@@ -1,0 +1,1494 @@
+{
+  "model": "sft",
+  "mode": "minimal",
+  "task_success": 0.96,
+  "by_category": {
+    "state_dependent": 1.0,
+    "disambiguation": 0.95,
+    "run_station_task": 0.9,
+    "negative_control": 1.0,
+    "inspect_station": 1.0,
+    "invalid_parameter": 1.0,
+    "move_to_station": 0.8333333333333334,
+    "sim_lifecycle": 1.0,
+    "missing_parameter": 1.0,
+    "kpi_acceptance": 1.0
+  },
+  "results": [
+    {
+      "prompt": "That's enough, shut it down now.",
+      "category": "state_dependent",
+      "lang": "en",
+      "completion": {
+        "name": "stop_simulation",
+        "arguments": {}
+      },
+      "raw": "{\"name\": \"stop_simulation\", \"arguments\": {}}",
+      "correct": true
+    },
+    {
+      "prompt": "AGV를 4번 작업대으로 보내 부탁해.",
+      "category": "disambiguation",
+      "lang": "ko",
+      "completion": {
+        "name": "move_to_station",
+        "arguments": {
+          "station_id": 4
+        }
+      },
+      "raw": "{\"name\": \"move_to_station\", \"arguments\": {\"station_id\": 4}}",
+      "correct": true
+    },
+    {
+      "prompt": "12번 스테이션 작업 돌려 지금.",
+      "category": "run_station_task",
+      "lang": "ko",
+      "completion": {
+        "name": "run_station_task",
+        "arguments": {
+          "station_id": 12
+        }
+      },
+      "raw": "{\"name\": \"run_station_task\", \"arguments\": {\"station_id\": 12}}",
+      "correct": true
+    },
+    {
+      "prompt": "What can you do? when you can.",
+      "category": "negative_control",
+      "lang": "en",
+      "completion": {
+        "name": "none",
+        "arguments": {}
+      },
+      "raw": "{\"name\": \"none\", \"arguments\": {}}",
+      "correct": true
+    },
+    {
+      "prompt": "11번 스테이션 검사해 바로.",
+      "category": "inspect_station",
+      "lang": "ko",
+      "completion": {
+        "name": "inspect_station",
+        "arguments": {
+          "station_id": 11
+        }
+      },
+      "raw": "{\"name\": \"inspect_station\", \"arguments\": {\"station_id\": 11}}",
+      "correct": true
+    },
+    {
+      "prompt": "스테이션 999 검사해.",
+      "category": "invalid_parameter",
+      "lang": "ko",
+      "completion": {
+        "name": "clarify",
+        "arguments": {
+          "message": "그 값은 유효 범위를 벗어납니다. 올바른 값을 알려주세요."
+        }
+      },
+      "raw": "{\"name\": \"clarify\", \"arguments\": {\"message\": \"그 값은 유효 범위를 벗어납니다. 올바른 값을 알려주세요.\"}}",
+      "correct": true
+    },
+    {
+      "prompt": "Set the speed to 0 now.",
+      "category": "invalid_parameter",
+      "lang": "en",
+      "completion": {
+        "name": "clarify",
+        "arguments": {
+          "message": "That value is out of the valid range. Please provide a valid one."
+        }
+      },
+      "raw": "{\"name\": \"clarify\", \"arguments\": {\"message\": \"That value is out of the valid range. Please provide a valid one.\"}}",
+      "correct": true
+    },
+    {
+      "prompt": "로봇을 10번 작업대으로 이동시켜.",
+      "category": "move_to_station",
+      "lang": "ko",
+      "completion": {
+        "name": "move_to_station",
+        "arguments": {
+          "station_id": 10
+        }
+      },
+      "raw": "{\"name\": \"move_to_station\", \"arguments\": {\"station_id\": 10}}",
+      "correct": true
+    },
+    {
+      "prompt": "Hi there.",
+      "category": "negative_control",
+      "lang": "en",
+      "completion": {
+        "name": "none",
+        "arguments": {}
+      },
+      "raw": "{\"name\": \"none\", \"arguments\": {}}",
+      "correct": true
+    },
+    {
+      "prompt": "5번 작업대 작업해 지금.",
+      "category": "run_station_task",
+      "lang": "ko",
+      "completion": {
+        "name": "run_station_task",
+        "arguments": {
+          "station_id": 5
+        }
+      },
+      "raw": "{\"name\": \"run_station_task\", \"arguments\": {\"station_id\": 5}}",
+      "correct": true
+    },
+    {
+      "prompt": "Bump the speed to 0.5x.",
+      "category": "sim_lifecycle",
+      "lang": "en",
+      "completion": {
+        "name": "set_sim_speed",
+        "arguments": {
+          "speed_multiplier": 0.5
+        }
+      },
+      "raw": "{\"name\": \"set_sim_speed\", \"arguments\": {\"speed_multiplier\": 0.5}}",
+      "correct": true
+    },
+    {
+      "prompt": "Handle that one over there please.",
+      "category": "missing_parameter",
+      "lang": "en",
+      "completion": {
+        "name": "clarify",
+        "arguments": {
+          "message": "Which station should I target?"
+        }
+      },
+      "raw": "{\"name\": \"clarify\", \"arguments\": {\"message\": \"Which station should I target?\"}}",
+      "correct": true
+    },
+    {
+      "prompt": "Change the speed to 1.5x.",
+      "category": "sim_lifecycle",
+      "lang": "en",
+      "completion": {
+        "name": "set_sim_speed",
+        "arguments": {
+          "speed_multiplier": 1.5
+        }
+      },
+      "raw": "{\"name\": \"set_sim_speed\", \"arguments\": {\"speed_multiplier\": 1.5}}",
+      "correct": true
+    },
+    {
+      "prompt": "AGV를 스테이션 5으로 이동해 좀.",
+      "category": "disambiguation",
+      "lang": "ko",
+      "completion": {
+        "name": "move_to_station",
+        "arguments": {
+          "station_id": 5
+        }
+      },
+      "raw": "{\"name\": \"move_to_station\", \"arguments\": {\"station_id\": 5}}",
+      "correct": true
+    },
+    {
+      "prompt": "Run the task at S10 now.",
+      "category": "disambiguation",
+      "lang": "en",
+      "completion": {
+        "name": "run_station_task",
+        "arguments": {
+          "station_id": 10
+        }
+      },
+      "raw": "{\"name\": \"run_task\", \"arguments\": {\"task_id\": 10}}",
+      "correct": false
+    },
+    {
+      "prompt": "4번 스테이션으로 AGV 보내줘 바로.",
+      "category": "disambiguation",
+      "lang": "ko",
+      "completion": {
+        "name": "move_to_station",
+        "arguments": {
+          "station_id": 4
+        }
+      },
+      "raw": "{\"name\": \"move_to_station\", \"arguments\": {\"station_id\": 4}}",
+      "correct": true
+    },
+    {
+      "prompt": "처리량 시간당 75 이상이면 통과로 AGV 8대 돌려줘.",
+      "category": "kpi_acceptance",
+      "lang": "ko",
+      "completion": {
+        "name": "start_simulation",
+        "arguments": {
+          "agv_count": 8,
+          "acceptance": [
+            {
+              "metric": "throughput",
+              "comparator": ">=",
+              "threshold": 75
+            }
+          ]
+        }
+      },
+      "raw": "{\"name\": \"start_simulation\", \"arguments\": {\"agv_count\": 8, \"acceptance\": [{\"metric\": \"throughput\", \"comparator\": \">=\", \"threshold\": 75}]}}",
+      "correct": true
+    },
+    {
+      "prompt": "5번 스테이션에서 공정 수행해. 높은 우선순위로.",
+      "category": "run_station_task",
+      "lang": "ko",
+      "completion": {
+        "name": "run_station_task",
+        "arguments": {
+          "station_id": 5,
+          "priority": "high"
+        }
+      },
+      "raw": "{\"name\": \"run_station_task\", \"arguments\": {\"station_id\": 5, \"priority\": \"high\"}}",
+      "correct": true
+    },
+    {
+      "prompt": "스테이션 999 검사해 바로.",
+      "category": "invalid_parameter",
+      "lang": "ko",
+      "completion": {
+        "name": "clarify",
+        "arguments": {
+          "message": "그 값은 유효 범위를 벗어납니다. 올바른 값을 알려주세요."
+        }
+      },
+      "raw": "{\"name\": \"clarify\", \"arguments\": {\"message\": \"그 값은 유효 범위를 벗어납니다. 올바른 값을 알려주세요.\"}}",
+      "correct": true
+    },
+    {
+      "prompt": "다시 진행해.",
+      "category": "sim_lifecycle",
+      "lang": "ko",
+      "completion": {
+        "name": "resume_simulation",
+        "arguments": {}
+      },
+      "raw": "{\"name\": \"resume_simulation\", \"arguments\": {}}",
+      "correct": true
+    },
+    {
+      "prompt": "Look at station number 8 thanks.",
+      "category": "inspect_station",
+      "lang": "en",
+      "completion": {
+        "name": "inspect_station",
+        "arguments": {
+          "station_id": 8
+        }
+      },
+      "raw": "{\"name\": \"inspect_station\", \"arguments\": {\"station_id\": 8}}",
+      "correct": true
+    },
+    {
+      "prompt": "Start with 4 AGVs and accept only if throughput is at least 65 per hour, and average wait is under 10 seconds.",
+      "category": "kpi_acceptance",
+      "lang": "en",
+      "completion": {
+        "name": "start_simulation",
+        "arguments": {
+          "agv_count": 4,
+          "acceptance": [
+            {
+              "metric": "throughput",
+              "comparator": ">=",
+              "threshold": 65
+            },
+            {
+              "metric": "avg_wait_sec",
+              "comparator": "<=",
+              "threshold": 10
+            }
+          ]
+        }
+      },
+      "raw": "{\"name\": \"start_simulation\", \"arguments\": {\"agv_count\": 4, \"acceptance\": [{\"metric\": \"throughput\", \"comparator\": \">=\", \"threshold\": 65}, {\"metric\": \"avg_wait_sec\", \"comparator\": \"<=\", \"threshold\": 10}]}}",
+      "correct": true
+    },
+    {
+      "prompt": "Start with 4 AGVs and accept only if throughput is at least 75 per hour, and average wait is under 15 seconds.",
+      "category": "kpi_acceptance",
+      "lang": "en",
+      "completion": {
+        "name": "start_simulation",
+        "arguments": {
+          "agv_count": 4,
+          "acceptance": [
+            {
+              "metric": "throughput",
+              "comparator": ">=",
+              "threshold": 75
+            },
+            {
+              "metric": "avg_wait_sec",
+              "comparator": "<=",
+              "threshold": 15
+            }
+          ]
+        }
+      },
+      "raw": "{\"name\": \"start_simulation\", \"arguments\": {\"agv_count\": 4, \"acceptance\": [{\"metric\": \"throughput\", \"comparator\": \">=\", \"threshold\": 75}, {\"metric\": \"avg_wait_sec\", \"comparator\": \"<=\", \"threshold\": 15}]}}",
+      "correct": true
+    },
+    {
+      "prompt": "출하 구역으로 AGV 보내줘.",
+      "category": "move_to_station",
+      "lang": "ko",
+      "completion": {
+        "name": "move_to_station",
+        "arguments": {
+          "station_id": 12
+        }
+      },
+      "raw": "{\"name\": \"move_to_station\", \"arguments\": {\"station_id\": 1}}",
+      "correct": false
+    },
+    {
+      "prompt": "Work S3 when you can.",
+      "category": "run_station_task",
+      "lang": "en",
+      "completion": {
+        "name": "run_station_task",
+        "arguments": {
+          "station_id": 3
+        }
+      },
+      "raw": "{\"name\": \"clarify\", \"arguments\": {\"message\": \"Which station should I target?\"}}",
+      "correct": false
+    },
+    {
+      "prompt": "Move the AGV.",
+      "category": "missing_parameter",
+      "lang": "en",
+      "completion": {
+        "name": "clarify",
+        "arguments": {
+          "message": "Which station should I target?"
+        }
+      },
+      "raw": "{\"name\": \"clarify\", \"arguments\": {\"message\": \"Which station should I target?\"}}",
+      "correct": true
+    },
+    {
+      "prompt": "Move the AGV to station 6.",
+      "category": "move_to_station",
+      "lang": "en",
+      "completion": {
+        "name": "move_to_station",
+        "arguments": {
+          "station_id": 6
+        }
+      },
+      "raw": "{\"name\": \"move_to_station\", \"arguments\": {\"station_id\": 6}}",
+      "correct": true
+    },
+    {
+      "prompt": "Do the task on workstation 8 when you can.",
+      "category": "disambiguation",
+      "lang": "en",
+      "completion": {
+        "name": "run_station_task",
+        "arguments": {
+          "station_id": 8
+        }
+      },
+      "raw": "{\"name\": \"run_station_task\", \"arguments\": {\"station_id\": 8}}",
+      "correct": true
+    },
+    {
+      "prompt": "로봇을 스테이션 11으로 이동시켜 바로.",
+      "category": "move_to_station",
+      "lang": "ko",
+      "completion": {
+        "name": "move_to_station",
+        "arguments": {
+          "station_id": 11
+        }
+      },
+      "raw": "{\"name\": \"move_to_station\", \"arguments\": {\"station_id\": 11}}",
+      "correct": true
+    },
+    {
+      "prompt": "10번 스테이션에서 공정 수행해 빨리.",
+      "category": "run_station_task",
+      "lang": "ko",
+      "completion": {
+        "name": "run_station_task",
+        "arguments": {
+          "station_id": 10
+        }
+      },
+      "raw": "{\"name\": \"run_station_task\", \"arguments\": {\"station_id\": 10}}",
+      "correct": true
+    },
+    {
+      "prompt": "Start with 5 AGVs and accept only if throughput is at least 75 per hour.",
+      "category": "kpi_acceptance",
+      "lang": "en",
+      "completion": {
+        "name": "start_simulation",
+        "arguments": {
+          "agv_count": 5,
+          "acceptance": [
+            {
+              "metric": "throughput",
+              "comparator": ">=",
+              "threshold": 75
+            }
+          ]
+        }
+      },
+      "raw": "{\"name\": \"start_simulation\", \"arguments\": {\"agv_count\": 5, \"acceptance\": [{\"metric\": \"throughput\", \"comparator\": \">=\", \"threshold\": 75}]}}",
+      "correct": true
+    },
+    {
+      "prompt": "Run the task at workstation 8 now.",
+      "category": "disambiguation",
+      "lang": "en",
+      "completion": {
+        "name": "run_station_task",
+        "arguments": {
+          "station_id": 8
+        }
+      },
+      "raw": "{\"name\": \"run_station_task\", \"arguments\": {\"station_id\": 8}}",
+      "correct": true
+    },
+    {
+      "prompt": "Begin the simulation using 6 AGVs.",
+      "category": "sim_lifecycle",
+      "lang": "en",
+      "completion": {
+        "name": "start_simulation",
+        "arguments": {
+          "agv_count": 6
+        }
+      },
+      "raw": "{\"name\": \"start_simulation\", \"arguments\": {\"agv_count\": 6}}",
+      "correct": true
+    },
+    {
+      "prompt": "11번 스테이션 작업해. 높은 우선순위로.",
+      "category": "run_station_task",
+      "lang": "ko",
+      "completion": {
+        "name": "run_station_task",
+        "arguments": {
+          "station_id": 11,
+          "priority": "high"
+        }
+      },
+      "raw": "{\"name\": \"run_station_task\", \"arguments\": {\"station_id\": 11, \"priority\": \"high\"}}",
+      "correct": true
+    },
+    {
+      "prompt": "Shut the sim down.",
+      "category": "sim_lifecycle",
+      "lang": "en",
+      "completion": {
+        "name": "stop_simulation",
+        "arguments": {}
+      },
+      "raw": "{\"name\": \"stop_simulation\", \"arguments\": {}}",
+      "correct": true
+    },
+    {
+      "prompt": "3번 작업대 작업 실행해 지금.",
+      "category": "run_station_task",
+      "lang": "ko",
+      "completion": {
+        "name": "run_station_task",
+        "arguments": {
+          "station_id": 3
+        }
+      },
+      "raw": "{\"name\": \"run_station_task\", \"arguments\": {\"station_id\": 3}}",
+      "correct": true
+    },
+    {
+      "prompt": "Run the task at workstation 1.",
+      "category": "disambiguation",
+      "lang": "en",
+      "completion": {
+        "name": "run_station_task",
+        "arguments": {
+          "station_id": 1
+        }
+      },
+      "raw": "{\"name\": \"run_station_task\", \"arguments\": {\"station_id\": 1}}",
+      "correct": true
+    },
+    {
+      "prompt": "5번 작업대 검사해 지금.",
+      "category": "inspect_station",
+      "lang": "ko",
+      "completion": {
+        "name": "inspect_station",
+        "arguments": {
+          "station_id": 5
+        }
+      },
+      "raw": "{\"name\": \"inspect_station\", \"arguments\": {\"station_id\": 5}}",
+      "correct": true
+    },
+    {
+      "prompt": "처리량 시간당 70 이상이면 통과로 AGV 4대 돌려줘.",
+      "category": "kpi_acceptance",
+      "lang": "ko",
+      "completion": {
+        "name": "start_simulation",
+        "arguments": {
+          "agv_count": 4,
+          "acceptance": [
+            {
+              "metric": "throughput",
+              "comparator": ">=",
+              "threshold": 70
+            }
+          ]
+        }
+      },
+      "raw": "{\"name\": \"start_simulation\", \"arguments\": {\"agv_count\": 4, \"acceptance\": [{\"metric\": \"throughput\", \"comparator\": \">=\", \"threshold\": 70}]}}",
+      "correct": true
+    },
+    {
+      "prompt": "Drive the robot to station number 8.",
+      "category": "move_to_station",
+      "lang": "en",
+      "completion": {
+        "name": "move_to_station",
+        "arguments": {
+          "station_id": 8
+        }
+      },
+      "raw": "{\"name\": \"move_to_station\", \"arguments\": {\"station_id\": 8}}",
+      "correct": true
+    },
+    {
+      "prompt": "Resume the simulation.",
+      "category": "sim_lifecycle",
+      "lang": "en",
+      "completion": {
+        "name": "resume_simulation",
+        "arguments": {}
+      },
+      "raw": "{\"name\": \"resume_simulation\", \"arguments\": {}}",
+      "correct": true
+    },
+    {
+      "prompt": "1번 스테이션 작업해 지금.",
+      "category": "disambiguation",
+      "lang": "ko",
+      "completion": {
+        "name": "run_station_task",
+        "arguments": {
+          "station_id": 1
+        }
+      },
+      "raw": "{\"name\": \"run_station_task\", \"arguments\": {\"station_id\": 1}}",
+      "correct": true
+    },
+    {
+      "prompt": "처리량 시간당 60 이상, 평균 대기 12초 이하이면 통과로 AGV 3대 돌려줘.",
+      "category": "kpi_acceptance",
+      "lang": "ko",
+      "completion": {
+        "name": "start_simulation",
+        "arguments": {
+          "agv_count": 3,
+          "acceptance": [
+            {
+              "metric": "throughput",
+              "comparator": ">=",
+              "threshold": 60
+            },
+            {
+              "metric": "avg_wait_sec",
+              "comparator": "<=",
+              "threshold": 12
+            }
+          ]
+        }
+      },
+      "raw": "{\"name\": \"start_simulation\", \"arguments\": {\"agv_count\": 3, \"acceptance\": [{\"metric\": \"throughput\", \"comparator\": \">=\", \"threshold\": 60}, {\"metric\": \"avg_wait_sec\", \"comparator\": \"<=\", \"threshold\": 12}]}}",
+      "correct": true
+    },
+    {
+      "prompt": "처리량 시간당 75 이상이면 통과로 AGV 6대 돌려줘.",
+      "category": "kpi_acceptance",
+      "lang": "ko",
+      "completion": {
+        "name": "start_simulation",
+        "arguments": {
+          "agv_count": 6,
+          "acceptance": [
+            {
+              "metric": "throughput",
+              "comparator": ">=",
+              "threshold": 75
+            }
+          ]
+        }
+      },
+      "raw": "{\"name\": \"start_simulation\", \"arguments\": {\"agv_count\": 6, \"acceptance\": [{\"metric\": \"throughput\", \"comparator\": \">=\", \"threshold\": 75}]}}",
+      "correct": true
+    },
+    {
+      "prompt": "Move the AGV to workstation 5 now.",
+      "category": "move_to_station",
+      "lang": "en",
+      "completion": {
+        "name": "move_to_station",
+        "arguments": {
+          "station_id": 5
+        }
+      },
+      "raw": "{\"name\": \"move_to_station\", \"arguments\": {\"station_id\": 5}}",
+      "correct": true
+    },
+    {
+      "prompt": "Start with 6 AGVs and accept only if throughput is at least 70 per hour, and average wait is under 15 seconds, and collisions are zero.",
+      "category": "kpi_acceptance",
+      "lang": "en",
+      "completion": {
+        "name": "start_simulation",
+        "arguments": {
+          "agv_count": 6,
+          "acceptance": [
+            {
+              "metric": "throughput",
+              "comparator": ">=",
+              "threshold": 70
+            },
+            {
+              "metric": "avg_wait_sec",
+              "comparator": "<=",
+              "threshold": 15
+            },
+            {
+              "metric": "collision_count",
+              "comparator": "==",
+              "threshold": 0
+            }
+          ]
+        }
+      },
+      "raw": "{\"name\": \"start_simulation\", \"arguments\": {\"agv_count\": 6, \"acceptance\": [{\"metric\": \"throughput\", \"comparator\": \">=\", \"threshold\": 70}, {\"metric\": \"avg_wait_sec\", \"comparator\": \"<=\", \"threshold\": 15}, {\"metric\": \"collision_count\", \"comparator\": \"==\", \"threshold\": 0}]}}",
+      "correct": true
+    },
+    {
+      "prompt": "속도를 0으로 설정해 지금.",
+      "category": "invalid_parameter",
+      "lang": "ko",
+      "completion": {
+        "name": "clarify",
+        "arguments": {
+          "message": "그 값은 유효 범위를 벗어납니다. 올바른 값을 알려주세요."
+        }
+      },
+      "raw": "{\"name\": \"clarify\", \"arguments\": {\"message\": \"그 값은 유효 범위를 벗어납니다. 올바른 값을 알려주세요.\"}}",
+      "correct": true
+    },
+    {
+      "prompt": "Start with 5 AGVs and accept only if throughput is at least 70 per hour.",
+      "category": "kpi_acceptance",
+      "lang": "en",
+      "completion": {
+        "name": "start_simulation",
+        "arguments": {
+          "agv_count": 5,
+          "acceptance": [
+            {
+              "metric": "throughput",
+              "comparator": ">=",
+              "threshold": 70
+            }
+          ]
+        }
+      },
+      "raw": "{\"name\": \"start_simulation\", \"arguments\": {\"agv_count\": 5, \"acceptance\": [{\"metric\": \"throughput\", \"comparator\": \">=\", \"threshold\": 70}]}}",
+      "correct": true
+    },
+    {
+      "prompt": "처리량 시간당 65 이상, 평균 대기 10초 이하이면 통과로 AGV 5대 돌려줘.",
+      "category": "kpi_acceptance",
+      "lang": "ko",
+      "completion": {
+        "name": "start_simulation",
+        "arguments": {
+          "agv_count": 5,
+          "acceptance": [
+            {
+              "metric": "throughput",
+              "comparator": ">=",
+              "threshold": 65
+            },
+            {
+              "metric": "avg_wait_sec",
+              "comparator": "<=",
+              "threshold": 10
+            }
+          ]
+        }
+      },
+      "raw": "{\"name\": \"start_simulation\", \"arguments\": {\"agv_count\": 5, \"acceptance\": [{\"metric\": \"throughput\", \"comparator\": \">=\", \"threshold\": 65}, {\"metric\": \"avg_wait_sec\", \"comparator\": \"<=\", \"threshold\": 10}]}}",
+      "correct": true
+    },
+    {
+      "prompt": "처리량 시간당 80 이상이면 통과로 AGV 4대 돌려줘.",
+      "category": "kpi_acceptance",
+      "lang": "ko",
+      "completion": {
+        "name": "start_simulation",
+        "arguments": {
+          "agv_count": 4,
+          "acceptance": [
+            {
+              "metric": "throughput",
+              "comparator": ">=",
+              "threshold": 80
+            }
+          ]
+        }
+      },
+      "raw": "{\"name\": \"start_simulation\", \"arguments\": {\"agv_count\": 4, \"acceptance\": [{\"metric\": \"throughput\", \"comparator\": \">=\", \"threshold\": 80}]}}",
+      "correct": true
+    },
+    {
+      "prompt": "Take a look at station number 12 when you can.",
+      "category": "disambiguation",
+      "lang": "en",
+      "completion": {
+        "name": "inspect_station",
+        "arguments": {
+          "station_id": 12
+        }
+      },
+      "raw": "{\"name\": \"inspect_station\", \"arguments\": {\"station_id\": 12}}",
+      "correct": true
+    },
+    {
+      "prompt": "Set the speed to -2x right away.",
+      "category": "invalid_parameter",
+      "lang": "en",
+      "completion": {
+        "name": "clarify",
+        "arguments": {
+          "message": "That value is out of the valid range. Please provide a valid one."
+        }
+      },
+      "raw": "{\"name\": \"clarify\", \"arguments\": {\"message\": \"That value is out of the valid range. Please provide a valid one.\"}}",
+      "correct": true
+    },
+    {
+      "prompt": "12번 작업대 점검해.",
+      "category": "inspect_station",
+      "lang": "ko",
+      "completion": {
+        "name": "inspect_station",
+        "arguments": {
+          "station_id": 12
+        }
+      },
+      "raw": "{\"name\": \"inspect_station\", \"arguments\": {\"station_id\": 12}}",
+      "correct": true
+    },
+    {
+      "prompt": "Inspect S7 thanks.",
+      "category": "disambiguation",
+      "lang": "en",
+      "completion": {
+        "name": "inspect_station",
+        "arguments": {
+          "station_id": 7
+        }
+      },
+      "raw": "{\"name\": \"inspect_station\", \"arguments\": {\"station_id\": 7}}",
+      "correct": true
+    },
+    {
+      "prompt": "로봇을 6번 작업대으로 이동시켜.",
+      "category": "disambiguation",
+      "lang": "ko",
+      "completion": {
+        "name": "move_to_station",
+        "arguments": {
+          "station_id": 6
+        }
+      },
+      "raw": "{\"name\": \"move_to_station\", \"arguments\": {\"station_id\": 6}}",
+      "correct": true
+    },
+    {
+      "prompt": "Start with 4 AGVs and accept only if throughput is at least 60 per hour.",
+      "category": "kpi_acceptance",
+      "lang": "en",
+      "completion": {
+        "name": "start_simulation",
+        "arguments": {
+          "agv_count": 4,
+          "acceptance": [
+            {
+              "metric": "throughput",
+              "comparator": ">=",
+              "threshold": 60
+            }
+          ]
+        }
+      },
+      "raw": "{\"name\": \"start_simulation\", \"arguments\": {\"agv_count\": 4, \"acceptance\": [{\"metric\": \"throughput\", \"comparator\": \">=\", \"threshold\": 60}]}}",
+      "correct": true
+    },
+    {
+      "prompt": "AGV를 11번 스테이션으로 보내.",
+      "category": "move_to_station",
+      "lang": "ko",
+      "completion": {
+        "name": "move_to_station",
+        "arguments": {
+          "station_id": 11
+        }
+      },
+      "raw": "{\"name\": \"move_to_station\", \"arguments\": {\"station_id\": 11}}",
+      "correct": true
+    },
+    {
+      "prompt": "처리량 시간당 65 이상, 평균 대기 12초 이하이면 통과로 AGV 6대 돌려줘.",
+      "category": "kpi_acceptance",
+      "lang": "ko",
+      "completion": {
+        "name": "start_simulation",
+        "arguments": {
+          "agv_count": 6,
+          "acceptance": [
+            {
+              "metric": "throughput",
+              "comparator": ">=",
+              "threshold": 65
+            },
+            {
+              "metric": "avg_wait_sec",
+              "comparator": "<=",
+              "threshold": 12
+            }
+          ]
+        }
+      },
+      "raw": "{\"name\": \"start_simulation\", \"arguments\": {\"agv_count\": 6, \"acceptance\": [{\"metric\": \"throughput\", \"comparator\": \">=\", \"threshold\": 65}, {\"metric\": \"avg_wait_sec\", \"comparator\": \"<=\", \"threshold\": 12}]}}",
+      "correct": true
+    },
+    {
+      "prompt": "Inspect S12.",
+      "category": "inspect_station",
+      "lang": "en",
+      "completion": {
+        "name": "inspect_station",
+        "arguments": {
+          "station_id": 12
+        }
+      },
+      "raw": "{\"name\": \"inspect_station\", \"arguments\": {\"station_id\": 12}}",
+      "correct": true
+    },
+    {
+      "prompt": "로봇을 출하 구역으로 이동시켜 지금.",
+      "category": "move_to_station",
+      "lang": "ko",
+      "completion": {
+        "name": "move_to_station",
+        "arguments": {
+          "station_id": 12
+        }
+      },
+      "raw": "{\"name\": \"move_to_station\", \"arguments\": {\"station_id\": 1}}",
+      "correct": false
+    },
+    {
+      "prompt": "10번 작업대 점검해 좀.",
+      "category": "disambiguation",
+      "lang": "ko",
+      "completion": {
+        "name": "inspect_station",
+        "arguments": {
+          "station_id": 10
+        }
+      },
+      "raw": "{\"name\": \"inspect_station\", \"arguments\": {\"station_id\": 10}}",
+      "correct": true
+    },
+    {
+      "prompt": "Do the task on station 3 right away.",
+      "category": "disambiguation",
+      "lang": "en",
+      "completion": {
+        "name": "run_station_task",
+        "arguments": {
+          "station_id": 3
+        }
+      },
+      "raw": "{\"name\": \"run_station_task\", \"arguments\": {\"station_id\": 3}}",
+      "correct": true
+    },
+    {
+      "prompt": "Execute the job at workstation 11. With high priority.",
+      "category": "run_station_task",
+      "lang": "en",
+      "completion": {
+        "name": "run_station_task",
+        "arguments": {
+          "station_id": 11,
+          "priority": "high"
+        }
+      },
+      "raw": "{\"name\": \"run_station_task\", \"arguments\": {\"station_id\": 11, \"priority\": \"high\"}}",
+      "correct": true
+    },
+    {
+      "prompt": "12번 작업대 작업해.",
+      "category": "run_station_task",
+      "lang": "ko",
+      "completion": {
+        "name": "run_station_task",
+        "arguments": {
+          "station_id": 12
+        }
+      },
+      "raw": "{\"name\": \"run_station_task\", \"arguments\": {\"station_id\": 12}}",
+      "correct": true
+    },
+    {
+      "prompt": "Stop the simulation.",
+      "category": "sim_lifecycle",
+      "lang": "en",
+      "completion": {
+        "name": "stop_simulation",
+        "arguments": {}
+      },
+      "raw": "{\"name\": \"stop_simulation\", \"arguments\": {}}",
+      "correct": true
+    },
+    {
+      "prompt": "6번 작업대 점검해.",
+      "category": "inspect_station",
+      "lang": "ko",
+      "completion": {
+        "name": "inspect_station",
+        "arguments": {
+          "station_id": 6
+        }
+      },
+      "raw": "{\"name\": \"inspect_station\", \"arguments\": {\"station_id\": 6}}",
+      "correct": true
+    },
+    {
+      "prompt": "6번 작업대 작업 돌려.",
+      "category": "disambiguation",
+      "lang": "ko",
+      "completion": {
+        "name": "run_station_task",
+        "arguments": {
+          "station_id": 6
+        }
+      },
+      "raw": "{\"name\": \"run_station_task\", \"arguments\": {\"station_id\": 6}}",
+      "correct": true
+    },
+    {
+      "prompt": "Look at workstation 10 please.",
+      "category": "disambiguation",
+      "lang": "en",
+      "completion": {
+        "name": "inspect_station",
+        "arguments": {
+          "station_id": 10
+        }
+      },
+      "raw": "{\"name\": \"inspect_station\", \"arguments\": {\"station_id\": 10}}",
+      "correct": true
+    },
+    {
+      "prompt": "로봇을 스테이션 12으로 이동시켜.",
+      "category": "move_to_station",
+      "lang": "ko",
+      "completion": {
+        "name": "move_to_station",
+        "arguments": {
+          "station_id": 12
+        }
+      },
+      "raw": "{\"name\": \"move_to_station\", \"arguments\": {\"station_id\": 12}}",
+      "correct": true
+    },
+    {
+      "prompt": "Dispatch the AGV to station number 9 now.",
+      "category": "move_to_station",
+      "lang": "en",
+      "completion": {
+        "name": "move_to_station",
+        "arguments": {
+          "station_id": 9
+        }
+      },
+      "raw": "{\"name\": \"move_to_station\", \"arguments\": {\"station_id\": 9}}",
+      "correct": true
+    },
+    {
+      "prompt": "뭐 할 수 있어? 바로.",
+      "category": "negative_control",
+      "lang": "ko",
+      "completion": {
+        "name": "none",
+        "arguments": {}
+      },
+      "raw": "{\"name\": \"none\", \"arguments\": {}}",
+      "correct": true
+    },
+    {
+      "prompt": "저거 처리해줘 빨리.",
+      "category": "missing_parameter",
+      "lang": "ko",
+      "completion": {
+        "name": "clarify",
+        "arguments": {
+          "message": "어느 스테이션을 대상으로 할까요?"
+        }
+      },
+      "raw": "{\"name\": \"clarify\", \"arguments\": {\"message\": \"어느 스테이션을 대상으로 할까요?\"}}",
+      "correct": true
+    },
+    {
+      "prompt": "Drive the robot to station 4.",
+      "category": "move_to_station",
+      "lang": "en",
+      "completion": {
+        "name": "move_to_station",
+        "arguments": {
+          "station_id": 4
+        }
+      },
+      "raw": "{\"name\": \"move_to_station\", \"arguments\": {\"station_id\": 4}}",
+      "correct": true
+    },
+    {
+      "prompt": "Work workstation 11.",
+      "category": "disambiguation",
+      "lang": "en",
+      "completion": {
+        "name": "run_station_task",
+        "arguments": {
+          "station_id": 11
+        }
+      },
+      "raw": "{\"name\": \"run_station_task\", \"arguments\": {\"station_id\": 11}}",
+      "correct": true
+    },
+    {
+      "prompt": "처리량 시간당 60 이상, 평균 대기 15초 이하, 충돌 0건이면 통과로 AGV 8대 돌려줘.",
+      "category": "kpi_acceptance",
+      "lang": "ko",
+      "completion": {
+        "name": "start_simulation",
+        "arguments": {
+          "agv_count": 8,
+          "acceptance": [
+            {
+              "metric": "throughput",
+              "comparator": ">=",
+              "threshold": 60
+            },
+            {
+              "metric": "avg_wait_sec",
+              "comparator": "<=",
+              "threshold": 15
+            },
+            {
+              "metric": "collision_count",
+              "comparator": "==",
+              "threshold": 0
+            }
+          ]
+        }
+      },
+      "raw": "{\"name\": \"start_simulation\", \"arguments\": {\"agv_count\": 8, \"acceptance\": [{\"metric\": \"throughput\", \"comparator\": \">=\", \"threshold\": 60}, {\"metric\": \"avg_wait_sec\", \"comparator\": \"<=\", \"threshold\": 15}, {\"metric\": \"collision_count\", \"comparator\": \"==\", \"threshold\": 0}]}}",
+      "correct": true
+    },
+    {
+      "prompt": "Inspect station 999.",
+      "category": "invalid_parameter",
+      "lang": "en",
+      "completion": {
+        "name": "clarify",
+        "arguments": {
+          "message": "That value is out of the valid range. Please provide a valid one."
+        }
+      },
+      "raw": "{\"name\": \"clarify\", \"arguments\": {\"message\": \"That value is out of the valid range. Please provide a valid one.\"}}",
+      "correct": true
+    },
+    {
+      "prompt": "Execute the job at workstation 1 now.",
+      "category": "run_station_task",
+      "lang": "en",
+      "completion": {
+        "name": "run_station_task",
+        "arguments": {
+          "station_id": 1
+        }
+      },
+      "raw": "{\"name\": \"run_station_task\", \"arguments\": {\"station_id\": 1}}",
+      "correct": true
+    },
+    {
+      "prompt": "Continue the run.",
+      "category": "sim_lifecycle",
+      "lang": "en",
+      "completion": {
+        "name": "resume_simulation",
+        "arguments": {}
+      },
+      "raw": "{\"name\": \"resume_simulation\", \"arguments\": {}}",
+      "correct": true
+    },
+    {
+      "prompt": "5번 작업대 점검해 지금.",
+      "category": "inspect_station",
+      "lang": "ko",
+      "completion": {
+        "name": "inspect_station",
+        "arguments": {
+          "station_id": 5
+        }
+      },
+      "raw": "{\"name\": \"inspect_station\", \"arguments\": {\"station_id\": 5}}",
+      "correct": true
+    },
+    {
+      "prompt": "AGV를 4번 작업대으로 이동해 지금.",
+      "category": "move_to_station",
+      "lang": "ko",
+      "completion": {
+        "name": "move_to_station",
+        "arguments": {
+          "station_id": 4
+        }
+      },
+      "raw": "{\"name\": \"move_to_station\", \"arguments\": {\"station_id\": 4}}",
+      "correct": true
+    },
+    {
+      "prompt": "뭐 할 수 있어? 부탁해.",
+      "category": "negative_control",
+      "lang": "ko",
+      "completion": {
+        "name": "none",
+        "arguments": {}
+      },
+      "raw": "{\"name\": \"none\", \"arguments\": {}}",
+      "correct": true
+    },
+    {
+      "prompt": "이제 멈춰 지금.",
+      "category": "state_dependent",
+      "lang": "ko",
+      "completion": {
+        "name": "stop_simulation",
+        "arguments": {}
+      },
+      "raw": "{\"name\": \"stop_simulation\", \"arguments\": {}}",
+      "correct": true
+    },
+    {
+      "prompt": "3번 스테이션 작업 돌려 바로.",
+      "category": "disambiguation",
+      "lang": "ko",
+      "completion": {
+        "name": "run_station_task",
+        "arguments": {
+          "station_id": 3
+        }
+      },
+      "raw": "{\"name\": \"run_station_task\", \"arguments\": {\"station_id\": 3}}",
+      "correct": true
+    },
+    {
+      "prompt": "Kick off the sim with 5 AGVs.",
+      "category": "sim_lifecycle",
+      "lang": "en",
+      "completion": {
+        "name": "start_simulation",
+        "arguments": {
+          "agv_count": 5
+        }
+      },
+      "raw": "{\"name\": \"start_simulation\", \"arguments\": {\"agv_count\": 5}}",
+      "correct": true
+    },
+    {
+      "prompt": "시뮬레이션 일시정지.",
+      "category": "sim_lifecycle",
+      "lang": "ko",
+      "completion": {
+        "name": "pause_simulation",
+        "arguments": {}
+      },
+      "raw": "{\"name\": \"pause_simulation\", \"arguments\": {}}",
+      "correct": true
+    },
+    {
+      "prompt": "Start with 5 AGVs and accept only if throughput is at least 60 per hour.",
+      "category": "kpi_acceptance",
+      "lang": "en",
+      "completion": {
+        "name": "start_simulation",
+        "arguments": {
+          "agv_count": 5,
+          "acceptance": [
+            {
+              "metric": "throughput",
+              "comparator": ">=",
+              "threshold": 60
+            }
+          ]
+        }
+      },
+      "raw": "{\"name\": \"start_simulation\", \"arguments\": {\"agv_count\": 5, \"acceptance\": [{\"metric\": \"throughput\", \"comparator\": \">=\", \"threshold\": 60}]}}",
+      "correct": true
+    },
+    {
+      "prompt": "처리량 시간당 75 이상, 평균 대기 15초 이하, 충돌 0건이면 통과로 AGV 6대 돌려줘.",
+      "category": "kpi_acceptance",
+      "lang": "ko",
+      "completion": {
+        "name": "start_simulation",
+        "arguments": {
+          "agv_count": 6,
+          "acceptance": [
+            {
+              "metric": "throughput",
+              "comparator": ">=",
+              "threshold": 75
+            },
+            {
+              "metric": "avg_wait_sec",
+              "comparator": "<=",
+              "threshold": 15
+            },
+            {
+              "metric": "collision_count",
+              "comparator": "==",
+              "threshold": 0
+            }
+          ]
+        }
+      },
+      "raw": "{\"name\": \"start_simulation\", \"arguments\": {\"agv_count\": 6, \"acceptance\": [{\"metric\": \"throughput\", \"comparator\": \">=\", \"threshold\": 75}, {\"metric\": \"avg_wait_sec\", \"comparator\": \"<=\", \"threshold\": 15}, {\"metric\": \"collision_count\", \"comparator\": \"==\", \"threshold\": 0}]}}",
+      "correct": true
+    },
+    {
+      "prompt": "Inspect the station when you can.",
+      "category": "missing_parameter",
+      "lang": "en",
+      "completion": {
+        "name": "clarify",
+        "arguments": {
+          "message": "Which station should I target?"
+        }
+      },
+      "raw": "{\"name\": \"clarify\", \"arguments\": {\"message\": \"Which station should I target?\"}}",
+      "correct": true
+    },
+    {
+      "prompt": "Go run a task right away.",
+      "category": "missing_parameter",
+      "lang": "en",
+      "completion": {
+        "name": "clarify",
+        "arguments": {
+          "message": "Which station should I target?"
+        }
+      },
+      "raw": "{\"name\": \"clarify\", \"arguments\": {\"message\": \"Which station should I target?\"}}",
+      "correct": true
+    },
+    {
+      "prompt": "Start with 8 AGVs and accept only if throughput is at least 65 per hour, and average wait is under 10 seconds, and collisions are zero.",
+      "category": "kpi_acceptance",
+      "lang": "en",
+      "completion": {
+        "name": "start_simulation",
+        "arguments": {
+          "agv_count": 8,
+          "acceptance": [
+            {
+              "metric": "throughput",
+              "comparator": ">=",
+              "threshold": 65
+            },
+            {
+              "metric": "avg_wait_sec",
+              "comparator": "<=",
+              "threshold": 10
+            },
+            {
+              "metric": "collision_count",
+              "comparator": "==",
+              "threshold": 0
+            }
+          ]
+        }
+      },
+      "raw": "{\"name\": \"start_simulation\", \"arguments\": {\"agv_count\": 8, \"acceptance\": [{\"metric\": \"throughput\", \"comparator\": \">=\", \"threshold\": 65}, {\"metric\": \"avg_wait_sec\", \"comparator\": \"<=\", \"threshold\": 10}, {\"metric\": \"collision_count\", \"comparator\": \"==\", \"threshold\": 0}]}}",
+      "correct": true
+    },
+    {
+      "prompt": "AGV를 10번 스테이션으로 보내 바로.",
+      "category": "disambiguation",
+      "lang": "ko",
+      "completion": {
+        "name": "move_to_station",
+        "arguments": {
+          "station_id": 10
+        }
+      },
+      "raw": "{\"name\": \"move_to_station\", \"arguments\": {\"station_id\": 10}}",
+      "correct": true
+    },
+    {
+      "prompt": "3대로 시뮬레이션 돌려.",
+      "category": "sim_lifecycle",
+      "lang": "ko",
+      "completion": {
+        "name": "start_simulation",
+        "arguments": {
+          "agv_count": 3
+        }
+      },
+      "raw": "{\"name\": \"start_simulation\", \"arguments\": {\"agv_count\": 3}}",
+      "correct": true
+    },
+    {
+      "prompt": "Move the AGV to workstation 12 when you can.",
+      "category": "disambiguation",
+      "lang": "en",
+      "completion": {
+        "name": "move_to_station",
+        "arguments": {
+          "station_id": 12
+        }
+      },
+      "raw": "{\"name\": \"move_to_station\", \"arguments\": {\"station_id\": 12}}",
+      "correct": true
+    },
+    {
+      "prompt": "Do the thing please.",
+      "category": "missing_parameter",
+      "lang": "en",
+      "completion": {
+        "name": "clarify",
+        "arguments": {
+          "message": "Which station should I target?"
+        }
+      },
+      "raw": "{\"name\": \"clarify\", \"arguments\": {\"message\": \"Which station should I target?\"}}",
+      "correct": true
+    },
+    {
+      "prompt": "거기로 보내줘.",
+      "category": "missing_parameter",
+      "lang": "ko",
+      "completion": {
+        "name": "clarify",
+        "arguments": {
+          "message": "어느 스테이션을 대상으로 할까요?"
+        }
+      },
+      "raw": "{\"name\": \"clarify\", \"arguments\": {\"message\": \"어느 스테이션을 대상으로 할까요?\"}}",
+      "correct": true
+    },
+    {
+      "prompt": "2번 작업대 검사해 지금.",
+      "category": "inspect_station",
+      "lang": "ko",
+      "completion": {
+        "name": "inspect_station",
+        "arguments": {
+          "station_id": 2
+        }
+      },
+      "raw": "{\"name\": \"inspect_station\", \"arguments\": {\"station_id\": 2}}",
+      "correct": true
+    },
+    {
+      "prompt": "처리량 시간당 70 이상, 평균 대기 10초 이하이면 통과로 AGV 4대 돌려줘.",
+      "category": "kpi_acceptance",
+      "lang": "ko",
+      "completion": {
+        "name": "start_simulation",
+        "arguments": {
+          "agv_count": 4,
+          "acceptance": [
+            {
+              "metric": "throughput",
+              "comparator": ">=",
+              "threshold": 70
+            },
+            {
+              "metric": "avg_wait_sec",
+              "comparator": "<=",
+              "threshold": 10
+            }
+          ]
+        }
+      },
+      "raw": "{\"name\": \"start_simulation\", \"arguments\": {\"agv_count\": 4, \"acceptance\": [{\"metric\": \"throughput\", \"comparator\": \">=\", \"threshold\": 70}, {\"metric\": \"avg_wait_sec\", \"comparator\": \"<=\", \"threshold\": 10}]}}",
+      "correct": true
+    },
+    {
+      "prompt": "Examine station number 2.",
+      "category": "disambiguation",
+      "lang": "en",
+      "completion": {
+        "name": "inspect_station",
+        "arguments": {
+          "station_id": 2
+        }
+      },
+      "raw": "{\"name\": \"inspect_station\", \"arguments\": {\"station_id\": 2}}",
+      "correct": true
+    },
+    {
+      "prompt": "Set speed to 1.5x.",
+      "category": "sim_lifecycle",
+      "lang": "en",
+      "completion": {
+        "name": "set_sim_speed",
+        "arguments": {
+          "speed_multiplier": 1.5
+        }
+      },
+      "raw": "{\"name\": \"set_sim_speed\", \"arguments\": {\"speed_multiplier\": 1.5}}",
+      "correct": true
+    },
+    {
+      "prompt": "AGV 이동해줘 좀.",
+      "category": "missing_parameter",
+      "lang": "ko",
+      "completion": {
+        "name": "clarify",
+        "arguments": {
+          "message": "어느 스테이션을 대상으로 할까요?"
+        }
+      },
+      "raw": "{\"name\": \"clarify\", \"arguments\": {\"message\": \"어느 스테이션을 대상으로 할까요?\"}}",
+      "correct": true
+    }
+  ]
+}

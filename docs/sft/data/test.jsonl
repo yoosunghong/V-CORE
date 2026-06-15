@@ -1,0 +1,118 @@
+{"prompt": "Drive the robot to station 4.", "category": "move_to_station", "lang": "en", "completion": {"name": "move_to_station", "arguments": {"station_id": 4}}}
+{"prompt": "로봇을 10번 작업대으로 이동시켜.", "category": "move_to_station", "lang": "ko", "completion": {"name": "move_to_station", "arguments": {"station_id": 10}}}
+{"prompt": "AGV를 스테이션 5으로 이동해 좀.", "category": "disambiguation", "lang": "ko", "completion": {"name": "move_to_station", "arguments": {"station_id": 5}}}
+{"prompt": "5번 작업대 검사해 지금.", "category": "inspect_station", "lang": "ko", "completion": {"name": "inspect_station", "arguments": {"station_id": 5}}}
+{"prompt": "1번 스테이션 작업해 지금.", "category": "disambiguation", "lang": "ko", "completion": {"name": "run_station_task", "arguments": {"station_id": 1}}}
+{"prompt": "Start with 5 AGVs and accept only if throughput is at least 75 per hour.", "category": "kpi_acceptance", "lang": "en", "completion": {"name": "start_simulation", "arguments": {"agv_count": 5, "acceptance": [{"metric": "throughput", "comparator": ">=", "threshold": 75}]}}}
+{"prompt": "Resume the simulation.", "category": "sim_lifecycle", "lang": "en", "completion": {"name": "resume_simulation", "arguments": {}}}
+{"prompt": "5번 작업대 작업해 지금.", "category": "run_station_task", "lang": "ko", "completion": {"name": "run_station_task", "arguments": {"station_id": 5}}}
+{"prompt": "Start with 5 AGVs and accept only if throughput is at least 70 per hour.", "category": "kpi_acceptance", "lang": "en", "completion": {"name": "start_simulation", "arguments": {"agv_count": 5, "acceptance": [{"metric": "throughput", "comparator": ">=", "threshold": 70}]}}}
+{"prompt": "처리량 시간당 60 이상, 평균 대기 15초 이하, 충돌 0건이면 통과로 AGV 8대 돌려줘.", "category": "kpi_acceptance", "lang": "ko", "completion": {"name": "start_simulation", "arguments": {"agv_count": 8, "acceptance": [{"metric": "throughput", "comparator": ">=", "threshold": 60}, {"metric": "avg_wait_sec", "comparator": "<=", "threshold": 15}, {"metric": "collision_count", "comparator": "==", "threshold": 0}]}}}
+{"prompt": "That's enough, shut it down now.", "category": "state_dependent", "lang": "en", "completion": {"name": "stop_simulation", "arguments": {}}}
+{"prompt": "3번 스테이션 작업 돌려 바로.", "category": "disambiguation", "lang": "ko", "completion": {"name": "run_station_task", "arguments": {"station_id": 3}}}
+{"prompt": "Go run a task right away.", "category": "missing_parameter", "lang": "en", "completion": {"name": "clarify", "arguments": {"message": "Which station should I target?"}}}
+{"prompt": "6대로 1.5배속으로 돌려 지금.", "category": "start_with_speed", "lang": "ko", "completion": {"name": "start_simulation", "arguments": {"agv_count": 6, "speed_multiplier": 1.5}}}
+{"prompt": "속도를 0으로 설정해 지금.", "category": "invalid_parameter", "lang": "ko", "completion": {"name": "clarify", "arguments": {"message": "그 값은 유효 범위를 벗어납니다. 올바른 값을 알려주세요."}}}
+{"prompt": "1배 속도로 AGV 3대 시작해줘.", "category": "start_with_speed", "lang": "ko", "completion": {"name": "start_simulation", "arguments": {"agv_count": 3, "speed_multiplier": 1.0}}}
+{"prompt": "이제 멈춰 지금.", "category": "state_dependent", "lang": "ko", "completion": {"name": "stop_simulation", "arguments": {}}}
+{"prompt": "뭐 할 수 있어? 바로.", "category": "negative_control", "lang": "ko", "completion": {"name": "none", "arguments": {}}}
+{"prompt": "Set speed to 1.5x.", "category": "sim_lifecycle", "lang": "en", "completion": {"name": "set_sim_speed", "arguments": {"speed_multiplier": 1.5}}}
+{"prompt": "3번 작업대 작업 실행해 지금.", "category": "run_station_task", "lang": "ko", "completion": {"name": "run_station_task", "arguments": {"station_id": 3}}}
+{"prompt": "처리량 시간당 70 이상이면 통과로 AGV 4대 돌려줘.", "category": "kpi_acceptance", "lang": "ko", "completion": {"name": "start_simulation", "arguments": {"agv_count": 4, "acceptance": [{"metric": "throughput", "comparator": ">=", "threshold": 70}]}}}
+{"prompt": "AGV를 11번 스테이션으로 보내.", "category": "move_to_station", "lang": "ko", "completion": {"name": "move_to_station", "arguments": {"station_id": 11}}}
+{"prompt": "10번 작업대 점검해 좀.", "category": "disambiguation", "lang": "ko", "completion": {"name": "inspect_station", "arguments": {"station_id": 10}}}
+{"prompt": "Start a 3x run with 6 AGVs and accept only if throughput is at least 80 per hour.", "category": "start_with_speed", "lang": "en", "completion": {"name": "start_simulation", "arguments": {"agv_count": 6, "speed_multiplier": 3.0, "acceptance": [{"metric": "throughput", "comparator": ">=", "threshold": 80}]}}}
+{"prompt": "4대로 시작하고 가동 AGV가 2대 이상이면 합격.", "category": "kpi_acceptance_metrics", "lang": "ko", "completion": {"name": "start_simulation", "arguments": {"agv_count": 4, "acceptance": [{"metric": "active_agvs", "comparator": ">=", "threshold": 2.0}]}}}
+{"prompt": "처리량 시간당 75 이상이면 통과로 AGV 8대 돌려줘.", "category": "kpi_acceptance", "lang": "ko", "completion": {"name": "start_simulation", "arguments": {"agv_count": 8, "acceptance": [{"metric": "throughput", "comparator": ">=", "threshold": 75}]}}}
+{"prompt": "처리량 시간당 75 이상이면 통과로 AGV 6대 돌려줘.", "category": "kpi_acceptance", "lang": "ko", "completion": {"name": "start_simulation", "arguments": {"agv_count": 6, "acceptance": [{"metric": "throughput", "comparator": ">=", "threshold": 75}]}}}
+{"prompt": "Do the thing please.", "category": "missing_parameter", "lang": "en", "completion": {"name": "clarify", "arguments": {"message": "Which station should I target?"}}}
+{"prompt": "5번 스테이션에서 공정 수행해. 높은 우선순위로.", "category": "run_station_task", "lang": "ko", "completion": {"name": "run_station_task", "arguments": {"station_id": 5, "priority": "high"}}}
+{"prompt": "Shut the sim down.", "category": "sim_lifecycle", "lang": "en", "completion": {"name": "stop_simulation", "arguments": {}}}
+{"prompt": "Inspect S7 thanks.", "category": "disambiguation", "lang": "en", "completion": {"name": "inspect_station", "arguments": {"station_id": 7}}}
+{"prompt": "Begin a run with 4 AGVs; it passes only if the bottleneck rate stays under 20%.", "category": "kpi_acceptance_metrics", "lang": "en", "completion": {"name": "start_simulation", "arguments": {"agv_count": 4, "acceptance": [{"metric": "bottleneck_rate", "comparator": "<=", "threshold": 20.0}]}}}
+{"prompt": "Inspect S12.", "category": "inspect_station", "lang": "en", "completion": {"name": "inspect_station", "arguments": {"station_id": 12}}}
+{"prompt": "3배속 8대로 시작해.", "category": "start_with_speed", "lang": "ko", "completion": {"name": "start_simulation", "arguments": {"agv_count": 8, "speed_multiplier": 3.0}}}
+{"prompt": "6번 작업대 점검해.", "category": "inspect_station", "lang": "ko", "completion": {"name": "inspect_station", "arguments": {"station_id": 6}}}
+{"prompt": "12번 작업대 작업해.", "category": "run_station_task", "lang": "ko", "completion": {"name": "run_station_task", "arguments": {"station_id": 12}}}
+{"prompt": "Start with 6 AGVs and accept only if throughput is at least 70 per hour, and average wait is under 15 seconds, and collisions are zero.", "category": "kpi_acceptance", "lang": "en", "completion": {"name": "start_simulation", "arguments": {"agv_count": 6, "acceptance": [{"metric": "throughput", "comparator": ">=", "threshold": 70}, {"metric": "avg_wait_sec", "comparator": "<=", "threshold": 15}, {"metric": "collision_count", "comparator": "==", "threshold": 0}]}}}
+{"prompt": "Continue the run.", "category": "sim_lifecycle", "lang": "en", "completion": {"name": "resume_simulation", "arguments": {}}}
+{"prompt": "시뮬레이션 일시정지.", "category": "sim_lifecycle", "lang": "ko", "completion": {"name": "pause_simulation", "arguments": {}}}
+{"prompt": "Work S3 when you can.", "category": "run_station_task", "lang": "en", "completion": {"name": "run_station_task", "arguments": {"station_id": 3}}}
+{"prompt": "Examine station number 2.", "category": "disambiguation", "lang": "en", "completion": {"name": "inspect_station", "arguments": {"station_id": 2}}}
+{"prompt": "스테이션 999 검사해.", "category": "invalid_parameter", "lang": "ko", "completion": {"name": "clarify", "arguments": {"message": "그 값은 유효 범위를 벗어납니다. 올바른 값을 알려주세요."}}}
+{"prompt": "처리량 시간당 60 이상, 평균 대기 12초 이하이면 통과로 AGV 3대 돌려줘.", "category": "kpi_acceptance", "lang": "ko", "completion": {"name": "start_simulation", "arguments": {"agv_count": 3, "acceptance": [{"metric": "throughput", "comparator": ">=", "threshold": 60}, {"metric": "avg_wait_sec", "comparator": "<=", "threshold": 12}]}}}
+{"prompt": "Bump the speed to 0.5x.", "category": "sim_lifecycle", "lang": "en", "completion": {"name": "set_sim_speed", "arguments": {"speed_multiplier": 0.5}}}
+{"prompt": "12번 작업대 점검해.", "category": "inspect_station", "lang": "ko", "completion": {"name": "inspect_station", "arguments": {"station_id": 12}}}
+{"prompt": "3배 속도로 AGV 8대 시작해줘 빨리.", "category": "start_with_speed", "lang": "ko", "completion": {"name": "start_simulation", "arguments": {"agv_count": 8, "speed_multiplier": 3.0}}}
+{"prompt": "Set the speed to -2x right away.", "category": "invalid_parameter", "lang": "en", "completion": {"name": "clarify", "arguments": {"message": "That value is out of the valid range. Please provide a valid one."}}}
+{"prompt": "Handle that one over there please.", "category": "missing_parameter", "lang": "en", "completion": {"name": "clarify", "arguments": {"message": "Which station should I target?"}}}
+{"prompt": "처리량 시간당 65 이상, 평균 대기 12초 이하이면 통과로 AGV 6대 돌려줘.", "category": "kpi_acceptance", "lang": "ko", "completion": {"name": "start_simulation", "arguments": {"agv_count": 6, "acceptance": [{"metric": "throughput", "comparator": ">=", "threshold": 65}, {"metric": "avg_wait_sec", "comparator": "<=", "threshold": 12}]}}}
+{"prompt": "Run 5 AGVs at 3x speed, passing only if throughput is at least 80 per hour.", "category": "start_with_speed", "lang": "en", "completion": {"name": "start_simulation", "arguments": {"agv_count": 5, "speed_multiplier": 3.0, "acceptance": [{"metric": "throughput", "comparator": ">=", "threshold": 80}]}}}
+{"prompt": "Dispatch the AGV to station number 9 now.", "category": "move_to_station", "lang": "en", "completion": {"name": "move_to_station", "arguments": {"station_id": 9}}}
+{"prompt": "Start with 4 AGVs and accept only if throughput is at least 60 per hour.", "category": "kpi_acceptance", "lang": "en", "completion": {"name": "start_simulation", "arguments": {"agv_count": 4, "acceptance": [{"metric": "throughput", "comparator": ">=", "threshold": 60}]}}}
+{"prompt": "출하 구역으로 AGV 보내줘.", "category": "move_to_station", "lang": "ko", "completion": {"name": "move_to_station", "arguments": {"station_id": 12}}}
+{"prompt": "다시 진행해.", "category": "sim_lifecycle", "lang": "ko", "completion": {"name": "resume_simulation", "arguments": {}}}
+{"prompt": "Change the speed to 1.5x.", "category": "sim_lifecycle", "lang": "en", "completion": {"name": "set_sim_speed", "arguments": {"speed_multiplier": 1.5}}}
+{"prompt": "로봇을 출하 구역으로 이동시켜 지금.", "category": "move_to_station", "lang": "ko", "completion": {"name": "move_to_station", "arguments": {"station_id": 12}}}
+{"prompt": "AGV 이동해줘 좀.", "category": "missing_parameter", "lang": "ko", "completion": {"name": "clarify", "arguments": {"message": "어느 스테이션을 대상으로 할까요?"}}}
+{"prompt": "Take a look at station number 12 when you can.", "category": "disambiguation", "lang": "en", "completion": {"name": "inspect_station", "arguments": {"station_id": 12}}}
+{"prompt": "What can you do? when you can.", "category": "negative_control", "lang": "en", "completion": {"name": "none", "arguments": {}}}
+{"prompt": "Kick off the sim with 3 AGVs at 1 times speed thanks.", "category": "start_with_speed", "lang": "en", "completion": {"name": "start_simulation", "arguments": {"agv_count": 3, "speed_multiplier": 1.0}}}
+{"prompt": "Work workstation 11.", "category": "disambiguation", "lang": "en", "completion": {"name": "run_station_task", "arguments": {"station_id": 11}}}
+{"prompt": "Run the task at workstation 1.", "category": "disambiguation", "lang": "en", "completion": {"name": "run_station_task", "arguments": {"station_id": 1}}}
+{"prompt": "Start with 4 AGVs and accept only if throughput is at least 75 per hour, and average wait is under 15 seconds.", "category": "kpi_acceptance", "lang": "en", "completion": {"name": "start_simulation", "arguments": {"agv_count": 4, "acceptance": [{"metric": "throughput", "comparator": ">=", "threshold": 75}, {"metric": "avg_wait_sec", "comparator": "<=", "threshold": 15}]}}}
+{"prompt": "AGV 8대로 돌리고 가동 AGV가 2대 이상이면 통과.", "category": "kpi_acceptance_metrics", "lang": "ko", "completion": {"name": "start_simulation", "arguments": {"agv_count": 8, "acceptance": [{"metric": "active_agvs", "comparator": ">=", "threshold": 2.0}]}}}
+{"prompt": "Inspect the station when you can.", "category": "missing_parameter", "lang": "en", "completion": {"name": "clarify", "arguments": {"message": "Which station should I target?"}}}
+{"prompt": "Start the simulation with 8 AGVs and accept only if the bottleneck rate stays under 20%.", "category": "kpi_acceptance_metrics", "lang": "en", "completion": {"name": "start_simulation", "arguments": {"agv_count": 8, "acceptance": [{"metric": "bottleneck_rate", "comparator": "<=", "threshold": 20.0}]}}}
+{"prompt": "스테이션 999 검사해 바로.", "category": "invalid_parameter", "lang": "ko", "completion": {"name": "clarify", "arguments": {"message": "그 값은 유효 범위를 벗어납니다. 올바른 값을 알려주세요."}}}
+{"prompt": "Stop the simulation.", "category": "sim_lifecycle", "lang": "en", "completion": {"name": "stop_simulation", "arguments": {}}}
+{"prompt": "Start with 4 AGVs and accept only if throughput is at least 65 per hour, and average wait is under 10 seconds.", "category": "kpi_acceptance", "lang": "en", "completion": {"name": "start_simulation", "arguments": {"agv_count": 4, "acceptance": [{"metric": "throughput", "comparator": ">=", "threshold": 65}, {"metric": "avg_wait_sec", "comparator": "<=", "threshold": 10}]}}}
+{"prompt": "Inspect station 999.", "category": "invalid_parameter", "lang": "en", "completion": {"name": "clarify", "arguments": {"message": "That value is out of the valid range. Please provide a valid one."}}}
+{"prompt": "Begin a run with 8 AGVs; it passes only if at least 4 AGVs stay active.", "category": "kpi_acceptance_metrics", "lang": "en", "completion": {"name": "start_simulation", "arguments": {"agv_count": 8, "acceptance": [{"metric": "active_agvs", "comparator": ">=", "threshold": 4.0}]}}}
+{"prompt": "Do the task on station 3 right away.", "category": "disambiguation", "lang": "en", "completion": {"name": "run_station_task", "arguments": {"station_id": 3}}}
+{"prompt": "10번 스테이션에서 공정 수행해 빨리.", "category": "run_station_task", "lang": "ko", "completion": {"name": "run_station_task", "arguments": {"station_id": 10}}}
+{"prompt": "Execute the job at workstation 1 now.", "category": "run_station_task", "lang": "en", "completion": {"name": "run_station_task", "arguments": {"station_id": 1}}}
+{"prompt": "Begin a run with 4 AGVs; it passes only if uptime ratio is at least 0.95.", "category": "kpi_acceptance_metrics", "lang": "en", "completion": {"name": "start_simulation", "arguments": {"agv_count": 4, "acceptance": [{"metric": "uptime_ratio", "comparator": ">=", "threshold": 0.95}]}}}
+{"prompt": "AGV를 4번 작업대으로 보내 부탁해.", "category": "disambiguation", "lang": "ko", "completion": {"name": "move_to_station", "arguments": {"station_id": 4}}}
+{"prompt": "Start with 8 AGVs and accept only if throughput is at least 65 per hour, and average wait is under 10 seconds, and collisions are zero.", "category": "kpi_acceptance", "lang": "en", "completion": {"name": "start_simulation", "arguments": {"agv_count": 8, "acceptance": [{"metric": "throughput", "comparator": ">=", "threshold": 65}, {"metric": "avg_wait_sec", "comparator": "<=", "threshold": 10}, {"metric": "collision_count", "comparator": "==", "threshold": 0}]}}}
+{"prompt": "Kick off the sim with 5 AGVs.", "category": "sim_lifecycle", "lang": "en", "completion": {"name": "start_simulation", "arguments": {"agv_count": 5}}}
+{"prompt": "6번 작업대 작업 돌려.", "category": "disambiguation", "lang": "ko", "completion": {"name": "run_station_task", "arguments": {"station_id": 6}}}
+{"prompt": "2번 작업대 검사해 지금.", "category": "inspect_station", "lang": "ko", "completion": {"name": "inspect_station", "arguments": {"station_id": 2}}}
+{"prompt": "12번 스테이션 작업 돌려 지금.", "category": "run_station_task", "lang": "ko", "completion": {"name": "run_station_task", "arguments": {"station_id": 12}}}
+{"prompt": "뭐 할 수 있어? 부탁해.", "category": "negative_control", "lang": "ko", "completion": {"name": "none", "arguments": {}}}
+{"prompt": "Move the AGV to workstation 12 when you can.", "category": "disambiguation", "lang": "en", "completion": {"name": "move_to_station", "arguments": {"station_id": 12}}}
+{"prompt": "Do the task on workstation 8 when you can.", "category": "disambiguation", "lang": "en", "completion": {"name": "run_station_task", "arguments": {"station_id": 8}}}
+{"prompt": "Move the AGV.", "category": "missing_parameter", "lang": "en", "completion": {"name": "clarify", "arguments": {"message": "Which station should I target?"}}}
+{"prompt": "Set the speed to 0 now.", "category": "invalid_parameter", "lang": "en", "completion": {"name": "clarify", "arguments": {"message": "That value is out of the valid range. Please provide a valid one."}}}
+{"prompt": "Run the task at workstation 8 now.", "category": "disambiguation", "lang": "en", "completion": {"name": "run_station_task", "arguments": {"station_id": 8}}}
+{"prompt": "Begin a run with 3 AGVs; it passes only if uptime ratio is at least 0.95.", "category": "kpi_acceptance_metrics", "lang": "en", "completion": {"name": "start_simulation", "arguments": {"agv_count": 3, "acceptance": [{"metric": "uptime_ratio", "comparator": ">=", "threshold": 0.95}]}}}
+{"prompt": "4번 스테이션으로 AGV 보내줘 바로.", "category": "disambiguation", "lang": "ko", "completion": {"name": "move_to_station", "arguments": {"station_id": 4}}}
+{"prompt": "11번 스테이션 검사해 바로.", "category": "inspect_station", "lang": "ko", "completion": {"name": "inspect_station", "arguments": {"station_id": 11}}}
+{"prompt": "처리량 시간당 80 이상이면 통과로 AGV 4대 돌려줘.", "category": "kpi_acceptance", "lang": "ko", "completion": {"name": "start_simulation", "arguments": {"agv_count": 4, "acceptance": [{"metric": "throughput", "comparator": ">=", "threshold": 80}]}}}
+{"prompt": "11번 스테이션 작업해. 높은 우선순위로.", "category": "run_station_task", "lang": "ko", "completion": {"name": "run_station_task", "arguments": {"station_id": 11, "priority": "high"}}}
+{"prompt": "Hi there.", "category": "negative_control", "lang": "en", "completion": {"name": "none", "arguments": {}}}
+{"prompt": "저거 처리해줘 빨리.", "category": "missing_parameter", "lang": "ko", "completion": {"name": "clarify", "arguments": {"message": "어느 스테이션을 대상으로 할까요?"}}}
+{"prompt": "AGV를 4번 작업대으로 이동해 지금.", "category": "move_to_station", "lang": "ko", "completion": {"name": "move_to_station", "arguments": {"station_id": 4}}}
+{"prompt": "3대로 시뮬레이션 돌려.", "category": "sim_lifecycle", "lang": "ko", "completion": {"name": "start_simulation", "arguments": {"agv_count": 3}}}
+{"prompt": "Start with 5 AGVs and accept only if throughput is at least 60 per hour.", "category": "kpi_acceptance", "lang": "en", "completion": {"name": "start_simulation", "arguments": {"agv_count": 5, "acceptance": [{"metric": "throughput", "comparator": ">=", "threshold": 60}]}}}
+{"prompt": "Move the AGV to workstation 5 now.", "category": "move_to_station", "lang": "en", "completion": {"name": "move_to_station", "arguments": {"station_id": 5}}}
+{"prompt": "처리량 시간당 65 이상, 평균 대기 10초 이하이면 통과로 AGV 5대 돌려줘.", "category": "kpi_acceptance", "lang": "ko", "completion": {"name": "start_simulation", "arguments": {"agv_count": 5, "acceptance": [{"metric": "throughput", "comparator": ">=", "threshold": 65}, {"metric": "avg_wait_sec", "comparator": "<=", "threshold": 10}]}}}
+{"prompt": "Execute the job at workstation 11. With high priority.", "category": "run_station_task", "lang": "en", "completion": {"name": "run_station_task", "arguments": {"station_id": 11, "priority": "high"}}}
+{"prompt": "Drive the robot to station number 8.", "category": "move_to_station", "lang": "en", "completion": {"name": "move_to_station", "arguments": {"station_id": 8}}}
+{"prompt": "AGV를 10번 스테이션으로 보내 바로.", "category": "disambiguation", "lang": "ko", "completion": {"name": "move_to_station", "arguments": {"station_id": 10}}}
+{"prompt": "Look at station number 8 thanks.", "category": "inspect_station", "lang": "en", "completion": {"name": "inspect_station", "arguments": {"station_id": 8}}}
+{"prompt": "AGV 6대로 2배속 시뮬레이션 시작해 부탁해.", "category": "start_with_speed", "lang": "ko", "completion": {"name": "start_simulation", "arguments": {"agv_count": 6, "speed_multiplier": 2.0}}}
+{"prompt": "1.5배 속도로 AGV 4대 시작해줘 바로.", "category": "start_with_speed", "lang": "ko", "completion": {"name": "start_simulation", "arguments": {"agv_count": 4, "speed_multiplier": 1.5}}}
+{"prompt": "Run 3 AGVs at 2x speed please.", "category": "start_with_speed", "lang": "en", "completion": {"name": "start_simulation", "arguments": {"agv_count": 3, "speed_multiplier": 2.0}}}
+{"prompt": "거기로 보내줘.", "category": "missing_parameter", "lang": "ko", "completion": {"name": "clarify", "arguments": {"message": "어느 스테이션을 대상으로 할까요?"}}}
+{"prompt": "처리량 시간당 75 이상, 평균 대기 15초 이하, 충돌 0건이면 통과로 AGV 6대 돌려줘.", "category": "kpi_acceptance", "lang": "ko", "completion": {"name": "start_simulation", "arguments": {"agv_count": 6, "acceptance": [{"metric": "throughput", "comparator": ">=", "threshold": 75}, {"metric": "avg_wait_sec", "comparator": "<=", "threshold": 15}, {"metric": "collision_count", "comparator": "==", "threshold": 0}]}}}
+{"prompt": "Run the task at S10 now.", "category": "disambiguation", "lang": "en", "completion": {"name": "run_station_task", "arguments": {"station_id": 10}}}
+{"prompt": "처리량 시간당 70 이상, 평균 대기 10초 이하이면 통과로 AGV 4대 돌려줘.", "category": "kpi_acceptance", "lang": "ko", "completion": {"name": "start_simulation", "arguments": {"agv_count": 4, "acceptance": [{"metric": "throughput", "comparator": ">=", "threshold": 70}, {"metric": "avg_wait_sec", "comparator": "<=", "threshold": 10}]}}}
+{"prompt": "Begin a run with 6 AGVs; it passes only if the bottleneck rate stays under 10%.", "category": "kpi_acceptance_metrics", "lang": "en", "completion": {"name": "start_simulation", "arguments": {"agv_count": 6, "acceptance": [{"metric": "bottleneck_rate", "comparator": "<=", "threshold": 10.0}]}}}
+{"prompt": "로봇을 스테이션 12으로 이동시켜.", "category": "move_to_station", "lang": "ko", "completion": {"name": "move_to_station", "arguments": {"station_id": 12}}}
+{"prompt": "Begin the simulation using 6 AGVs.", "category": "sim_lifecycle", "lang": "en", "completion": {"name": "start_simulation", "arguments": {"agv_count": 6}}}
+{"prompt": "5번 작업대 점검해 지금.", "category": "inspect_station", "lang": "ko", "completion": {"name": "inspect_station", "arguments": {"station_id": 5}}}
+{"prompt": "로봇을 스테이션 11으로 이동시켜 바로.", "category": "move_to_station", "lang": "ko", "completion": {"name": "move_to_station", "arguments": {"station_id": 11}}}
+{"prompt": "Move the AGV to station 6.", "category": "move_to_station", "lang": "en", "completion": {"name": "move_to_station", "arguments": {"station_id": 6}}}
+{"prompt": "Look at workstation 10 please.", "category": "disambiguation", "lang": "en", "completion": {"name": "inspect_station", "arguments": {"station_id": 10}}}
+{"prompt": "로봇을 6번 작업대으로 이동시켜.", "category": "disambiguation", "lang": "ko", "completion": {"name": "move_to_station", "arguments": {"station_id": 6}}}

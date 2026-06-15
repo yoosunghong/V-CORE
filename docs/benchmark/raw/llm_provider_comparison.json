@@ -1,0 +1,631 @@
+{
+  "generated_at_unix": 1781088319.214354,
+  "results": {
+    "ollama": {
+      "summary": {
+        "provider": "ollama",
+        "prompt_count": 12,
+        "json_parse_success_rate": 0.9166666666666666,
+        "schema_validation_success_rate": 0.8333333333333334,
+        "tool_selection_accuracy": 0.6666666666666666,
+        "repair_retry_rate": 0.3333333333333333,
+        "rule_based_fallback_rate": 0.0,
+        "average_latency_ms": 2005.9406666666666,
+        "p95_latency_ms": 4602.863,
+        "stddev_latency_ms": 1225.5552512178806,
+        "first_request_latency_ms": 3179.296,
+        "warm_average_latency_ms": 1899.2720000000002,
+        "cold_start_latency_ms": 1277.804,
+        "preload_error": null,
+        "memory_usage_bytes": null,
+        "errors": []
+      },
+      "prompts": [
+        {
+          "provider": "ollama",
+          "case_id": "process_status_query",
+          "prompt": "What is the current process status?",
+          "expected_tool": null,
+          "actual_tool": null,
+          "tool_selection_correct": true,
+          "json_parse_success": true,
+          "schema_validation_success": false,
+          "repair_retry_used": true,
+          "rule_based_fallback_used": false,
+          "latency_ms": 3179.296,
+          "attempts": [
+            {
+              "attempt": 1,
+              "valid": false,
+              "error": "Missing tool arguments: station_id"
+            },
+            {
+              "attempt": 2,
+              "valid": false,
+              "error": "Missing tool arguments: station_id"
+            }
+          ],
+          "arguments": null,
+          "error": null
+        },
+        {
+          "provider": "ollama",
+          "case_id": "start_simulation",
+          "prompt": "Start the simulation with 3 AGVs.",
+          "expected_tool": "start_simulation",
+          "actual_tool": "start_simulation",
+          "tool_selection_correct": true,
+          "json_parse_success": true,
+          "schema_validation_success": true,
+          "repair_retry_used": false,
+          "rule_based_fallback_used": false,
+          "latency_ms": 1211.459,
+          "attempts": [
+            {
+              "attempt": 1,
+              "valid": true
+            }
+          ],
+          "arguments": {
+            "agv_count": 3
+          },
+          "error": null
+        },
+        {
+          "provider": "ollama",
+          "case_id": "start_simulation_with_kpi_acceptance",
+          "prompt": "Start a simulation with 4 AGVs and accept only if throughput is at least 70 per hour, average wait is under 12 seconds, and collisions are zero.",
+          "expected_tool": "start_simulation",
+          "actual_tool": null,
+          "tool_selection_correct": false,
+          "json_parse_success": false,
+          "schema_validation_success": false,
+          "repair_retry_used": true,
+          "rule_based_fallback_used": false,
+          "latency_ms": 4602.863,
+          "attempts": [
+            {
+              "attempt": 1,
+              "valid": false,
+              "error": "Ollama returned no tool call"
+            },
+            {
+              "attempt": 2,
+              "valid": false,
+              "error": "Ollama returned no tool call"
+            }
+          ],
+          "arguments": null,
+          "error": null
+        },
+        {
+          "provider": "ollama",
+          "case_id": "stop_simulation",
+          "prompt": "Stop the running simulation.",
+          "expected_tool": "stop_simulation",
+          "actual_tool": "stop_simulation",
+          "tool_selection_correct": true,
+          "json_parse_success": true,
+          "schema_validation_success": true,
+          "repair_retry_used": false,
+          "rule_based_fallback_used": false,
+          "latency_ms": 1064.222,
+          "attempts": [
+            {
+              "attempt": 1,
+              "valid": true
+            }
+          ],
+          "arguments": {},
+          "error": null
+        },
+        {
+          "provider": "ollama",
+          "case_id": "abort_confirm",
+          "prompt": "Abort the current simulation now. Yes, confirm.",
+          "expected_tool": "stop_simulation",
+          "actual_tool": "stop_simulation",
+          "tool_selection_correct": true,
+          "json_parse_success": true,
+          "schema_validation_success": true,
+          "repair_retry_used": false,
+          "rule_based_fallback_used": false,
+          "latency_ms": 1097.379,
+          "attempts": [
+            {
+              "attempt": 1,
+              "valid": true
+            }
+          ],
+          "arguments": {},
+          "error": null
+        },
+        {
+          "provider": "ollama",
+          "case_id": "pause_resume",
+          "prompt": "Pause the simulation, then resume it when ready.",
+          "expected_tool": "pause_simulation",
+          "actual_tool": "pause_simulation",
+          "tool_selection_correct": true,
+          "json_parse_success": true,
+          "schema_validation_success": true,
+          "repair_retry_used": false,
+          "rule_based_fallback_used": false,
+          "latency_ms": 1042.66,
+          "attempts": [
+            {
+              "attempt": 1,
+              "valid": true
+            }
+          ],
+          "arguments": {},
+          "error": null
+        },
+        {
+          "provider": "ollama",
+          "case_id": "set_speed",
+          "prompt": "Set simulation speed to 1.5x.",
+          "expected_tool": "set_sim_speed",
+          "actual_tool": "set_sim_speed",
+          "tool_selection_correct": true,
+          "json_parse_success": true,
+          "schema_validation_success": true,
+          "repair_retry_used": false,
+          "rule_based_fallback_used": false,
+          "latency_ms": 1220.324,
+          "attempts": [
+            {
+              "attempt": 1,
+              "valid": true
+            }
+          ],
+          "arguments": {
+            "speed_multiplier": 1.5
+          },
+          "error": null
+        },
+        {
+          "provider": "ollama",
+          "case_id": "move_agv_to_station",
+          "prompt": "Move the AGV to station 2.",
+          "expected_tool": "move_to_station",
+          "actual_tool": "move_to_station",
+          "tool_selection_correct": true,
+          "json_parse_success": true,
+          "schema_validation_success": true,
+          "repair_retry_used": false,
+          "rule_based_fallback_used": false,
+          "latency_ms": 1239.065,
+          "attempts": [
+            {
+              "attempt": 1,
+              "valid": true
+            }
+          ],
+          "arguments": {
+            "station_id": 2
+          },
+          "error": null
+        },
+        {
+          "provider": "ollama",
+          "case_id": "run_station_task",
+          "prompt": "Run the task at station 3.",
+          "expected_tool": "run_station_task",
+          "actual_tool": "inspect_station",
+          "tool_selection_correct": false,
+          "json_parse_success": true,
+          "schema_validation_success": true,
+          "repair_retry_used": false,
+          "rule_based_fallback_used": false,
+          "latency_ms": 1233.95,
+          "attempts": [
+            {
+              "attempt": 1,
+              "valid": true
+            }
+          ],
+          "arguments": {
+            "station_id": 3
+          },
+          "error": null
+        },
+        {
+          "provider": "ollama",
+          "case_id": "inspect_station",
+          "prompt": "Inspect station 4.",
+          "expected_tool": "inspect_station",
+          "actual_tool": "inspect_station",
+          "tool_selection_correct": true,
+          "json_parse_success": true,
+          "schema_validation_success": true,
+          "repair_retry_used": false,
+          "rule_based_fallback_used": false,
+          "latency_ms": 1257.949,
+          "attempts": [
+            {
+              "attempt": 1,
+              "valid": true
+            }
+          ],
+          "arguments": {
+            "station_id": 4
+          },
+          "error": null
+        },
+        {
+          "provider": "ollama",
+          "case_id": "available_actions_query",
+          "prompt": "What actions are available for station 2?",
+          "expected_tool": null,
+          "actual_tool": "inspect_station",
+          "tool_selection_correct": false,
+          "json_parse_success": true,
+          "schema_validation_success": true,
+          "repair_retry_used": true,
+          "rule_based_fallback_used": false,
+          "latency_ms": 3595.467,
+          "attempts": [
+            {
+              "attempt": 1,
+              "valid": false,
+              "error": "Ollama tool response failed schema validation"
+            },
+            {
+              "attempt": 2,
+              "valid": true
+            }
+          ],
+          "arguments": {
+            "station_id": 2
+          },
+          "error": null
+        },
+        {
+          "provider": "ollama",
+          "case_id": "ambiguous_command",
+          "prompt": "Can you handle that one over there?",
+          "expected_tool": null,
+          "actual_tool": "run_station_task",
+          "tool_selection_correct": false,
+          "json_parse_success": true,
+          "schema_validation_success": true,
+          "repair_retry_used": true,
+          "rule_based_fallback_used": false,
+          "latency_ms": 3326.654,
+          "attempts": [
+            {
+              "attempt": 1,
+              "valid": false,
+              "error": "Ollama returned no tool call"
+            },
+            {
+              "attempt": 2,
+              "valid": true
+            }
+          ],
+          "arguments": {
+            "station_id": 1,
+            "priority": "normal"
+          },
+          "error": null
+        }
+      ]
+    },
+    "llama_cpp": {
+      "summary": {
+        "provider": "llama_cpp",
+        "prompt_count": 12,
+        "json_parse_success_rate": 0.5833333333333334,
+        "schema_validation_success_rate": 0.5833333333333334,
+        "tool_selection_accuracy": 0.9166666666666666,
+        "repair_retry_rate": 0.4166666666666667,
+        "rule_based_fallback_rate": 0.08333333333333333,
+        "average_latency_ms": 2373.4996666666666,
+        "p95_latency_ms": 4365.453,
+        "stddev_latency_ms": 1088.872427058632,
+        "first_request_latency_ms": 3589.201,
+        "warm_average_latency_ms": 2262.9813636363638,
+        "cold_start_latency_ms": 388.752,
+        "preload_error": null,
+        "memory_usage_bytes": null,
+        "errors": []
+      },
+      "prompts": [
+        {
+          "provider": "llama_cpp",
+          "case_id": "process_status_query",
+          "prompt": "What is the current process status?",
+          "expected_tool": null,
+          "actual_tool": null,
+          "tool_selection_correct": true,
+          "json_parse_success": false,
+          "schema_validation_success": false,
+          "repair_retry_used": true,
+          "rule_based_fallback_used": false,
+          "latency_ms": 3589.201,
+          "attempts": [
+            {
+              "attempt": 1,
+              "valid": false,
+              "error": "Ollama returned no tool call"
+            },
+            {
+              "attempt": 2,
+              "valid": false,
+              "error": "Ollama returned no tool call"
+            }
+          ],
+          "arguments": null,
+          "error": null
+        },
+        {
+          "provider": "llama_cpp",
+          "case_id": "start_simulation",
+          "prompt": "Start the simulation with 3 AGVs.",
+          "expected_tool": "start_simulation",
+          "actual_tool": "start_simulation",
+          "tool_selection_correct": true,
+          "json_parse_success": true,
+          "schema_validation_success": true,
+          "repair_retry_used": false,
+          "rule_based_fallback_used": false,
+          "latency_ms": 1553.277,
+          "attempts": [
+            {
+              "attempt": 1,
+              "valid": true
+            }
+          ],
+          "arguments": {
+            "agv_count": 3
+          },
+          "error": null
+        },
+        {
+          "provider": "llama_cpp",
+          "case_id": "start_simulation_with_kpi_acceptance",
+          "prompt": "Start a simulation with 4 AGVs and accept only if throughput is at least 70 per hour, average wait is under 12 seconds, and collisions are zero.",
+          "expected_tool": "start_simulation",
+          "actual_tool": null,
+          "tool_selection_correct": false,
+          "json_parse_success": false,
+          "schema_validation_success": false,
+          "repair_retry_used": true,
+          "rule_based_fallback_used": false,
+          "latency_ms": 3401.482,
+          "attempts": [
+            {
+              "attempt": 1,
+              "valid": false,
+              "error": "Ollama returned no tool call"
+            },
+            {
+              "attempt": 2,
+              "valid": false,
+              "error": "Ollama returned no tool call"
+            }
+          ],
+          "arguments": null,
+          "error": null
+        },
+        {
+          "provider": "llama_cpp",
+          "case_id": "stop_simulation",
+          "prompt": "Stop the running simulation.",
+          "expected_tool": "stop_simulation",
+          "actual_tool": "stop_simulation",
+          "tool_selection_correct": true,
+          "json_parse_success": true,
+          "schema_validation_success": true,
+          "repair_retry_used": false,
+          "rule_based_fallback_used": false,
+          "latency_ms": 1183.893,
+          "attempts": [
+            {
+              "attempt": 1,
+              "valid": true
+            }
+          ],
+          "arguments": {},
+          "error": null
+        },
+        {
+          "provider": "llama_cpp",
+          "case_id": "abort_confirm",
+          "prompt": "Abort the current simulation now. Yes, confirm.",
+          "expected_tool": "stop_simulation",
+          "actual_tool": "stop_simulation",
+          "tool_selection_correct": true,
+          "json_parse_success": true,
+          "schema_validation_success": true,
+          "repair_retry_used": false,
+          "rule_based_fallback_used": false,
+          "latency_ms": 1429.03,
+          "attempts": [
+            {
+              "attempt": 1,
+              "valid": true
+            }
+          ],
+          "arguments": {},
+          "error": null
+        },
+        {
+          "provider": "llama_cpp",
+          "case_id": "pause_resume",
+          "prompt": "Pause the simulation, then resume it when ready.",
+          "expected_tool": "pause_simulation",
+          "actual_tool": "pause_simulation",
+          "tool_selection_correct": true,
+          "json_parse_success": true,
+          "schema_validation_success": true,
+          "repair_retry_used": false,
+          "rule_based_fallback_used": false,
+          "latency_ms": 1673.557,
+          "attempts": [
+            {
+              "attempt": 1,
+              "valid": true
+            }
+          ],
+          "arguments": {},
+          "error": null
+        },
+        {
+          "provider": "llama_cpp",
+          "case_id": "set_speed",
+          "prompt": "Set simulation speed to 1.5x.",
+          "expected_tool": "set_sim_speed",
+          "actual_tool": "set_sim_speed",
+          "tool_selection_correct": true,
+          "json_parse_success": false,
+          "schema_validation_success": false,
+          "repair_retry_used": true,
+          "rule_based_fallback_used": true,
+          "latency_ms": 3341.233,
+          "attempts": [
+            {
+              "attempt": 1,
+              "valid": false,
+              "error": "Ollama returned no tool call"
+            },
+            {
+              "attempt": 2,
+              "valid": false,
+              "error": "Ollama tool arguments were not valid JSON"
+            }
+          ],
+          "arguments": {
+            "speed_multiplier": 1.5
+          },
+          "error": null
+        },
+        {
+          "provider": "llama_cpp",
+          "case_id": "move_agv_to_station",
+          "prompt": "Move the AGV to station 2.",
+          "expected_tool": "move_to_station",
+          "actual_tool": "move_to_station",
+          "tool_selection_correct": true,
+          "json_parse_success": true,
+          "schema_validation_success": true,
+          "repair_retry_used": false,
+          "rule_based_fallback_used": false,
+          "latency_ms": 1647.638,
+          "attempts": [
+            {
+              "attempt": 1,
+              "valid": true
+            }
+          ],
+          "arguments": {
+            "station_id": 2
+          },
+          "error": null
+        },
+        {
+          "provider": "llama_cpp",
+          "case_id": "run_station_task",
+          "prompt": "Run the task at station 3.",
+          "expected_tool": "run_station_task",
+          "actual_tool": "run_station_task",
+          "tool_selection_correct": true,
+          "json_parse_success": true,
+          "schema_validation_success": true,
+          "repair_retry_used": false,
+          "rule_based_fallback_used": false,
+          "latency_ms": 1278.774,
+          "attempts": [
+            {
+              "attempt": 1,
+              "valid": true
+            }
+          ],
+          "arguments": {
+            "station_id": 3,
+            "priority": "normal"
+          },
+          "error": null
+        },
+        {
+          "provider": "llama_cpp",
+          "case_id": "inspect_station",
+          "prompt": "Inspect station 4.",
+          "expected_tool": "inspect_station",
+          "actual_tool": "inspect_station",
+          "tool_selection_correct": true,
+          "json_parse_success": true,
+          "schema_validation_success": true,
+          "repair_retry_used": false,
+          "rule_based_fallback_used": false,
+          "latency_ms": 1627.005,
+          "attempts": [
+            {
+              "attempt": 1,
+              "valid": true
+            }
+          ],
+          "arguments": {
+            "station_id": 4
+          },
+          "error": null
+        },
+        {
+          "provider": "llama_cpp",
+          "case_id": "available_actions_query",
+          "prompt": "What actions are available for station 2?",
+          "expected_tool": null,
+          "actual_tool": null,
+          "tool_selection_correct": true,
+          "json_parse_success": false,
+          "schema_validation_success": false,
+          "repair_retry_used": true,
+          "rule_based_fallback_used": false,
+          "latency_ms": 3391.453,
+          "attempts": [
+            {
+              "attempt": 1,
+              "valid": false,
+              "error": "Ollama returned no tool call"
+            },
+            {
+              "attempt": 2,
+              "valid": false,
+              "error": "Ollama returned no tool call"
+            }
+          ],
+          "arguments": null,
+          "error": null
+        },
+        {
+          "provider": "llama_cpp",
+          "case_id": "ambiguous_command",
+          "prompt": "Can you handle that one over there?",
+          "expected_tool": null,
+          "actual_tool": null,
+          "tool_selection_correct": true,
+          "json_parse_success": false,
+          "schema_validation_success": false,
+          "repair_retry_used": true,
+          "rule_based_fallback_used": false,
+          "latency_ms": 4365.453,
+          "attempts": [
+            {
+              "attempt": 1,
+              "valid": false,
+              "error": "Ollama returned no tool call"
+            },
+            {
+              "attempt": 2,
+              "valid": false,
+              "error": "Ollama returned no tool call"
+            }
+          ],
+          "arguments": null,
+          "error": null
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,141 @@
+openapi: 3.1.0
+info:
+  title: PAI Control Server Demo
+  version: 0.1.0
+  description: Smart farm demo control server API consumed by the chatbot backend.
+paths:
+  /health:
+    get:
+      tags: [system]
+      summary: Health check
+      responses:
+        "200":
+          description: Service is healthy.
+  /farm/status:
+    get:
+      tags: [farm]
+      summary: Return mocked greenhouse status, bed states, and current sensor snapshot.
+      responses:
+        "200":
+          description: Current demo farm status.
+          content:
+            application/json:
+              example:
+                greenhouse_id: greenhouse_demo
+                beds:
+                  - bed_id: 2
+                    crop: lettuce
+                    harvestable: true
+                    greenhouse_id: greenhouse_demo
+                    zone: A
+                    growth_stage: harvest_ready
+                    robot_accessible: true
+                sensors:
+                  temperature_celsius: 23.4
+                  humidity_percent: 62.5
+                  co2_ppm: 810
+                  illuminance_lux: 18400
+  /beds/{bed_id}:
+    get:
+      tags: [farm]
+      summary: Return one bed state for chatbot context building.
+      parameters:
+        - in: path
+          name: bed_id
+          required: true
+          schema:
+            type: integer
+        - in: header
+          name: x-correlation-id
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Bed state.
+          content:
+            application/json:
+              example:
+                bed_id: 2
+                crop: lettuce
+                harvestable: true
+                greenhouse_id: greenhouse_demo
+                zone: A
+                growth_stage: harvest_ready
+                robot_accessible: true
+        "404":
+          description: Unknown bed.
+  /tasks:
+    post:
+      tags: [tasks]
+      summary: Accept a control task command from an upstream system.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            example:
+              command_name: harvest_bed
+              target_type: bed
+              target_id: "2"
+              correlation_id: corr_001
+              idempotency_key: ue-req-001
+              parameters:
+                bed_id: 2
+      responses:
+        "202":
+          description: Task accepted. Repeated idempotency keys return the original task.
+  /tasks/{task_id}:
+    get:
+      tags: [tasks]
+      summary: Return task status.
+      parameters:
+        - in: path
+          name: task_id
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Task state.
+        "404":
+          description: Unknown task.
+    patch:
+      tags: [tasks]
+      summary: Update task status in the demo store.
+      parameters:
+        - in: path
+          name: task_id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            example:
+              status: running
+      responses:
+        "200":
+          description: Updated task.
+  /events:
+    post:
+      tags: [events]
+      summary: Publish a demo control event.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            example:
+              event_type: control.task.completed
+              correlation_id: corr_001
+              task_id: task_abc
+              payload:
+                operator: demo
+      responses:
+        "202":
+          description: Event accepted and recorded.
+    get:
+      tags: [events]
+      summary: List demo control events for verification.
+      responses:
+        "200":
+          description: Recorded events.

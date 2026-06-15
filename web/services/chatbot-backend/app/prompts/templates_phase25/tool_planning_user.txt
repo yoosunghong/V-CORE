@@ -1,0 +1,7 @@
+User request:
+$user_message
+
+Station context:
+$station_context
+
+Select the best tool call now.

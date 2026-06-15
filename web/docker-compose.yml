@@ -1,0 +1,299 @@
+name: ${COMPOSE_PROJECT_NAME:-virtual-process}
+
+services:
+  chat-web:
+    build:
+      context: ./services/chat-web
+      args:
+        # Use ${VAR-default} (no colon) so an explicitly empty value passes through,
+        # enabling the adaptive same-origin fallback in api.ts for ngrok/proxy mode.
+        VITE_API_BASE_URL: ${CHAT_WEB_API_BASE_URL-http://localhost:8000}
+        VITE_WS_BASE_URL: ${CHAT_WEB_WS_BASE_URL-ws://localhost:8000}
+        VITE_FIREBASE_API_KEY: ${VITE_FIREBASE_API_KEY:-}
+        VITE_FIREBASE_AUTH_DOMAIN: ${VITE_FIREBASE_AUTH_DOMAIN:-}
+        VITE_FIREBASE_DATABASE_URL: ${VITE_FIREBASE_DATABASE_URL:-}
+        VITE_FIREBASE_PROJECT_ID: ${VITE_FIREBASE_PROJECT_ID:-}
+        VITE_FIREBASE_STORAGE_BUCKET: ${VITE_FIREBASE_STORAGE_BUCKET:-}
+        VITE_FIREBASE_MESSAGING_SENDER_ID: ${VITE_FIREBASE_MESSAGING_SENDER_ID:-}
+        VITE_FIREBASE_APP_ID: ${VITE_FIREBASE_APP_ID:-}
+        VITE_CELL_ID: ${CELL_ID:-cell_demo}
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    ports:
+      - "${CHAT_WEB_PORT:-5173}:5173"
+    depends_on:
+      chatbot-backend:
+        condition: service_healthy
+    networks:
+      - pai-demo
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O", "-", "http://127.0.0.1:5173/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
+
+  chatbot-backend:
+    build:
+      context: ./services/chatbot-backend
+    env_file:
+      - .env
+    environment:
+      APP_NAME: chatbot-backend
+      PORT: ${CHATBOT_BACKEND_PORT:-8000}
+      LLM_PROVIDER: ${LLM_PROVIDER:-ollama}
+      OLLAMA_NUM_CTX: ${OLLAMA_NUM_CTX:-2048}
+      OLLAMA_PLAN_NUM_PREDICT: ${OLLAMA_PLAN_NUM_PREDICT:-192}
+      OLLAMA_TOOL_NUM_PREDICT: ${OLLAMA_TOOL_NUM_PREDICT:-128}
+      OLLAMA_REPORT_NUM_PREDICT: ${OLLAMA_REPORT_NUM_PREDICT:-192}
+      SESSION_HISTORY_LIMIT: ${SESSION_HISTORY_LIMIT:-40}
+      SESSION_HISTORY_MESSAGE_MAX_CHARS: ${SESSION_HISTORY_MESSAGE_MAX_CHARS:-1200}
+      SESSION_PREVIEW_MAX_CHARS: ${SESSION_PREVIEW_MAX_CHARS:-80}
+      CONTROL_SERVER_CLIENT_MODE: ${CONTROL_SERVER_CLIENT_MODE:-http}
+      UE5_BASE_URL: ${UE5_BASE_URL:-http://host.docker.internal:7777}
+      UE5_CLIENT_MODE: ${UE5_CLIENT_MODE:-mock}
+      UE5_VIEW_URL: ${UE5_VIEW_URL:-http://localhost:8880}
+      # UE5 streams telemetry over the backend WebSocket; the backend forwards each
+      # node to the collector here (in-Docker, avoids the Windows Docker proxy).
+      TELEMETRY_COLLECTOR_URL: ${TELEMETRY_COLLECTOR_URL:-http://telemetry-collector:8030}
+      AGV_API_KEY: ${AGV_API_KEY:-dev-agv-key}
+      CORS_ALLOW_ORIGINS: ${CORS_ALLOW_ORIGINS:-http://localhost:5173,http://127.0.0.1:5173}
+    extra_hosts:
+      # Lets the containerized backend reach the UE5 AGVSimController on the host (:7777).
+      - "host.docker.internal:host-gateway"
+    ports:
+      - "${CHATBOT_BACKEND_PORT:-8000}:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      qdrant:
+        condition: service_started
+      redis:
+        condition: service_healthy
+      control-server-demo:
+        condition: service_healthy
+      ollama-model:
+        condition: service_completed_successfully
+    networks:
+      - pai-demo
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health', timeout=2).read()"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  control-server-demo:
+    build:
+      context: ./services/control-server-demo
+    env_file:
+      - .env
+    environment:
+      APP_NAME: control-server-demo
+      PORT: ${CONTROL_SERVER_PORT:-8010}
+    ports:
+      - "${CONTROL_SERVER_PORT:-8010}:8010"
+    networks:
+      - pai-demo
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8010/health', timeout=2).read()"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  iot-platform-demo:
+    build:
+      context: ./services/iot-platform-demo
+    env_file:
+      - .env
+    profiles:
+      - legacy
+    environment:
+      APP_NAME: iot-platform-demo
+      PORT: ${IOT_PLATFORM_PORT:-8020}
+    ports:
+      - "${IOT_PLATFORM_PORT:-8020}:8020"
+    networks:
+      - pai-demo
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8020/health', timeout=2).read()"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  telemetry-collector:
+    build:
+      context: ./services/telemetry-collector
+    env_file:
+      - .env
+    environment:
+      TELEMETRY_UDP_PORT: ${TELEMETRY_UDP_PORT:-9999}
+      TELEMETRY_TCP_PORT: ${TELEMETRY_TCP_PORT:-9998}
+      FIREBASE_CELL_ROOT: ${FIREBASE_CELL_ROOT:-cells}
+      FIREBASE_DB_URL: ${FIREBASE_DB_URL:-}
+      # Mounted service-account JSON (see volumes below). Keep this container-local so
+      # host GOOGLE_APPLICATION_CREDENTIALS values cannot override Docker secret wiring.
+      GOOGLE_APPLICATION_CREDENTIALS: /run/secrets/firebase-sa.json
+    ports:
+      - "${TELEMETRY_HTTP_PORT:-8030}:8030"
+      - "${TELEMETRY_UDP_PORT:-9999}:9999/udp"
+      - "${TELEMETRY_TCP_PORT:-9998}:9998"
+    volumes:
+      # Place the Firebase service-account JSON at web/secrets/firebase-sa.json.
+      - ./secrets:/run/secrets:ro
+    networks:
+      - pai-demo
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8030/health', timeout=2).read()"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-pai_chatbot}
+      POSTGRES_USER: ${POSTGRES_USER:-pai}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-pai}
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./infra/postgres/init:/docker-entrypoint-initdb.d:ro
+    networks:
+      - pai-demo
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  timescaledb:
+    image: timescale/timescaledb:latest-pg16
+    environment:
+      POSTGRES_DB: ${TIMESCALEDB_DB:-pai_timeseries}
+      POSTGRES_USER: ${TIMESCALEDB_USER:-pai}
+      POSTGRES_PASSWORD: ${TIMESCALEDB_PASSWORD:-pai}
+    ports:
+      - "${TIMESCALEDB_PORT:-5433}:5432"
+    volumes:
+      - timeseries-data:/var/lib/postgresql/data
+      - ./infra/timeseries/init:/docker-entrypoint-initdb.d:ro
+    networks:
+      - pai-demo
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  qdrant:
+    image: qdrant/qdrant:v1.12.5
+    ports:
+      - "${QDRANT_PORT:-6333}:6333"
+    volumes:
+      - qdrant-data:/qdrant/storage
+      - ./infra/vector-db/init:/pai/init:ro
+    networks:
+      - pai-demo
+
+  redis:
+    image: redis:7-alpine
+    command: ["redis-server", "--appendonly", "yes"]
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
+    volumes:
+      - redis-data:/data
+    networks:
+      - pai-demo
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  ollama:
+    image: ollama/ollama:${OLLAMA_IMAGE_TAG:-0.20.0}
+    gpus: all
+    environment:
+      OLLAMA_HOST: 0.0.0.0:11434
+      NVIDIA_VISIBLE_DEVICES: all
+      NVIDIA_DRIVER_CAPABILITIES: compute,utility
+      # Keep the model resident so chat turns don't pay the ~11s cold reload.
+      # -1 = never unload; override with a duration (e.g. 30m) to free VRAM when idle.
+      OLLAMA_KEEP_ALIVE: ${OLLAMA_KEEP_ALIVE:--1}
+    ports:
+      - "${OLLAMA_PORT:-11434}:11434"
+    volumes:
+      - ollama-data:/root/.ollama
+      - ./infra/ollama:/pai/ollama:ro
+    networks:
+      - pai-demo
+    healthcheck:
+      test: ["CMD", "ollama", "list"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 20s
+
+  ollama-model:
+    image: ollama/ollama:${OLLAMA_IMAGE_TAG:-0.20.0}
+    environment:
+      OLLAMA_HOST: http://ollama:11434
+      OLLAMA_MODEL: ${OLLAMA_MODEL:-qwen3.5:0.8b}
+    entrypoint: ["sh", "-c"]
+    command: ["ollama pull $${OLLAMA_MODEL}"]
+    depends_on:
+      ollama:
+        condition: service_healthy
+    networks:
+      - pai-demo
+
+  # Remote access via ngrok. Starts with the normal stack.
+  # The public URL is shown in the ngrok dashboard at http://localhost:4040
+  # or in container logs: docker compose logs ngrok
+  ngrok:
+    image: ngrok/ngrok:latest
+    entrypoint: ["sh", "-c"]
+    command: >-
+      ngrok http chat-web:5173 --log=stdout
+      $$([ -n "$$NGROK_DOMAIN" ] && printf -- "--url=$$NGROK_DOMAIN")
+    environment:
+      NGROK_AUTHTOKEN: ${NGROK_AUTHTOKEN}
+      NGROK_DOMAIN: ${NGROK_DOMAIN:-}
+    ports:
+      - "${NGROK_DASHBOARD_PORT:-4040}:4040"
+    depends_on:
+      chat-web:
+        condition: service_healthy
+    networks:
+      - pai-demo
+
+  data-seeder:
+    build:
+      context: ./services/data-seeder
+    env_file:
+      - .env
+    profiles:
+      - tools
+    depends_on:
+      postgres:
+        condition: service_healthy
+      timescaledb:
+        condition: service_healthy
+    networks:
+      - pai-demo
+
+networks:
+  pai-demo:
+    driver: bridge
+
+volumes:
+  postgres-data:
+  timeseries-data:
+  qdrant-data:
+  redis-data:
+  ollama-data:

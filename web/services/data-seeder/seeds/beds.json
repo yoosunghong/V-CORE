@@ -1,0 +1,38 @@
+[
+  {
+    "bed_id": 1,
+    "greenhouse_id": "greenhouse_demo",
+    "zone": "A",
+    "crop": "lettuce",
+    "growth_stage": "growing",
+    "harvestable": false,
+    "robot_accessible": true
+  },
+  {
+    "bed_id": 2,
+    "greenhouse_id": "greenhouse_demo",
+    "zone": "A",
+    "crop": "lettuce",
+    "growth_stage": "harvest_ready",
+    "harvestable": true,
+    "robot_accessible": true
+  },
+  {
+    "bed_id": 3,
+    "greenhouse_id": "greenhouse_demo",
+    "zone": "B",
+    "crop": "basil",
+    "growth_stage": "seedling",
+    "harvestable": false,
+    "robot_accessible": true
+  },
+  {
+    "bed_id": 4,
+    "greenhouse_id": "greenhouse_demo",
+    "zone": "B",
+    "crop": "strawberry",
+    "growth_stage": "harvest_ready",
+    "harvestable": true,
+    "robot_accessible": false
+  }
+]

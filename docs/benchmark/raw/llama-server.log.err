@@ -1,0 +1,19 @@
+warning: no usable GPU found, --gpu-layers option will be ignored
+warning: one possible reason is that llama.cpp was compiled without GPU support
+warning: consult docs/build.md for compilation instructions
+0.00.012.604 I log_info: verbosity = 3 (adjust with the `-lv N` CLI arg)
+0.00.012.607 I device_info:
+0.00.012.616 I   - CPU     : Intel(R) Core(TM) i7-14700 (32437 MiB, 9120 MiB free)
+0.00.012.657 I system_info: n_threads = 20 (n_threads_batch = 20) / 28 | CPU : SSE3 = 1 | SSSE3 = 1 | AVX = 1 | AVX2 = 1 | F16C = 1 | FMA = 1 | LLAMAFILE = 1 | OPENMP = 1 | REPACK = 1 | 
+0.00.012.658 I srv  llama_server: n_parallel is set to auto, using n_parallel = 4 and kv_unified = true
+0.00.012.734 I srv          init: using 27 threads for HTTP server
+0.00.012.864 I srv         start: binding port with default address family
+0.00.022.158 I srv  llama_server: loading model
+0.00.022.171 I srv    load_model: loading model 'C:\Users\PC\.ollama\models\blobs\sha256-81fb60c7daa80fc1123380b98970b320ae233409f0f71a72ed7b9b0d62f40490'
+0.00.022.255 I common_init_result: fitting params to device memory ...
+0.00.022.256 I common_init_result: (for bugs during this step try to reproduce them with -fit off, or provide --verbose logs if the bug only occurs with -fit on)
+0.00.277.512 E llama_model_load: error loading model: error loading model hyperparameters: key qwen35.rope.dimension_sections has wrong array length; expected 4, got 3
+0.00.277.518 E llama_model_load_from_file_impl: failed to load model
+0.00.277.570 E common_fit_params: encountered an error while trying to fit params to free device memory: failed to load model
+0.00.536.129 E llama_model_load: error loading model: error loading model hyperparameters: key qwen35.rope.dimension_sections has wrong array length; expected 4, got 3
+0.00.536.135 

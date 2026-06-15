@@ -1,0 +1,41 @@
+# Integrated path/action SFT config.
+# Base stays fixed to the production-compatible Qwen/Qwen3.5-2B for a fair
+# benchmark against the existing standard baseline.
+
+base_model: Qwen/Qwen3.5-2B
+production_ollama_tag: qwen3.5:2b
+production_gguf_blob: sha256-b709d81508a078a686961de6ca07a953b895d9b286c46e17f00fb267f4f2d297
+
+task: causal_lm_sft
+goal: integrated_path_action_routing
+prompt_file: docs/sft/integrated/prompts/path_action_system.txt
+mask_prompt_tokens: true
+
+lora:
+  type: qlora
+  r: 16
+  alpha: 32
+  dropout: 0.05
+  target_modules: [q_proj, k_proj, v_proj, o_proj, gate_proj, up_proj, down_proj]
+  bias: none
+
+train:
+  epochs: 3
+  lr: 2.0e-4
+  lr_scheduler: cosine
+  warmup_ratio: 0.03
+  per_device_batch_size: 8
+  grad_accum: 2
+  max_seq_len: 1024
+  bf16: true
+  eval_strategy: epoch
+  save_best_on: val_loss
+
+data:
+  train: docs/sft/integrated/data/train.jsonl
+  val: docs/sft/integrated/data/val.jsonl
+
+export:
+  adapter_dir: docs/sft/integrated/data/adapter
+  merged_gguf: docs/sft/integrated/data/vcore-path-action-router.gguf
+  quantize: q5_k_m

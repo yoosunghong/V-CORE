@@ -1,0 +1,9 @@
+[
+  {
+    "robot_id": "robot_demo_1",
+    "display_name": "Demo Harvest Robot 1",
+    "status": "idle",
+    "current_bed_id": 1,
+    "battery_percent": 87
+  }
+]

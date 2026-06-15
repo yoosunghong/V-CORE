@@ -1,0 +1,4 @@
+User request:
+$user_message
+
+Create the visible execution plan JSON now.

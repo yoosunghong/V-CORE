@@ -1,0 +1,498 @@
+{"category": "station_action_query", "completion": {"action": null, "arguments": {}, "route": "station_action_query"}, "lang": "en", "prompt": "Tell me the task options at workstation 9. in the cell"}
+{"category": "move_to_station", "completion": {"action": "move_to_station", "arguments": {"station_id": 10}, "route": "robot_command"}, "lang": "ko", "prompt": "AGV를 스테이션 10으로 이동해. 바로"}
+{"category": "compare_runs", "completion": {"action": null, "arguments": {}, "route": "compare_runs"}, "lang": "en", "prompt": "Show me the difference between the previous runs. now"}
+{"category": "station_action_query", "completion": {"action": null, "arguments": {}, "route": "station_action_query"}, "lang": "en", "prompt": "Tell me the task options at S9. for the demo"}
+{"category": "station_action_query", "completion": {"action": null, "arguments": {}, "route": "station_action_query"}, "lang": "en", "prompt": "Which actions are available for S2? now"}
+{"category": "kpi_acceptance", "completion": {"action": "start_simulation", "arguments": {"acceptance": [{"comparator": ">=", "metric": "throughput", "threshold": 80}, {"comparator": "<=", "metric": "avg_wait_sec", "threshold": 12}, {"comparator": "==", "metric": "collision_count", "threshold": 0}], "agv_count": 8}, "route": "robot_command"}, "lang": "en", "prompt": "Start with 8 AGVs and pass only if throughput is at least 80, average wait is under 12 seconds, and collisions are zero. for me"}
+{"category": "kpi_acceptance", "completion": {"action": "start_simulation", "arguments": {"acceptance": [{"comparator": ">=", "metric": "throughput", "threshold": 80}, {"comparator": "<=", "metric": "avg_wait_sec", "threshold": 15}, {"comparator": "==", "metric": "collision_count", "threshold": 0}], "agv_count": 2}, "route": "robot_command"}, "lang": "en", "prompt": "Start with 2 AGVs and pass only if throughput is at least 80, average wait is under 15 seconds, and collisions are zero. for me"}
+{"category": "move_to_station", "completion": {"action": "move_to_station", "arguments": {"station_id": 9}, "route": "robot_command"}, "lang": "en", "prompt": "Dispatch the AGV to station 9. this turn"}
+{"category": "optimize_agvs", "completion": {"action": null, "arguments": {}, "route": "optimize_agvs"}, "lang": "en", "prompt": "Find the best AGV count for bottleneck rate. right away"}
+{"category": "inspect_station", "completion": {"action": "inspect_station", "arguments": {"station_id": 11}, "route": "robot_command"}, "lang": "ko", "prompt": "11번 작업대 확인해."}
+{"category": "optimize_agvs", "completion": {"action": null, "arguments": {}, "route": "optimize_agvs"}, "lang": "en", "prompt": "Optimize the number of AGVs to reduce bottleneck rate. right away"}
+{"category": "kpi_acceptance", "completion": {"action": "start_simulation", "arguments": {"acceptance": [{"comparator": ">=", "metric": "throughput", "threshold": 75}, {"comparator": "<=", "metric": "avg_wait_sec", "threshold": 10}, {"comparator": "==", "metric": "collision_count", "threshold": 0}], "agv_count": 4}, "route": "robot_command"}, "lang": "ko", "prompt": "처리량 75 이상, 평균 대기 10초 이하, 충돌 0건이면 통과로 AGV 4대 돌려줘. 부탁해"}
+{"category": "kpi_acceptance", "completion": {"action": "start_simulation", "arguments": {"acceptance": [{"comparator": ">=", "metric": "throughput", "threshold": 80}, {"comparator": "<=", "metric": "avg_wait_sec", "threshold": 12}, {"comparator": "==", "metric": "collision_count", "threshold": 0}], "agv_count": 6}, "route": "robot_command"}, "lang": "en", "prompt": "Start with 6 AGVs and pass only if throughput is at least 80, average wait is under 12 seconds, and collisions are zero. this turn"}
+{"category": "cancel_command", "completion": {"action": "cancel_command", "arguments": {"command_id": "cmd-204"}, "route": "robot_command"}, "lang": "ko", "prompt": "명령 cmd-204 취소. 데모용으로"}
+{"category": "inspect_station", "completion": {"action": "inspect_station", "arguments": {"station_id": 11}, "route": "robot_command"}, "lang": "en", "prompt": "Look at S11. in the cell"}
+{"category": "set_sim_speed", "completion": {"action": "set_sim_speed", "arguments": {"speed_multiplier": 1.0}, "route": "robot_command"}, "lang": "en", "prompt": "Use 1.0x speed."}
+{"category": "optimize_agvs", "completion": {"action": null, "arguments": {}, "route": "optimize_agvs"}, "lang": "ko", "prompt": "최적 운행 대수를 계산해줘. 데모용으로"}
+{"category": "run_station_task", "completion": {"action": "run_station_task", "arguments": {"station_id": 6}, "route": "robot_command"}, "lang": "ko", "prompt": "6번 작업대 작업 돌려. 간단히"}
+{"category": "station_action_query", "completion": {"action": null, "arguments": {}, "route": "station_action_query"}, "lang": "ko", "prompt": "5번 작업대에서 가능한 작업 알려줘. 데모용으로"}
+{"category": "clarify", "completion": {"action": null, "arguments": {}, "route": "clarify"}, "lang": "en", "prompt": "Move to station -1. now"}
+{"category": "station_action_query", "completion": {"action": null, "arguments": {}, "route": "station_action_query"}, "lang": "en", "prompt": "What can station number 11 do? for the demo"}
+{"category": "station_action_query", "completion": {"action": null, "arguments": {}, "route": "station_action_query"}, "lang": "en", "prompt": "What can workstation 6 do? for the demo"}
+{"category": "station_action_query", "completion": {"action": null, "arguments": {}, "route": "station_action_query"}, "lang": "en", "prompt": "Tell me the task options at workstation 7. in the cell"}
+{"category": "optimize_agvs", "completion": {"action": null, "arguments": {}, "route": "optimize_agvs"}, "lang": "en", "prompt": "How many AGVs should I use for the best KPI? right away"}
+{"category": "inspect_station", "completion": {"action": "inspect_station", "arguments": {"station_id": 2}, "route": "robot_command"}, "lang": "ko", "prompt": "스테이션 2 확인해. 부탁해"}
+{"category": "run_station_task", "completion": {"action": "run_station_task", "arguments": {"station_id": 2}, "route": "robot_command"}, "lang": "ko", "prompt": "스테이션 2 작업 실행해. 데모용으로"}
+{"category": "kpi_acceptance", "completion": {"action": "start_simulation", "arguments": {"acceptance": [{"comparator": ">=", "metric": "throughput", "threshold": 65}, {"comparator": "<=", "metric": "avg_wait_sec", "threshold": 15}, {"comparator": "==", "metric": "collision_count", "threshold": 0}], "agv_count": 2}, "route": "robot_command"}, "lang": "en", "prompt": "Start with 2 AGVs and pass only if throughput is at least 65, average wait is under 15 seconds, and collisions are zero. for me"}
+{"category": "run_station_task", "completion": {"action": "run_station_task", "arguments": {"priority": "high", "station_id": 5}, "route": "robot_command"}, "lang": "en", "prompt": "Run the task at workstation 5. High priority. right away"}
+{"category": "optimize_agvs", "completion": {"action": null, "arguments": {}, "route": "optimize_agvs"}, "lang": "ko", "prompt": "KPI가 제일 좋은 AGV 수 추천해줘. 부탁해"}
+{"category": "process_status", "completion": {"action": null, "arguments": {}, "route": "process_status"}, "lang": "en", "prompt": "Current process telemetry. in the cell"}
+{"category": "run_station_task", "completion": {"action": "run_station_task", "arguments": {"station_id": 11}, "route": "robot_command"}, "lang": "en", "prompt": "Execute the job at workstation 11. for me"}
+{"category": "kpi_acceptance", "completion": {"action": "start_simulation", "arguments": {"acceptance": [{"comparator": ">=", "metric": "throughput", "threshold": 60}, {"comparator": "<=", "metric": "avg_wait_sec", "threshold": 10}, {"comparator": "==", "metric": "collision_count", "threshold": 0}], "agv_count": 8}, "route": "robot_command"}, "lang": "ko", "prompt": "처리량 60 이상, 평균 대기 10초 이하, 충돌 0건이면 통과로 AGV 8대 돌려줘. 간단히"}
+{"category": "optimize_agvs", "completion": {"action": null, "arguments": {}, "route": "optimize_agvs"}, "lang": "ko", "prompt": "최적 운행 대수를 계산해줘. 부탁해"}
+{"category": "kpi_acceptance", "completion": {"action": "start_simulation", "arguments": {"acceptance": [{"comparator": ">=", "metric": "throughput", "threshold": 75}, {"comparator": "<=", "metric": "avg_wait_sec", "threshold": 10}, {"comparator": "==", "metric": "collision_count", "threshold": 0}], "agv_count": 6}, "route": "robot_command"}, "lang": "en", "prompt": "Start with 6 AGVs and pass only if throughput is at least 75, average wait is under 10 seconds, and collisions are zero. now"}
+{"category": "pause_simulation", "completion": {"action": "pause_simulation", "arguments": {}, "route": "robot_command"}, "lang": "en", "prompt": "Freeze the run. for me"}
+{"category": "set_sim_speed", "completion": {"action": "set_sim_speed", "arguments": {"speed_multiplier": 2.0}, "route": "robot_command"}, "lang": "en", "prompt": "Set speed to 2.0x. for me"}
+{"category": "set_sim_speed", "completion": {"action": "set_sim_speed", "arguments": {"speed_multiplier": 2.0}, "route": "robot_command"}, "lang": "en", "prompt": "Set speed to 2.0x. now"}
+{"category": "simulation_status", "completion": {"action": null, "arguments": {}, "route": "simulation_status"}, "lang": "ko", "prompt": "로봇들이 어디 있는지 보여줘. 지금"}
+{"category": "kpi_acceptance", "completion": {"action": "start_simulation", "arguments": {"acceptance": [{"comparator": ">=", "metric": "throughput", "threshold": 75}, {"comparator": "<=", "metric": "avg_wait_sec", "threshold": 12}, {"comparator": "==", "metric": "collision_count", "threshold": 0}], "agv_count": 8}, "route": "robot_command"}, "lang": "en", "prompt": "Start with 8 AGVs and pass only if throughput is at least 75, average wait is under 12 seconds, and collisions are zero. for the demo"}
+{"category": "set_sim_speed", "completion": {"action": "set_sim_speed", "arguments": {"speed_multiplier": 2.0}, "route": "robot_command"}, "lang": "ko", "prompt": "2.0배속으로 바꿔. 셀 기준으로"}
+{"category": "move_to_station", "completion": {"action": "move_to_station", "arguments": {"station_id": 6}, "route": "robot_command"}, "lang": "en", "prompt": "Send the robot to station number 6."}
+{"category": "simulation_status", "completion": {"action": null, "arguments": {}, "route": "simulation_status"}, "lang": "en", "prompt": "Show the running simulation state. for the demo"}
+{"category": "process_status", "completion": {"action": null, "arguments": {}, "route": "process_status"}, "lang": "en", "prompt": "How is the cell doing right now? this turn"}
+{"category": "no_action", "completion": {"action": null, "arguments": {}, "route": "no_action"}, "lang": "en", "prompt": "What is the weather today? please"}
+{"category": "station_action_query", "completion": {"action": null, "arguments": {}, "route": "station_action_query"}, "lang": "ko", "prompt": "7번 스테이션는 어떤 작업을 할 수 있어? 셀 기준으로"}
+{"category": "resume_simulation", "completion": {"action": "resume_simulation", "arguments": {}, "route": "robot_command"}, "lang": "ko", "prompt": "시뮬레이션 재개. 부탁해"}
+{"category": "start_simulation", "completion": {"action": "start_simulation", "arguments": {"agv_count": 8}, "route": "robot_command"}, "lang": "en", "prompt": "Begin using 8 AGVs. now"}
+{"category": "process_status", "completion": {"action": null, "arguments": {}, "route": "process_status"}, "lang": "en", "prompt": "Current process telemetry."}
+{"category": "stop_simulation", "completion": {"action": "stop_simulation", "arguments": {}, "route": "robot_command"}, "lang": "ko", "prompt": "실행 멈춰. 부탁해"}
+{"category": "process_status", "completion": {"action": null, "arguments": {}, "route": "process_status"}, "lang": "en", "prompt": "Current process telemetry. now"}
+{"category": "inspect_station", "completion": {"action": "inspect_station", "arguments": {"station_id": 2}, "route": "robot_command"}, "lang": "ko", "prompt": "2번 스테이션 상태 봐줘. 바로"}
+{"category": "station_action_query", "completion": {"action": null, "arguments": {}, "route": "station_action_query"}, "lang": "ko", "prompt": "1번 스테이션 액션 목록 보여줘. 지금"}
+{"category": "optimize_agvs", "completion": {"action": null, "arguments": {}, "route": "optimize_agvs"}, "lang": "ko", "prompt": "목표를 만족하는 AGV 대수 찾아줘. 이번 턴에"}
+{"category": "run_station_task", "completion": {"action": "run_station_task", "arguments": {"station_id": 11}, "route": "robot_command"}, "lang": "en", "prompt": "Execute the job at station 11. in the cell"}
+{"category": "clarify", "completion": {"action": null, "arguments": {}, "route": "clarify"}, "lang": "ko", "prompt": "AGV 다섯 대로 시작해."}
+{"category": "station_action_query", "completion": {"action": null, "arguments": {}, "route": "station_action_query"}, "lang": "ko", "prompt": "6번 스테이션에서 검사나 작업 가능해? 데모용으로"}
+{"category": "simulation_status", "completion": {"action": null, "arguments": {}, "route": "simulation_status"}, "lang": "en", "prompt": "Where are the robots in the cell? now"}
+{"category": "clarify", "completion": {"action": null, "arguments": {}, "route": "clarify"}, "lang": "ko", "prompt": "스테이션 -1로 이동해. 이번 턴에"}
+{"category": "clarify", "completion": {"action": null, "arguments": {}, "route": "clarify"}, "lang": "ko", "prompt": "스테이션 검사해."}
+{"category": "run_station_task", "completion": {"action": "run_station_task", "arguments": {"station_id": 12}, "route": "robot_command"}, "lang": "ko", "prompt": "12번 스테이션 작업 실행해. 부탁해"}
+{"category": "move_to_station", "completion": {"action": "move_to_station", "arguments": {"station_id": 3}, "route": "robot_command"}, "lang": "ko", "prompt": "AGV를 3번 작업대으로 이동해."}
+{"category": "start_simulation", "completion": {"action": "start_simulation", "arguments": {"agv_count": 6}, "route": "robot_command"}, "lang": "en", "prompt": "Start the simulation with 6 AGVs. for me"}
+{"category": "process_status", "completion": {"action": null, "arguments": {}, "route": "process_status"}, "lang": "en", "prompt": "Tell me throughput and waiting time. please"}
+{"category": "clarify", "completion": {"action": null, "arguments": {}, "route": "clarify"}, "lang": "ko", "prompt": "속도 바꿔줘. 데모용으로"}
+{"category": "no_action", "completion": {"action": null, "arguments": {}, "route": "no_action"}, "lang": "ko", "prompt": "농담 하나 해줘. 셀 기준으로"}
+{"category": "inspect_station", "completion": {"action": "inspect_station", "arguments": {"station_id": 9}, "route": "robot_command"}, "lang": "en", "prompt": "Inspect S9. right away"}
+{"category": "inspect_station", "completion": {"action": "inspect_station", "arguments": {"station_id": 5}, "route": "robot_command"}, "lang": "en", "prompt": "Inspect workstation 5. now"}
+{"category": "resume_simulation", "completion": {"action": "resume_simulation", "arguments": {}, "route": "robot_command"}, "lang": "ko", "prompt": "시뮬레이션 재개. 지금"}
+{"category": "run_station_task", "completion": {"action": "run_station_task", "arguments": {"station_id": 11}, "route": "robot_command"}, "lang": "en", "prompt": "Start the process at station 11. for me"}
+{"category": "simulation_status", "completion": {"action": null, "arguments": {}, "route": "simulation_status"}, "lang": "en", "prompt": "Give me the live simulation status. in the cell"}
+{"category": "run_station_task", "completion": {"action": "run_station_task", "arguments": {"station_id": 8}, "route": "robot_command"}, "lang": "en", "prompt": "Start the process at station number 8. right away"}
+{"category": "inspect_station", "completion": {"action": "inspect_station", "arguments": {"station_id": 4}, "route": "robot_command"}, "lang": "ko", "prompt": "스테이션 4 확인해. 지금"}
+{"category": "stop_simulation", "completion": {"action": "stop_simulation", "arguments": {}, "route": "robot_command"}, "lang": "en", "prompt": "Halt the run. now"}
+{"category": "station_action_query", "completion": {"action": null, "arguments": {}, "route": "station_action_query"}, "lang": "ko", "prompt": "스테이션 4 액션 목록 보여줘."}
+{"category": "compare_runs", "completion": {"action": null, "arguments": {}, "route": "compare_runs"}, "lang": "en", "prompt": "Which recent simulation was better? for me"}
+{"category": "resume_simulation", "completion": {"action": "resume_simulation", "arguments": {}, "route": "robot_command"}, "lang": "en", "prompt": "Continue the run. right away"}
+{"category": "compare_runs", "completion": {"action": null, "arguments": {}, "route": "compare_runs"}, "lang": "en", "prompt": "Tell me whether the latest run improved. now"}
+{"category": "start_with_speed", "completion": {"action": "start_simulation", "arguments": {"agv_count": 8, "speed_multiplier": 1.5}, "route": "robot_command"}, "lang": "ko", "prompt": "AGV 8대를 1.5배속으로 시작해. 바로"}
+{"category": "move_to_station", "completion": {"action": "move_to_station", "arguments": {"station_id": 3}, "route": "robot_command"}, "lang": "ko", "prompt": "로봇을 3번 작업대으로 보내줘."}
+{"category": "start_simulation", "completion": {"action": "start_simulation", "arguments": {"agv_count": 5}, "route": "robot_command"}, "lang": "en", "prompt": "Launch a run with 5 AGVs. for me"}
+{"category": "inspect_station", "completion": {"action": "inspect_station", "arguments": {"station_id": 5}, "route": "robot_command"}, "lang": "en", "prompt": "Check workstation 5. right away"}
+{"category": "no_action", "completion": {"action": null, "arguments": {}, "route": "no_action"}, "lang": "en", "prompt": "What is the weather today? now"}
+{"category": "resume_simulation", "completion": {"action": "resume_simulation", "arguments": {}, "route": "robot_command"}, "lang": "ko", "prompt": "이어서 계속해. 간단히"}
+{"category": "clarify", "completion": {"action": null, "arguments": {}, "route": "clarify"}, "lang": "ko", "prompt": "속도 바꿔줘. 간단히"}
+{"category": "compare_runs", "completion": {"action": null, "arguments": {}, "route": "compare_runs"}, "lang": "en", "prompt": "Compare run A and run B. please"}
+{"category": "kpi_acceptance", "completion": {"action": "start_simulation", "arguments": {"acceptance": [{"comparator": ">=", "metric": "throughput", "threshold": 75}, {"comparator": "<=", "metric": "avg_wait_sec", "threshold": 10}, {"comparator": "==", "metric": "collision_count", "threshold": 0}], "agv_count": 2}, "route": "robot_command"}, "lang": "en", "prompt": "Start with 2 AGVs and pass only if throughput is at least 75, average wait is under 10 seconds, and collisions are zero. for me"}
+{"category": "move_to_station", "completion": {"action": "move_to_station", "arguments": {"station_id": 1}, "route": "robot_command"}, "lang": "ko", "prompt": "스테이션 1으로 이동시켜. 셀 기준으로"}
+{"category": "process_status", "completion": {"action": null, "arguments": {}, "route": "process_status"}, "lang": "en", "prompt": "Current process telemetry. this turn"}
+{"category": "inspect_station", "completion": {"action": "inspect_station", "arguments": {"station_id": 3}, "route": "robot_command"}, "lang": "en", "prompt": "Look at station number 3."}
+{"category": "compare_runs", "completion": {"action": null, "arguments": {}, "route": "compare_runs"}, "lang": "ko", "prompt": "두 실행의 차이를 알려줘. 이번 턴에"}
+{"category": "station_action_query", "completion": {"action": null, "arguments": {}, "route": "station_action_query"}, "lang": "en", "prompt": "Can workstation 2 be inspected or worked? for me"}
+{"category": "optimize_agvs", "completion": {"action": null, "arguments": {}, "route": "optimize_agvs"}, "lang": "ko", "prompt": "병목률 줄이려면 AGV 몇 대가 좋아?"}
+{"category": "process_status", "completion": {"action": null, "arguments": {}, "route": "process_status"}, "lang": "en", "prompt": "Show me the current KPI snapshot."}
+{"category": "simulation_status", "completion": {"action": null, "arguments": {}, "route": "simulation_status"}, "lang": "en", "prompt": "Where are the robots in the cell? right away"}
+{"category": "pause_simulation", "completion": {"action": "pause_simulation", "arguments": {}, "route": "robot_command"}, "lang": "ko", "prompt": "실행 보류해. 데모용으로"}
+{"category": "process_status", "completion": {"action": null, "arguments": {}, "route": "process_status"}, "lang": "en", "prompt": "Current process telemetry. for me"}
+{"category": "simulation_status", "completion": {"action": null, "arguments": {}, "route": "simulation_status"}, "lang": "en", "prompt": "Where are the robots in the cell? please"}
+{"category": "simulation_status", "completion": {"action": null, "arguments": {}, "route": "simulation_status"}, "lang": "ko", "prompt": "라이브 시뮬레이션 상태 알려줘. 지금"}
+{"category": "station_action_query", "completion": {"action": null, "arguments": {}, "route": "station_action_query"}, "lang": "ko", "prompt": "12번 작업대에서 검사나 작업 가능해? 바로"}
+{"category": "clarify", "completion": {"action": null, "arguments": {}, "route": "clarify"}, "lang": "ko", "prompt": "작업 실행해. 데모용으로"}
+{"category": "clarify", "completion": {"action": null, "arguments": {}, "route": "clarify"}, "lang": "en", "prompt": "Start with five AGVs. please"}
+{"category": "clarify", "completion": {"action": null, "arguments": {}, "route": "clarify"}, "lang": "en", "prompt": "Start with five AGVs. for the demo"}
+{"category": "station_action_query", "completion": {"action": null, "arguments": {}, "route": "station_action_query"}, "lang": "ko", "prompt": "스테이션 1에서 가능한 작업 알려줘. 셀 기준으로"}
+{"category": "cancel_command", "completion": {"action": "cancel_command", "arguments": {"command_id": "cmd-101"}, "route": "robot_command"}, "lang": "ko", "prompt": "cmd-101 작업 중단해. 바로"}
+{"category": "simulation_status", "completion": {"action": null, "arguments": {}, "route": "simulation_status"}, "lang": "ko", "prompt": "로봇들이 어디 있는지 보여줘."}
+{"category": "clarify", "completion": {"action": null, "arguments": {}, "route": "clarify"}, "lang": "ko", "prompt": "명령 취소해. 지금"}
+{"category": "set_sim_speed", "completion": {"action": "set_sim_speed", "arguments": {"speed_multiplier": 1.0}, "route": "robot_command"}, "lang": "en", "prompt": "Change simulation speed to 1.0x."}
+{"category": "process_status", "completion": {"action": null, "arguments": {}, "route": "process_status"}, "lang": "en", "prompt": "Tell me throughput and waiting time. for the demo"}
+{"category": "no_action", "completion": {"action": null, "arguments": {}, "route": "no_action"}, "lang": "ko", "prompt": "디지털 트윈이 뭔지 설명해줘. 셀 기준으로"}
+{"category": "simulation_status", "completion": {"action": null, "arguments": {}, "route": "simulation_status"}, "lang": "en", "prompt": "Which AGVs are active right now? in the cell"}
+{"category": "resume_simulation", "completion": {"action": "resume_simulation", "arguments": {}, "route": "robot_command"}, "lang": "en", "prompt": "Resume the simulation. please"}
+{"category": "compare_runs", "completion": {"action": null, "arguments": {}, "route": "compare_runs"}, "lang": "en", "prompt": "Which recent simulation was better? this turn"}
+{"category": "simulation_status", "completion": {"action": null, "arguments": {}, "route": "simulation_status"}, "lang": "ko", "prompt": "지금 어떤 AGV가 움직이고 있어?"}
+{"category": "clarify", "completion": {"action": null, "arguments": {}, "route": "clarify"}, "lang": "ko", "prompt": "작업 실행해."}
+{"category": "move_to_station", "completion": {"action": "move_to_station", "arguments": {"station_id": 1}, "route": "robot_command"}, "lang": "en", "prompt": "Drive to S1. for the demo"}
+{"category": "compare_runs", "completion": {"action": null, "arguments": {}, "route": "compare_runs"}, "lang": "ko", "prompt": "마지막 실행이 개선됐는지 비교해줘. 부탁해"}
+{"category": "run_station_task", "completion": {"action": "run_station_task", "arguments": {"station_id": 8}, "route": "robot_command"}, "lang": "ko", "prompt": "8번 스테이션에서 공정 수행해. 셀 기준으로"}
+{"category": "cancel_command", "completion": {"action": "cancel_command", "arguments": {"command_id": "sim-77"}, "route": "robot_command"}, "lang": "en", "prompt": "Abort command id sim-77. please"}
+{"category": "set_sim_speed", "completion": {"action": "set_sim_speed", "arguments": {"speed_multiplier": 0.5}, "route": "robot_command"}, "lang": "en", "prompt": "Use 0.5x speed. for me"}
+{"category": "clarify", "completion": {"action": null, "arguments": {}, "route": "clarify"}, "lang": "ko", "prompt": "AGV 다섯 대로 시작해. 바로"}
+{"category": "run_station_task", "completion": {"action": "run_station_task", "arguments": {"station_id": 3}, "route": "robot_command"}, "lang": "ko", "prompt": "스테이션 3 작업해. 데모용으로"}
+{"category": "no_action", "completion": {"action": null, "arguments": {}, "route": "no_action"}, "lang": "en", "prompt": "Thanks for your help. for me"}
+{"category": "resume_simulation", "completion": {"action": "resume_simulation", "arguments": {}, "route": "robot_command"}, "lang": "en", "prompt": "Continue the run. please"}
+{"category": "run_station_task", "completion": {"action": "run_station_task", "arguments": {"station_id": 12}, "route": "robot_command"}, "lang": "en", "prompt": "Work S12. please"}
+{"category": "optimize_agvs", "completion": {"action": null, "arguments": {}, "route": "optimize_agvs"}, "lang": "en", "prompt": "Optimize the number of AGVs to reduce throughput. now"}
+{"category": "no_action", "completion": {"action": null, "arguments": {}, "route": "no_action"}, "lang": "ko", "prompt": "뭐 할 수 있어? 지금"}
+{"category": "cancel_command", "completion": {"action": "cancel_command", "arguments": {"command_id": "cmd-101"}, "route": "robot_command"}, "lang": "ko", "prompt": "cmd-101 작업 중단해. 셀 기준으로"}
+{"category": "move_to_station", "completion": {"action": "move_to_station", "arguments": {"station_id": 4}, "route": "robot_command"}, "lang": "en", "prompt": "Drive to workstation 4. right away"}
+{"category": "process_status", "completion": {"action": null, "arguments": {}, "route": "process_status"}, "lang": "en", "prompt": "What is the current process status? please"}
+{"category": "compare_runs", "completion": {"action": null, "arguments": {}, "route": "compare_runs"}, "lang": "en", "prompt": "Show me the difference between the previous runs. please"}
+{"category": "pause_simulation", "completion": {"action": "pause_simulation", "arguments": {}, "route": "robot_command"}, "lang": "ko", "prompt": "시뮬레이션 일시정지."}
+{"category": "simulation_status", "completion": {"action": null, "arguments": {}, "route": "simulation_status"}, "lang": "ko", "prompt": "실행 중인 시뮬레이션 상태 확인해줘. 셀 기준으로"}
+{"category": "run_station_task", "completion": {"action": "run_station_task", "arguments": {"station_id": 12}, "route": "robot_command"}, "lang": "ko", "prompt": "12번 작업대 작업 실행해. 데모용으로"}
+{"category": "station_action_query", "completion": {"action": null, "arguments": {}, "route": "station_action_query"}, "lang": "ko", "prompt": "9번 스테이션에서 가능한 작업 알려줘. 셀 기준으로"}
+{"category": "resume_simulation", "completion": {"action": "resume_simulation", "arguments": {}, "route": "robot_command"}, "lang": "en", "prompt": "Resume the simulation. now"}
+{"category": "inspect_station", "completion": {"action": "inspect_station", "arguments": {"station_id": 12}, "route": "robot_command"}, "lang": "en", "prompt": "Inspect station number 12. in the cell"}
+{"category": "clarify", "completion": {"action": null, "arguments": {}, "route": "clarify"}, "lang": "ko", "prompt": "AGV 이동해줘. 지금"}
+{"category": "run_station_task", "completion": {"action": "run_station_task", "arguments": {"station_id": 5}, "route": "robot_command"}, "lang": "ko", "prompt": "5번 스테이션 작업 돌려. 데모용으로"}
+{"category": "move_to_station", "completion": {"action": "move_to_station", "arguments": {"station_id": 7}, "route": "robot_command"}, "lang": "ko", "prompt": "AGV 7번 스테이션으로 보내. 이번 턴에"}
+{"category": "kpi_acceptance", "completion": {"action": "start_simulation", "arguments": {"acceptance": [{"comparator": ">=", "metric": "throughput", "threshold": 80}, {"comparator": "<=", "metric": "avg_wait_sec", "threshold": 10}, {"comparator": "==", "metric": "collision_count", "threshold": 0}], "agv_count": 3}, "route": "robot_command"}, "lang": "en", "prompt": "Start with 3 AGVs and pass only if throughput is at least 80, average wait is under 10 seconds, and collisions are zero. please"}
+{"category": "run_station_task", "completion": {"action": "run_station_task", "arguments": {"station_id": 12}, "route": "robot_command"}, "lang": "ko", "prompt": "스테이션 12 작업해. 이번 턴에"}
+{"category": "clarify", "completion": {"action": null, "arguments": {}, "route": "clarify"}, "lang": "ko", "prompt": "거기로 보내줘. 데모용으로"}
+{"category": "process_status", "completion": {"action": null, "arguments": {}, "route": "process_status"}, "lang": "ko", "prompt": "지금 KPI 보여줘. 셀 기준으로"}
+{"category": "clarify", "completion": {"action": null, "arguments": {}, "route": "clarify"}, "lang": "en", "prompt": "Inspect the station. right away"}
+{"category": "run_station_task", "completion": {"action": "run_station_task", "arguments": {"priority": "high", "station_id": 4}, "route": "robot_command"}, "lang": "ko", "prompt": "4번 작업대에서 공정 수행해. 높은 우선순위로. 바로"}
+{"category": "kpi_acceptance", "completion": {"action": "start_simulation", "arguments": {"acceptance": [{"comparator": ">=", "metric": "throughput", "threshold": 65}, {"comparator": "<=", "metric": "avg_wait_sec", "threshold": 10}, {"comparator": "==", "metric": "collision_count", "threshold": 0}], "agv_count": 6}, "route": "robot_command"}, "lang": "ko", "prompt": "처리량 65 이상, 평균 대기 10초 이하, 충돌 0건이면 통과로 AGV 6대 돌려줘."}
+{"category": "start_simulation", "completion": {"action": "start_simulation", "arguments": {"agv_count": 8}, "route": "robot_command"}, "lang": "ko", "prompt": "AGV 8대로 시뮬레이션 시작해. 간단히"}
+{"category": "no_action", "completion": {"action": null, "arguments": {}, "route": "no_action"}, "lang": "ko", "prompt": "안녕하세요."}
+{"category": "process_status", "completion": {"action": null, "arguments": {}, "route": "process_status"}, "lang": "ko", "prompt": "처리량이랑 대기시간 알려줘."}
+{"category": "move_to_station", "completion": {"action": "move_to_station", "arguments": {"station_id": 11}, "route": "robot_command"}, "lang": "en", "prompt": "Dispatch the AGV to workstation 11. this turn"}
+{"category": "compare_runs", "completion": {"action": null, "arguments": {}, "route": "compare_runs"}, "lang": "en", "prompt": "Tell me whether the latest run improved."}
+{"category": "resume_simulation", "completion": {"action": "resume_simulation", "arguments": {}, "route": "robot_command"}, "lang": "en", "prompt": "Pick it back up. now"}
+{"category": "simulation_status", "completion": {"action": null, "arguments": {}, "route": "simulation_status"}, "lang": "ko", "prompt": "현재 AGV 위치 보여줘. 지금"}
+{"category": "move_to_station", "completion": {"action": "move_to_station", "arguments": {"station_id": 5}, "route": "robot_command"}, "lang": "en", "prompt": "Move the AGV to station 5. right away"}
+{"category": "simulation_status", "completion": {"action": null, "arguments": {}, "route": "simulation_status"}, "lang": "ko", "prompt": "지금 어떤 AGV가 움직이고 있어? 부탁해"}
+{"category": "start_simulation", "completion": {"action": "start_simulation", "arguments": {"agv_count": 3}, "route": "robot_command"}, "lang": "ko", "prompt": "AGV 3대로 돌려줘. 데모용으로"}
+{"category": "no_action", "completion": {"action": null, "arguments": {}, "route": "no_action"}, "lang": "ko", "prompt": "고마워요. 바로"}
+{"category": "station_action_query", "completion": {"action": null, "arguments": {}, "route": "station_action_query"}, "lang": "en", "prompt": "Which actions are available for workstation 12? for the demo"}
+{"category": "simulation_status", "completion": {"action": null, "arguments": {}, "route": "simulation_status"}, "lang": "ko", "prompt": "실행 중인 시뮬레이션 상태 확인해줘."}
+{"category": "optimize_agvs", "completion": {"action": null, "arguments": {}, "route": "optimize_agvs"}, "lang": "en", "prompt": "How many AGVs should I use for the best KPI? for the demo"}
+{"category": "no_action", "completion": {"action": null, "arguments": {}, "route": "no_action"}, "lang": "ko", "prompt": "뭐 할 수 있어?"}
+{"category": "clarify", "completion": {"action": null, "arguments": {}, "route": "clarify"}, "lang": "en", "prompt": "Cancel the command. for me"}
+{"category": "optimize_agvs", "completion": {"action": null, "arguments": {}, "route": "optimize_agvs"}, "lang": "ko", "prompt": "병목률 줄이려면 AGV 몇 대가 좋아? 데모용으로"}
+{"category": "inspect_station", "completion": {"action": "inspect_station", "arguments": {"station_id": 12}, "route": "robot_command"}, "lang": "en", "prompt": "Check S12. for the demo"}
+{"category": "compare_runs", "completion": {"action": null, "arguments": {}, "route": "compare_runs"}, "lang": "ko", "prompt": "어떤 시뮬레이션이 더 나았어? 부탁해"}
+{"category": "move_to_station", "completion": {"action": "move_to_station", "arguments": {"station_id": 6}, "route": "robot_command"}, "lang": "en", "prompt": "Drive to workstation 6."}
+{"category": "clarify", "completion": {"action": null, "arguments": {}, "route": "clarify"}, "lang": "en", "prompt": "Run the task. now"}
+{"category": "clarify", "completion": {"action": null, "arguments": {}, "route": "clarify"}, "lang": "ko", "prompt": "AGV 이동해줘. 바로"}
+{"category": "compare_runs", "completion": {"action": null, "arguments": {}, "route": "compare_runs"}, "lang": "en", "prompt": "Show me the difference between the previous runs. this turn"}
+{"category": "optimize_agvs", "completion": {"action": null, "arguments": {}, "route": "optimize_agvs"}, "lang": "en", "prompt": "Optimize the number of AGVs to reduce average wait. for me"}
+{"category": "kpi_acceptance", "completion": {"action": "start_simulation", "arguments": {"acceptance": [{"comparator": ">=", "metric": "throughput", "threshold": 80}, {"comparator": "<=", "metric": "avg_wait_sec", "threshold": 10}, {"comparator": "==", "metric": "collision_count", "threshold": 0}], "agv_count": 3}, "route": "robot_command"}, "lang": "ko", "prompt": "처리량 80 이상, 평균 대기 10초 이하, 충돌 0건이면 통과로 AGV 3대 돌려줘. 데모용으로"}
+{"category": "kpi_acceptance", "completion": {"action": "start_simulation", "arguments": {"acceptance": [{"comparator": ">=", "metric": "throughput", "threshold": 65}, {"comparator": "<=", "metric": "avg_wait_sec", "threshold": 12}, {"comparator": "==", "metric": "collision_count", "threshold": 0}], "agv_count": 2}, "route": "robot_command"}, "lang": "ko", "prompt": "처리량 65 이상, 평균 대기 12초 이하, 충돌 0건이면 통과로 AGV 2대 돌려줘."}
+{"category": "station_action_query", "completion": {"action": null, "arguments": {}, "route": "station_action_query"}, "lang": "en", "prompt": "Which actions are available for workstation 6? right away"}
+{"category": "simulation_status", "completion": {"action": null, "arguments": {}, "route": "simulation_status"}, "lang": "en", "prompt": "Show current AGV positions. for the demo"}
+{"category": "run_station_task", "completion": {"action": "run_station_task", "arguments": {"station_id": 7}, "route": "robot_command"}, "lang": "ko", "prompt": "7번 스테이션 작업 실행해. 데모용으로"}
+{"category": "no_action", "completion": {"action": null, "arguments": {}, "route": "no_action"}, "lang": "en", "prompt": "Tell me a joke. right away"}
+{"category": "move_to_station", "completion": {"action": "move_to_station", "arguments": {"station_id": 12}, "route": "robot_command"}, "lang": "en", "prompt": "Dispatch the AGV to station number 12. in the cell"}
+{"category": "inspect_station", "completion": {"action": "inspect_station", "arguments": {"station_id": 2}, "route": "robot_command"}, "lang": "en", "prompt": "Check station number 2. in the cell"}
+{"category": "set_sim_speed", "completion": {"action": "set_sim_speed", "arguments": {"speed_multiplier": 1.5}, "route": "robot_command"}, "lang": "en", "prompt": "Set speed to 1.5x. now"}
+{"category": "kpi_acceptance", "completion": {"action": "start_simulation", "arguments": {"acceptance": [{"comparator": ">=", "metric": "throughput", "threshold": 75}, {"comparator": "<=", "metric": "avg_wait_sec", "threshold": 10}, {"comparator": "==", "metric": "collision_count", "threshold": 0}], "agv_count": 5}, "route": "robot_command"}, "lang": "en", "prompt": "Start with 5 AGVs and pass only if throughput is at least 75, average wait is under 10 seconds, and collisions are zero."}
+{"category": "pause_simulation", "completion": {"action": "pause_simulation", "arguments": {}, "route": "robot_command"}, "lang": "en", "prompt": "Hold the sim. in the cell"}
+{"category": "simulation_status", "completion": {"action": null, "arguments": {}, "route": "simulation_status"}, "lang": "en", "prompt": "Show the running simulation state. in the cell"}
+{"category": "run_station_task", "completion": {"action": "run_station_task", "arguments": {"priority": "high", "station_id": 10}, "route": "robot_command"}, "lang": "en", "prompt": "Work station 10. High priority. now"}
+{"category": "run_station_task", "completion": {"action": "run_station_task", "arguments": {"station_id": 8}, "route": "robot_command"}, "lang": "ko", "prompt": "8번 스테이션에서 공정 수행해. 이번 턴에"}
+{"category": "move_to_station", "completion": {"action": "move_to_station", "arguments": {"station_id": 6}, "route": "robot_command"}, "lang": "ko", "prompt": "AGV 6번 스테이션으로 보내. 데모용으로"}
+{"category": "process_status", "completion": {"action": null, "arguments": {}, "route": "process_status"}, "lang": "en", "prompt": "Tell me throughput and waiting time. right away"}
+{"category": "simulation_status", "completion": {"action": null, "arguments": {}, "route": "simulation_status"}, "lang": "ko", "prompt": "로봇들이 어디 있는지 보여줘. 바로"}
+{"category": "optimize_agvs", "completion": {"action": null, "arguments": {}, "route": "optimize_agvs"}, "lang": "ko", "prompt": "최적 운행 대수를 계산해줘. 간단히"}
+{"category": "stop_simulation", "completion": {"action": "stop_simulation", "arguments": {}, "route": "robot_command"}, "lang": "en", "prompt": "Stop the simulation."}
+{"category": "compare_runs", "completion": {"action": null, "arguments": {}, "route": "compare_runs"}, "lang": "en", "prompt": "Compare run A and run B. for the demo"}
+{"category": "inspect_station", "completion": {"action": "inspect_station", "arguments": {"station_id": 1}, "route": "robot_command"}, "lang": "en", "prompt": "Inspect workstation 1. in the cell"}
+{"category": "compare_runs", "completion": {"action": null, "arguments": {}, "route": "compare_runs"}, "lang": "en", "prompt": "Tell me whether the latest run improved. please"}
+{"category": "simulation_status", "completion": {"action": null, "arguments": {}, "route": "simulation_status"}, "lang": "en", "prompt": "Show the running simulation state. please"}
+{"category": "clarify", "completion": {"action": null, "arguments": {}, "route": "clarify"}, "lang": "en", "prompt": "Move the AGV. now"}
+{"category": "inspect_station", "completion": {"action": "inspect_station", "arguments": {"station_id": 5}, "route": "robot_command"}, "lang": "en", "prompt": "Check station 5. for the demo"}
+{"category": "compare_runs", "completion": {"action": null, "arguments": {}, "route": "compare_runs"}, "lang": "en", "prompt": "Compare the last two runs. for the demo"}
+{"category": "move_to_station", "completion": {"action": "move_to_station", "arguments": {"station_id": 6}, "route": "robot_command"}, "lang": "en", "prompt": "Drive to S6. for me"}
+{"category": "simulation_status", "completion": {"action": null, "arguments": {}, "route": "simulation_status"}, "lang": "en", "prompt": "Where are the robots in the cell?"}
+{"category": "simulation_status", "completion": {"action": null, "arguments": {}, "route": "simulation_status"}, "lang": "ko", "prompt": "라이브 시뮬레이션 상태 알려줘. 간단히"}
+{"category": "move_to_station", "completion": {"action": "move_to_station", "arguments": {"station_id": 10}, "route": "robot_command"}, "lang": "ko", "prompt": "로봇을 10번 스테이션으로 보내줘. 부탁해"}
+{"category": "move_to_station", "completion": {"action": "move_to_station", "arguments": {"station_id": 11}, "route": "robot_command"}, "lang": "ko", "prompt": "AGV 11번 스테이션으로 보내. 간단히"}
+{"category": "stop_simulation", "completion": {"action": "stop_simulation", "arguments": {}, "route": "robot_command"}, "lang": "ko", "prompt": "시뮬레이션 정지해. 간단히"}
+{"category": "no_action", "completion": {"action": null, "arguments": {}, "route": "no_action"}, "lang": "ko", "prompt": "오늘 날씨 어때? 지금"}
+{"category": "no_action", "completion": {"action": null, "arguments": {}, "route": "no_action"}, "lang": "ko", "prompt": "오늘 날씨 어때? 셀 기준으로"}
+{"category": "kpi_acceptance", "completion": {"action": "start_simulation", "arguments": {"acceptance": [{"comparator": ">=", "metric": "throughput", "threshold": 75}, {"comparator": "<=", "metric": "avg_wait_sec", "threshold": 10}, {"comparator": "==", "metric": "collision_count", "threshold": 0}], "agv_count": 4}, "route": "robot_command"}, "lang": "en", "prompt": "Start with 4 AGVs and pass only if throughput is at least 75, average wait is under 10 seconds, and collisions are zero. for me"}
+{"category": "clarify", "completion": {"action": null, "arguments": {}, "route": "clarify"}, "lang": "en", "prompt": "Set the speed. right away"}
+{"category": "compare_runs", "completion": {"action": null, "arguments": {}, "route": "compare_runs"}, "lang": "en", "prompt": "Tell me whether the latest run improved. right away"}
+{"category": "clarify", "completion": {"action": null, "arguments": {}, "route": "clarify"}, "lang": "ko", "prompt": "거기로 보내줘. 이번 턴에"}
+{"category": "start_simulation", "completion": {"action": "start_simulation", "arguments": {"agv_count": 2}, "route": "robot_command"}, "lang": "ko", "prompt": "AGV 2대로 돌려줘. 데모용으로"}
+{"category": "station_action_query", "completion": {"action": null, "arguments": {}, "route": "station_action_query"}, "lang": "en", "prompt": "Tell me the task options at station 12. right away"}
+{"category": "optimize_agvs", "completion": {"action": null, "arguments": {}, "route": "optimize_agvs"}, "lang": "en", "prompt": "Recommend the AGV count that meets the target. this turn"}
+{"category": "optimize_agvs", "completion": {"action": null, "arguments": {}, "route": "optimize_agvs"}, "lang": "en", "prompt": "Search for the optimal fleet size. in the cell"}
+{"category": "kpi_acceptance", "completion": {"action": "start_simulation", "arguments": {"acceptance": [{"comparator": ">=", "metric": "throughput", "threshold": 80}, {"comparator": "<=", "metric": "avg_wait_sec", "threshold": 15}, {"comparator": "==", "metric": "collision_count", "threshold": 0}], "agv_count": 2}, "route": "robot_command"}, "lang": "ko", "prompt": "처리량 80 이상, 평균 대기 15초 이하, 충돌 0건이면 통과로 AGV 2대 돌려줘. 바로"}
+{"category": "optimize_agvs", "completion": {"action": null, "arguments": {}, "route": "optimize_agvs"}, "lang": "ko", "prompt": "최적 AGV 대수 찾아줘. 바로"}
+{"category": "move_to_station", "completion": {"action": "move_to_station", "arguments": {"station_id": 11}, "route": "robot_command"}, "lang": "ko", "prompt": "11번 스테이션으로 이동시켜. 데모용으로"}
+{"category": "inspect_station", "completion": {"action": "inspect_station", "arguments": {"station_id": 9}, "route": "robot_command"}, "lang": "en", "prompt": "Inspect station number 9. for the demo"}
+{"category": "move_to_station", "completion": {"action": "move_to_station", "arguments": {"station_id": 10}, "route": "robot_command"}, "lang": "ko", "prompt": "AGV 10번 스테이션으로 보내. 바로"}
+{"category": "run_station_task", "completion": {"action": "run_station_task", "arguments": {"station_id": 3}, "route": "robot_command"}, "lang": "en", "prompt": "Start the process at station number 3. for me"}
+{"category": "compare_runs", "completion": {"action": null, "arguments": {}, "route": "compare_runs"}, "lang": "ko", "prompt": "최근 두 번 실행 결과 비교해줘. 간단히"}
+{"category": "simulation_status", "completion": {"action": null, "arguments": {}, "route": "simulation_status"}, "lang": "ko", "prompt": "실행 중인 시뮬레이션 상태 확인해줘. 간단히"}
+{"category": "move_to_station", "completion": {"action": "move_to_station", "arguments": {"station_id": 12}, "route": "robot_command"}, "lang": "en", "prompt": "Send the robot to station 12."}
+{"category": "clarify", "completion": {"action": null, "arguments": {}, "route": "clarify"}, "lang": "en", "prompt": "Send it over there. please"}
+{"category": "set_sim_speed", "completion": {"action": "set_sim_speed", "arguments": {"speed_multiplier": 0.5}, "route": "robot_command"}, "lang": "ko", "prompt": "0.5배속으로 바꿔. 지금"}
+{"category": "resume_simulation", "completion": {"action": "resume_simulation", "arguments": {}, "route": "robot_command"}, "lang": "ko", "prompt": "다시 진행해."}
+{"category": "cancel_command", "completion": {"action": "cancel_command", "arguments": {"command_id": "cmd-204"}, "route": "robot_command"}, "lang": "en", "prompt": "Cancel command cmd-204. right away"}
+{"category": "compare_runs", "completion": {"action": null, "arguments": {}, "route": "compare_runs"}, "lang": "en", "prompt": "Compare run A and run B. right away"}
+{"category": "inspect_station", "completion": {"action": "inspect_station", "arguments": {"station_id": 1}, "route": "robot_command"}, "lang": "en", "prompt": "Check station number 1. in the cell"}
+{"category": "clarify", "completion": {"action": null, "arguments": {}, "route": "clarify"}, "lang": "ko", "prompt": "거기로 보내줘. 지금"}
+{"category": "inspect_station", "completion": {"action": "inspect_station", "arguments": {"station_id": 1}, "route": "robot_command"}, "lang": "en", "prompt": "Inspect S1. in the cell"}
+{"category": "cancel_command", "completion": {"action": "cancel_command", "arguments": {"command_id": "cmd-101"}, "route": "robot_command"}, "lang": "en", "prompt": "Stop job cmd-101. for the demo"}
+{"category": "move_to_station", "completion": {"action": "move_to_station", "arguments": {"station_id": 5}, "route": "robot_command"}, "lang": "ko", "prompt": "스테이션 5으로 이동시켜. 이번 턴에"}
+{"category": "optimize_agvs", "completion": {"action": null, "arguments": {}, "route": "optimize_agvs"}, "lang": "en", "prompt": "Find the best AGV count for bottleneck rate. please"}
+{"category": "kpi_acceptance", "completion": {"action": "start_simulation", "arguments": {"acceptance": [{"comparator": ">=", "metric": "throughput", "threshold": 70}, {"comparator": "<=", "metric": "avg_wait_sec", "threshold": 12}, {"comparator": "==", "metric": "collision_count", "threshold": 0}], "agv_count": 8}, "route": "robot_command"}, "lang": "en", "prompt": "Start with 8 AGVs and pass only if throughput is at least 70, average wait is under 12 seconds, and collisions are zero. for the demo"}
+{"category": "inspect_station", "completion": {"action": "inspect_station", "arguments": {"station_id": 11}, "route": "robot_command"}, "lang": "ko", "prompt": "11번 작업대 확인해. 셀 기준으로"}
+{"category": "simulation_status", "completion": {"action": null, "arguments": {}, "route": "simulation_status"}, "lang": "ko", "prompt": "현재 AGV 위치 보여줘. 데모용으로"}
+{"category": "compare_runs", "completion": {"action": null, "arguments": {}, "route": "compare_runs"}, "lang": "en", "prompt": "Compare run A and run B. now"}
+{"category": "cancel_command", "completion": {"action": "cancel_command", "arguments": {"command_id": "cmd-204"}, "route": "robot_command"}, "lang": "ko", "prompt": "cmd-204 작업 중단해. 바로"}
+{"category": "move_to_station", "completion": {"action": "move_to_station", "arguments": {"station_id": 4}, "route": "robot_command"}, "lang": "en", "prompt": "Move the AGV to station 4. now"}
+{"category": "run_station_task", "completion": {"action": "run_station_task", "arguments": {"priority": "high", "station_id": 11}, "route": "robot_command"}, "lang": "ko", "prompt": "11번 스테이션 작업 실행해. 높은 우선순위로. 부탁해"}
+{"category": "clarify", "completion": {"action": null, "arguments": {}, "route": "clarify"}, "lang": "en", "prompt": "Start with five AGVs. now"}
+{"category": "no_action", "completion": {"action": null, "arguments": {}, "route": "no_action"}, "lang": "ko", "prompt": "뭐 할 수 있어? 부탁해"}
+{"category": "clarify", "completion": {"action": null, "arguments": {}, "route": "clarify"}, "lang": "ko", "prompt": "AGV 다섯 대로 시작해. 셀 기준으로"}
+{"category": "process_status", "completion": {"action": null, "arguments": {}, "route": "process_status"}, "lang": "en", "prompt": "What is the current process status?"}
+{"category": "start_simulation", "completion": {"action": "start_simulation", "arguments": {"agv_count": 6}, "route": "robot_command"}, "lang": "en", "prompt": "Begin using 6 AGVs. for the demo"}
+{"category": "stop_simulation", "completion": {"action": "stop_simulation", "arguments": {}, "route": "robot_command"}, "lang": "ko", "prompt": "시뮬레이션 정지해. 지금"}
+{"category": "inspect_station", "completion": {"action": "inspect_station", "arguments": {"station_id": 1}, "route": "robot_command"}, "lang": "ko", "prompt": "1번 작업대 점검해. 바로"}
+{"category": "process_status", "completion": {"action": null, "arguments": {}, "route": "process_status"}, "lang": "ko", "prompt": "처리량이랑 대기시간 알려줘. 지금"}
+{"category": "cancel_command", "completion": {"action": "cancel_command", "arguments": {"command_id": "sim-77"}, "route": "robot_command"}, "lang": "ko", "prompt": "sim-77 작업 중단해. 이번 턴에"}
+{"category": "process_status", "completion": {"action": null, "arguments": {}, "route": "process_status"}, "lang": "ko", "prompt": "현재 공정 상태 알려줘. 이번 턴에"}
+{"category": "optimize_agvs", "completion": {"action": null, "arguments": {}, "route": "optimize_agvs"}, "lang": "en", "prompt": "Find the best AGV count for collisions. right away"}
+{"category": "process_status", "completion": {"action": null, "arguments": {}, "route": "process_status"}, "lang": "ko", "prompt": "현재 공정 텔레메트리 확인해줘. 부탁해"}
+{"category": "compare_runs", "completion": {"action": null, "arguments": {}, "route": "compare_runs"}, "lang": "en", "prompt": "Which recent simulation was better? now"}
+{"category": "process_status", "completion": {"action": null, "arguments": {}, "route": "process_status"}, "lang": "en", "prompt": "What is the current process status? this turn"}
+{"category": "clarify", "completion": {"action": null, "arguments": {}, "route": "clarify"}, "lang": "ko", "prompt": "작업 실행해. 셀 기준으로"}
+{"category": "start_simulation", "completion": {"action": "start_simulation", "arguments": {"agv_count": 2}, "route": "robot_command"}, "lang": "en", "prompt": "Start the simulation with 2 AGVs. right away"}
+{"category": "kpi_acceptance", "completion": {"action": "start_simulation", "arguments": {"acceptance": [{"comparator": ">=", "metric": "throughput", "threshold": 65}, {"comparator": "<=", "metric": "avg_wait_sec", "threshold": 15}, {"comparator": "==", "metric": "collision_count", "threshold": 0}], "agv_count": 3}, "route": "robot_command"}, "lang": "en", "prompt": "Start with 3 AGVs and pass only if throughput is at least 65, average wait is under 15 seconds, and collisions are zero. now"}
+{"category": "optimize_agvs", "completion": {"action": null, "arguments": {}, "route": "optimize_agvs"}, "lang": "ko", "prompt": "목표를 만족하는 AGV 대수 찾아줘. 부탁해"}
+{"category": "optimize_agvs", "completion": {"action": null, "arguments": {}, "route": "optimize_agvs"}, "lang": "ko", "prompt": "목표를 만족하는 AGV 대수 찾아줘."}
+{"category": "kpi_acceptance", "completion": {"action": "start_simulation", "arguments": {"acceptance": [{"comparator": ">=", "metric": "throughput", "threshold": 70}, {"comparator": "<=", "metric": "avg_wait_sec", "threshold": 15}, {"comparator": "==", "metric": "collision_count", "threshold": 0}], "agv_count": 2}, "route": "robot_command"}, "lang": "ko", "prompt": "처리량 70 이상, 평균 대기 15초 이하, 충돌 0건이면 통과로 AGV 2대 돌려줘. 이번 턴에"}
+{"category": "process_status", "completion": {"action": null, "arguments": {}, "route": "process_status"}, "lang": "en", "prompt": "What is the current process status? for me"}
+{"category": "clarify", "completion": {"action": null, "arguments": {}, "route": "clarify"}, "lang": "ko", "prompt": "작업 실행해. 간단히"}
+{"category": "optimize_agvs", "completion": {"action": null, "arguments": {}, "route": "optimize_agvs"}, "lang": "ko", "prompt": "병목률 줄이려면 AGV 몇 대가 좋아? 셀 기준으로"}
+{"category": "pause_simulation", "completion": {"action": "pause_simulation", "arguments": {}, "route": "robot_command"}, "lang": "en", "prompt": "Hold the sim. right away"}
+{"category": "cancel_command", "completion": {"action": "cancel_command", "arguments": {"command_id": "cmd-204"}, "route": "robot_command"}, "lang": "en", "prompt": "Cancel command cmd-204."}
+{"category": "run_station_task", "completion": {"action": "run_station_task", "arguments": {"station_id": 2}, "route": "robot_command"}, "lang": "en", "prompt": "Run the task at station 2. now"}
+{"category": "stop_simulation", "completion": {"action": "stop_simulation", "arguments": {}, "route": "robot_command"}, "lang": "en", "prompt": "Halt the run. this turn"}
+{"category": "move_to_station", "completion": {"action": "move_to_station", "arguments": {"station_id": 9}, "route": "robot_command"}, "lang": "ko", "prompt": "스테이션 9으로 이동시켜. 셀 기준으로"}
+{"category": "set_sim_speed", "completion": {"action": "set_sim_speed", "arguments": {"speed_multiplier": 2.0}, "route": "robot_command"}, "lang": "ko", "prompt": "2.0배속으로 바꿔. 데모용으로"}
+{"category": "simulation_status", "completion": {"action": null, "arguments": {}, "route": "simulation_status"}, "lang": "ko", "prompt": "실행 중인 시뮬레이션 상태 확인해줘. 이번 턴에"}
+{"category": "kpi_acceptance", "completion": {"action": "start_simulation", "arguments": {"acceptance": [{"comparator": ">=", "metric": "throughput", "threshold": 75}, {"comparator": "<=", "metric": "avg_wait_sec", "threshold": 10}, {"comparator": "==", "metric": "collision_count", "threshold": 0}], "agv_count": 5}, "route": "robot_command"}, "lang": "en", "prompt": "Start with 5 AGVs and pass only if throughput is at least 75, average wait is under 10 seconds, and collisions are zero. this turn"}
+{"category": "clarify", "completion": {"action": null, "arguments": {}, "route": "clarify"}, "lang": "en", "prompt": "Move to station -1. please"}
+{"category": "station_action_query", "completion": {"action": null, "arguments": {}, "route": "station_action_query"}, "lang": "ko", "prompt": "8번 작업대에서 가능한 작업 알려줘. 바로"}
+{"category": "move_to_station", "completion": {"action": "move_to_station", "arguments": {"station_id": 9}, "route": "robot_command"}, "lang": "ko", "prompt": "AGV 9번 스테이션으로 보내. 이번 턴에"}
+{"category": "simulation_status", "completion": {"action": null, "arguments": {}, "route": "simulation_status"}, "lang": "ko", "prompt": "지금 어떤 AGV가 움직이고 있어? 데모용으로"}
+{"category": "inspect_station", "completion": {"action": "inspect_station", "arguments": {"station_id": 2}, "route": "robot_command"}, "lang": "en", "prompt": "Check workstation 2. now"}
+{"category": "inspect_station", "completion": {"action": "inspect_station", "arguments": {"station_id": 9}, "route": "robot_command"}, "lang": "ko", "prompt": "9번 작업대 검사해. 간단히"}
+{"category": "pause_simulation", "completion": {"action": "pause_simulation", "arguments": {}, "route": "robot_command"}, "lang": "en", "prompt": "Freeze the run. in the cell"}
+{"category": "start_simulation", "completion": {"action": "start_simulation", "arguments": {"agv_count": 2}, "route": "robot_command"}, "lang": "ko", "prompt": "AGV 2대로 시뮬레이션 시작해. 데모용으로"}
+{"category": "resume_simulation", "completion": {"action": "resume_simulation", "arguments": {}, "route": "robot_command"}, "lang": "ko", "prompt": "다시 진행해. 셀 기준으로"}
+{"category": "set_sim_speed", "completion": {"action": "set_sim_speed", "arguments": {"speed_multiplier": 3.0}, "route": "robot_command"}, "lang": "ko", "prompt": "속도를 3.0배로 설정해. 이번 턴에"}
+{"category": "clarify", "completion": {"action": null, "arguments": {}, "route": "clarify"}, "lang": "ko", "prompt": "스테이션 검사해. 부탁해"}
+{"category": "resume_simulation", "completion": {"action": "resume_simulation", "arguments": {}, "route": "robot_command"}, "lang": "ko", "prompt": "다시 진행해. 부탁해"}
+{"category": "stop_simulation", "completion": {"action": "stop_simulation", "arguments": {}, "route": "robot_command"}, "lang": "ko", "prompt": "이제 중단해. 셀 기준으로"}
+{"category": "start_with_speed", "completion": {"action": "start_simulation", "arguments": {"agv_count": 4, "speed_multiplier": 2.0}, "route": "robot_command"}, "lang": "ko", "prompt": "AGV 4대를 2.0배속으로 시작해. 셀 기준으로"}
+{"category": "optimize_agvs", "completion": {"action": null, "arguments": {}, "route": "optimize_agvs"}, "lang": "ko", "prompt": "KPI가 제일 좋은 AGV 수 추천해줘. 이번 턴에"}
+{"category": "kpi_acceptance", "completion": {"action": "start_simulation", "arguments": {"acceptance": [{"comparator": ">=", "metric": "throughput", "threshold": 60}, {"comparator": "<=", "metric": "avg_wait_sec", "threshold": 12}, {"comparator": "==", "metric": "collision_count", "threshold": 0}], "agv_count": 4}, "route": "robot_command"}, "lang": "en", "prompt": "Start with 4 AGVs and pass only if throughput is at least 60, average wait is under 12 seconds, and collisions are zero. now"}
+{"category": "run_station_task", "completion": {"action": "run_station_task", "arguments": {"priority": "high", "station_id": 10}, "route": "robot_command"}, "lang": "en", "prompt": "Work S10. High priority. in the cell"}
+{"category": "station_action_query", "completion": {"action": null, "arguments": {}, "route": "station_action_query"}, "lang": "en", "prompt": "Which actions are available for workstation 5? right away"}
+{"category": "inspect_station", "completion": {"action": "inspect_station", "arguments": {"station_id": 9}, "route": "robot_command"}, "lang": "en", "prompt": "Examine workstation 9. this turn"}
+{"category": "station_action_query", "completion": {"action": null, "arguments": {}, "route": "station_action_query"}, "lang": "ko", "prompt": "스테이션 7 액션 목록 보여줘. 바로"}
+{"category": "move_to_station", "completion": {"action": "move_to_station", "arguments": {"station_id": 3}, "route": "robot_command"}, "lang": "en", "prompt": "Send the robot to station number 3."}
+{"category": "inspect_station", "completion": {"action": "inspect_station", "arguments": {"station_id": 12}, "route": "robot_command"}, "lang": "ko", "prompt": "12번 작업대 검사해. 간단히"}
+{"category": "clarify", "completion": {"action": null, "arguments": {}, "route": "clarify"}, "lang": "ko", "prompt": "스테이션 -1로 이동해. 간단히"}
+{"category": "cancel_command", "completion": {"action": "cancel_command", "arguments": {"command_id": "cmd-101"}, "route": "robot_command"}, "lang": "ko", "prompt": "cmd-101 작업 중단해. 지금"}
+{"category": "process_status", "completion": {"action": null, "arguments": {}, "route": "process_status"}, "lang": "en", "prompt": "What is the current process status? right away"}
+{"category": "set_sim_speed", "completion": {"action": "set_sim_speed", "arguments": {"speed_multiplier": 3.0}, "route": "robot_command"}, "lang": "en", "prompt": "Use 3.0x speed. please"}
+{"category": "pause_simulation", "completion": {"action": "pause_simulation", "arguments": {}, "route": "robot_command"}, "lang": "ko", "prompt": "실행 보류해. 간단히"}
+{"category": "stop_simulation", "completion": {"action": "stop_simulation", "arguments": {}, "route": "robot_command"}, "lang": "en", "prompt": "Halt the run."}
+{"category": "process_status", "completion": {"action": null, "arguments": {}, "route": "process_status"}, "lang": "ko", "prompt": "지금 KPI 보여줘. 데모용으로"}
+{"category": "simulation_status", "completion": {"action": null, "arguments": {}, "route": "simulation_status"}, "lang": "ko", "prompt": "현재 AGV 위치 보여줘. 셀 기준으로"}
+{"category": "inspect_station", "completion": {"action": "inspect_station", "arguments": {"station_id": 8}, "route": "robot_command"}, "lang": "en", "prompt": "Inspect S8. this turn"}
+{"category": "start_with_speed", "completion": {"action": "start_simulation", "arguments": {"agv_count": 3, "speed_multiplier": 0.5}, "route": "robot_command"}, "lang": "ko", "prompt": "AGV 3대를 0.5배속으로 시작해. 지금"}
+{"category": "no_action", "completion": {"action": null, "arguments": {}, "route": "no_action"}, "lang": "en", "prompt": "Explain digital twins generally. in the cell"}
+{"category": "station_action_query", "completion": {"action": null, "arguments": {}, "route": "station_action_query"}, "lang": "en", "prompt": "Which actions are available for station number 10? now"}
+{"category": "run_station_task", "completion": {"action": "run_station_task", "arguments": {"station_id": 1}, "route": "robot_command"}, "lang": "ko", "prompt": "1번 스테이션 작업 돌려. 이번 턴에"}
+{"category": "pause_simulation", "completion": {"action": "pause_simulation", "arguments": {}, "route": "robot_command"}, "lang": "ko", "prompt": "시뮬레이션 일시정지. 바로"}
+{"category": "optimize_agvs", "completion": {"action": null, "arguments": {}, "route": "optimize_agvs"}, "lang": "ko", "prompt": "KPI가 제일 좋은 AGV 수 추천해줘. 지금"}
+{"category": "optimize_agvs", "completion": {"action": null, "arguments": {}, "route": "optimize_agvs"}, "lang": "en", "prompt": "Optimize the number of AGVs to reduce collisions. for me"}
+{"category": "process_status", "completion": {"action": null, "arguments": {}, "route": "process_status"}, "lang": "en", "prompt": "Show me the current KPI snapshot. please"}
+{"category": "compare_runs", "completion": {"action": null, "arguments": {}, "route": "compare_runs"}, "lang": "en", "prompt": "Compare run A and run B. in the cell"}
+{"category": "station_action_query", "completion": {"action": null, "arguments": {}, "route": "station_action_query"}, "lang": "en", "prompt": "Which actions are available for station 12? for the demo"}
+{"category": "move_to_station", "completion": {"action": "move_to_station", "arguments": {"station_id": 1}, "route": "robot_command"}, "lang": "ko", "prompt": "AGV를 스테이션 1으로 이동해."}
+{"category": "move_to_station", "completion": {"action": "move_to_station", "arguments": {"station_id": 9}, "route": "robot_command"}, "lang": "ko", "prompt": "AGV를 9번 작업대으로 이동해."}
+{"category": "process_status", "completion": {"action": null, "arguments": {}, "route": "process_status"}, "lang": "ko", "prompt": "현재 공정 텔레메트리 확인해줘. 바로"}
+{"category": "kpi_acceptance", "completion": {"action": "start_simulation", "arguments": {"acceptance": [{"comparator": ">=", "metric": "throughput", "threshold": 80}, {"comparator": "<=", "metric": "avg_wait_sec", "threshold": 15}, {"comparator": "==", "metric": "collision_count", "threshold": 0}], "agv_count": 2}, "route": "robot_command"}, "lang": "en", "prompt": "Start with 2 AGVs and pass only if throughput is at least 80, average wait is under 15 seconds, and collisions are zero. please"}
+{"category": "process_status", "completion": {"action": null, "arguments": {}, "route": "process_status"}, "lang": "en", "prompt": "What is the current process status? for the demo"}
+{"category": "start_simulation", "completion": {"action": "start_simulation", "arguments": {"agv_count": 3}, "route": "robot_command"}, "lang": "ko", "prompt": "AGV 3대로 시뮬레이션 시작해. 지금"}
+{"category": "station_action_query", "completion": {"action": null, "arguments": {}, "route": "station_action_query"}, "lang": "en", "prompt": "What can S5 do? for me"}
+{"category": "clarify", "completion": {"action": null, "arguments": {}, "route": "clarify"}, "lang": "ko", "prompt": "속도 바꿔줘. 셀 기준으로"}
+{"category": "inspect_station", "completion": {"action": "inspect_station", "arguments": {"station_id": 7}, "route": "robot_command"}, "lang": "ko", "prompt": "스테이션 7 점검해. 간단히"}
+{"category": "optimize_agvs", "completion": {"action": null, "arguments": {}, "route": "optimize_agvs"}, "lang": "en", "prompt": "Recommend the AGV count that meets the target. for me"}
+{"category": "kpi_acceptance", "completion": {"action": "start_simulation", "arguments": {"acceptance": [{"comparator": ">=", "metric": "throughput", "threshold": 60}, {"comparator": "<=", "metric": "avg_wait_sec", "threshold": 10}, {"comparator": "==", "metric": "collision_count", "threshold": 0}], "agv_count": 3}, "route": "robot_command"}, "lang": "en", "prompt": "Start with 3 AGVs and pass only if throughput is at least 60, average wait is under 10 seconds, and collisions are zero. in the cell"}
+{"category": "move_to_station", "completion": {"action": "move_to_station", "arguments": {"station_id": 8}, "route": "robot_command"}, "lang": "ko", "prompt": "AGV를 스테이션 8으로 이동해. 간단히"}
+{"category": "kpi_acceptance", "completion": {"action": "start_simulation", "arguments": {"acceptance": [{"comparator": ">=", "metric": "throughput", "threshold": 75}, {"comparator": "<=", "metric": "avg_wait_sec", "threshold": 12}, {"comparator": "==", "metric": "collision_count", "threshold": 0}], "agv_count": 4}, "route": "robot_command"}, "lang": "ko", "prompt": "처리량 75 이상, 평균 대기 12초 이하, 충돌 0건이면 통과로 AGV 4대 돌려줘. 바로"}
+{"category": "inspect_station", "completion": {"action": "inspect_station", "arguments": {"station_id": 3}, "route": "robot_command"}, "lang": "ko", "prompt": "스테이션 3 검사해. 간단히"}
+{"category": "simulation_status", "completion": {"action": null, "arguments": {}, "route": "simulation_status"}, "lang": "en", "prompt": "Which AGVs are active right now? for the demo"}
+{"category": "process_status", "completion": {"action": null, "arguments": {}, "route": "process_status"}, "lang": "ko", "prompt": "공정 상태 요약해줘. 바로"}
+{"category": "run_station_task", "completion": {"action": "run_station_task", "arguments": {"station_id": 9}, "route": "robot_command"}, "lang": "en", "prompt": "Work station 9. this turn"}
+{"category": "simulation_status", "completion": {"action": null, "arguments": {}, "route": "simulation_status"}, "lang": "en", "prompt": "Which AGVs are active right now? now"}
+{"category": "compare_runs", "completion": {"action": null, "arguments": {}, "route": "compare_runs"}, "lang": "en", "prompt": "Which recent simulation was better? in the cell"}
+{"category": "no_action", "completion": {"action": null, "arguments": {}, "route": "no_action"}, "lang": "ko", "prompt": "고마워요. 지금"}
+{"category": "process_status", "completion": {"action": null, "arguments": {}, "route": "process_status"}, "lang": "ko", "prompt": "지금 KPI 보여줘. 부탁해"}
+{"category": "cancel_command", "completion": {"action": "cancel_command", "arguments": {"command_id": "sim-77"}, "route": "robot_command"}, "lang": "ko", "prompt": "명령 sim-77 취소. 셀 기준으로"}
+{"category": "station_action_query", "completion": {"action": null, "arguments": {}, "route": "station_action_query"}, "lang": "en", "prompt": "Tell me the task options at station 1. for me"}
+{"category": "run_station_task", "completion": {"action": "run_station_task", "arguments": {"station_id": 9}, "route": "robot_command"}, "lang": "ko", "prompt": "스테이션 9에서 공정 수행해. 데모용으로"}
+{"category": "simulation_status", "completion": {"action": null, "arguments": {}, "route": "simulation_status"}, "lang": "ko", "prompt": "실행 중인 시뮬레이션 상태 확인해줘. 지금"}
+{"category": "run_station_task", "completion": {"action": "run_station_task", "arguments": {"station_id": 11}, "route": "robot_command"}, "lang": "en", "prompt": "Run the task at S11. in the cell"}
+{"category": "kpi_acceptance", "completion": {"action": "start_simulation", "arguments": {"acceptance": [{"comparator": ">=", "metric": "throughput", "threshold": 80}, {"comparator": "<=", "metric": "avg_wait_sec", "threshold": 10}, {"comparator": "==", "metric": "collision_count", "threshold": 0}], "agv_count": 2}, "route": "robot_command"}, "lang": "en", "prompt": "Start with 2 AGVs and pass only if throughput is at least 80, average wait is under 10 seconds, and collisions are zero."}
+{"category": "run_station_task", "completion": {"action": "run_station_task", "arguments": {"station_id": 6}, "route": "robot_command"}, "lang": "ko", "prompt": "6번 작업대 작업 돌려. 바로"}
+{"category": "kpi_acceptance", "completion": {"action": "start_simulation", "arguments": {"acceptance": [{"comparator": ">=", "metric": "throughput", "threshold": 75}, {"comparator": "<=", "metric": "avg_wait_sec", "threshold": 12}, {"comparator": "==", "metric": "collision_count", "threshold": 0}], "agv_count": 4}, "route": "robot_command"}, "lang": "en", "prompt": "Start with 4 AGVs and pass only if throughput is at least 75, average wait is under 12 seconds, and collisions are zero. in the cell"}
+{"category": "optimize_agvs", "completion": {"action": null, "arguments": {}, "route": "optimize_agvs"}, "lang": "ko", "prompt": "병목률 줄이려면 AGV 몇 대가 좋아? 지금"}
+{"category": "run_station_task", "completion": {"action": "run_station_task", "arguments": {"station_id": 1}, "route": "robot_command"}, "lang": "ko", "prompt": "1번 스테이션에서 공정 수행해. 부탁해"}
+{"category": "simulation_status", "completion": {"action": null, "arguments": {}, "route": "simulation_status"}, "lang": "en", "prompt": "Give me the live simulation status. for me"}
+{"category": "process_status", "completion": {"action": null, "arguments": {}, "route": "process_status"}, "lang": "ko", "prompt": "현재 공정 상태 알려줘. 셀 기준으로"}
+{"category": "move_to_station", "completion": {"action": "move_to_station", "arguments": {"station_id": 9}, "route": "robot_command"}, "lang": "en", "prompt": "Dispatch the AGV to S9. please"}
+{"category": "cancel_command", "completion": {"action": "cancel_command", "arguments": {"command_id": "cmd-101"}, "route": "robot_command"}, "lang": "ko", "prompt": "명령 cmd-101 취소. 지금"}
+{"category": "cancel_command", "completion": {"action": "cancel_command", "arguments": {"command_id": "run-88"}, "route": "robot_command"}, "lang": "en", "prompt": "Abort command id run-88. now"}
+{"category": "stop_simulation", "completion": {"action": "stop_simulation", "arguments": {}, "route": "robot_command"}, "lang": "en", "prompt": "Shut it down. right away"}
+{"category": "run_station_task", "completion": {"action": "run_station_task", "arguments": {"station_id": 9}, "route": "robot_command"}, "lang": "ko", "prompt": "스테이션 9에서 공정 수행해. 바로"}
+{"category": "station_action_query", "completion": {"action": null, "arguments": {}, "route": "station_action_query"}, "lang": "ko", "prompt": "1번 작업대 액션 목록 보여줘. 셀 기준으로"}
+{"category": "no_action", "completion": {"action": null, "arguments": {}, "route": "no_action"}, "lang": "en", "prompt": "What can you do? please"}
+{"category": "optimize_agvs", "completion": {"action": null, "arguments": {}, "route": "optimize_agvs"}, "lang": "ko", "prompt": "최적 운행 대수를 계산해줘. 셀 기준으로"}
+{"category": "process_status", "completion": {"action": null, "arguments": {}, "route": "process_status"}, "lang": "en", "prompt": "Tell me throughput and waiting time. for me"}
+{"category": "inspect_station", "completion": {"action": "inspect_station", "arguments": {"station_id": 9}, "route": "robot_command"}, "lang": "ko", "prompt": "스테이션 9 검사해. 데모용으로"}
+{"category": "station_action_query", "completion": {"action": null, "arguments": {}, "route": "station_action_query"}, "lang": "ko", "prompt": "스테이션 8는 어떤 작업을 할 수 있어? 이번 턴에"}
+{"category": "kpi_acceptance", "completion": {"action": "start_simulation", "arguments": {"acceptance": [{"comparator": ">=", "metric": "throughput", "threshold": 65}, {"comparator": "<=", "metric": "avg_wait_sec", "threshold": 10}, {"comparator": "==", "metric": "collision_count", "threshold": 0}], "agv_count": 6}, "route": "robot_command"}, "lang": "en", "prompt": "Start with 6 AGVs and pass only if throughput is at least 65, average wait is under 10 seconds, and collisions are zero. please"}
+{"category": "kpi_acceptance", "completion": {"action": "start_simulation", "arguments": {"acceptance": [{"comparator": ">=", "metric": "throughput", "threshold": 70}, {"comparator": "<=", "metric": "avg_wait_sec", "threshold": 12}, {"comparator": "==", "metric": "collision_count", "threshold": 0}], "agv_count": 3}, "route": "robot_command"}, "lang": "en", "prompt": "Start with 3 AGVs and pass only if throughput is at least 70, average wait is under 12 seconds, and collisions are zero. this turn"}
+{"category": "kpi_acceptance", "completion": {"action": "start_simulation", "arguments": {"acceptance": [{"comparator": ">=", "metric": "throughput", "threshold": 65}, {"comparator": "<=", "metric": "avg_wait_sec", "threshold": 15}, {"comparator": "==", "metric": "collision_count", "threshold": 0}], "agv_count": 3}, "route": "robot_command"}, "lang": "ko", "prompt": "처리량 65 이상, 평균 대기 15초 이하, 충돌 0건이면 통과로 AGV 3대 돌려줘. 셀 기준으로"}
+{"category": "inspect_station", "completion": {"action": "inspect_station", "arguments": {"station_id": 8}, "route": "robot_command"}, "lang": "ko", "prompt": "8번 스테이션 상태 봐줘. 지금"}
+{"category": "pause_simulation", "completion": {"action": "pause_simulation", "arguments": {}, "route": "robot_command"}, "lang": "ko", "prompt": "잠깐 멈춰. 데모용으로"}
+{"category": "run_station_task", "completion": {"action": "run_station_task", "arguments": {"priority": "high", "station_id": 4}, "route": "robot_command"}, "lang": "en", "prompt": "Run the task at station number 4. High priority. for me"}
+{"category": "move_to_station", "completion": {"action": "move_to_station", "arguments": {"station_id": 11}, "route": "robot_command"}, "lang": "en", "prompt": "Send the robot to station 11. right away"}
+{"category": "set_sim_speed", "completion": {"action": "set_sim_speed", "arguments": {"speed_multiplier": 2.0}, "route": "robot_command"}, "lang": "ko", "prompt": "속도를 2.0배로 설정해. 바로"}
+{"category": "process_status", "completion": {"action": null, "arguments": {}, "route": "process_status"}, "lang": "en", "prompt": "Tell me throughput and waiting time. in the cell"}
+{"category": "compare_runs", "completion": {"action": null, "arguments": {}, "route": "compare_runs"}, "lang": "ko", "prompt": "어떤 시뮬레이션이 더 나았어? 지금"}
+{"category": "process_status", "completion": {"action": null, "arguments": {}, "route": "process_status"}, "lang": "en", "prompt": "How is the cell doing right now? please"}
+{"category": "compare_runs", "completion": {"action": null, "arguments": {}, "route": "compare_runs"}, "lang": "ko", "prompt": "최근 두 번 실행 결과 비교해줘. 이번 턴에"}
+{"category": "move_to_station", "completion": {"action": "move_to_station", "arguments": {"station_id": 7}, "route": "robot_command"}, "lang": "en", "prompt": "Move the AGV to workstation 7. for the demo"}
+{"category": "inspect_station", "completion": {"action": "inspect_station", "arguments": {"station_id": 4}, "route": "robot_command"}, "lang": "ko", "prompt": "4번 스테이션 점검해. 셀 기준으로"}
+{"category": "clarify", "completion": {"action": null, "arguments": {}, "route": "clarify"}, "lang": "en", "prompt": "Set the speed. this turn"}
+{"category": "cancel_command", "completion": {"action": "cancel_command", "arguments": {"command_id": "run-88"}, "route": "robot_command"}, "lang": "ko", "prompt": "run-88 명령 취소해. 데모용으로"}
+{"category": "resume_simulation", "completion": {"action": "resume_simulation", "arguments": {}, "route": "robot_command"}, "lang": "ko", "prompt": "시뮬레이션 재개. 이번 턴에"}
+{"category": "simulation_status", "completion": {"action": null, "arguments": {}, "route": "simulation_status"}, "lang": "en", "prompt": "Show the running simulation state. now"}
+{"category": "clarify", "completion": {"action": null, "arguments": {}, "route": "clarify"}, "lang": "en", "prompt": "Inspect the station. please"}
+{"category": "resume_simulation", "completion": {"action": "resume_simulation", "arguments": {}, "route": "robot_command"}, "lang": "ko", "prompt": "시뮬레이션 재개. 셀 기준으로"}
+{"category": "no_action", "completion": {"action": null, "arguments": {}, "route": "no_action"}, "lang": "ko", "prompt": "뭐 할 수 있어? 데모용으로"}
+{"category": "clarify", "completion": {"action": null, "arguments": {}, "route": "clarify"}, "lang": "ko", "prompt": "AGV 이동해줘. 셀 기준으로"}
+{"category": "simulation_status", "completion": {"action": null, "arguments": {}, "route": "simulation_status"}, "lang": "en", "prompt": "Show current AGV positions. now"}
+{"category": "kpi_acceptance", "completion": {"action": "start_simulation", "arguments": {"acceptance": [{"comparator": ">=", "metric": "throughput", "threshold": 65}, {"comparator": "<=", "metric": "avg_wait_sec", "threshold": 12}, {"comparator": "==", "metric": "collision_count", "threshold": 0}], "agv_count": 4}, "route": "robot_command"}, "lang": "en", "prompt": "Start with 4 AGVs and pass only if throughput is at least 65, average wait is under 12 seconds, and collisions are zero. this turn"}
+{"category": "optimize_agvs", "completion": {"action": null, "arguments": {}, "route": "optimize_agvs"}, "lang": "en", "prompt": "Search for the optimal fleet size. this turn"}
+{"category": "clarify", "completion": {"action": null, "arguments": {}, "route": "clarify"}, "lang": "ko", "prompt": "작업 실행해. 이번 턴에"}
+{"category": "inspect_station", "completion": {"action": "inspect_station", "arguments": {"station_id": 7}, "route": "robot_command"}, "lang": "en", "prompt": "Examine station 7. for the demo"}
+{"category": "move_to_station", "completion": {"action": "move_to_station", "arguments": {"station_id": 6}, "route": "robot_command"}, "lang": "en", "prompt": "Drive to S6. this turn"}
+{"category": "move_to_station", "completion": {"action": "move_to_station", "arguments": {"station_id": 6}, "route": "robot_command"}, "lang": "en", "prompt": "Move the AGV to station number 6. now"}
+{"category": "station_action_query", "completion": {"action": null, "arguments": {}, "route": "station_action_query"}, "lang": "ko", "prompt": "1번 작업대 액션 목록 보여줘. 간단히"}
+{"category": "start_simulation", "completion": {"action": "start_simulation", "arguments": {"agv_count": 3}, "route": "robot_command"}, "lang": "ko", "prompt": "AGV 3대로 시뮬레이션 시작해. 셀 기준으로"}
+{"category": "optimize_agvs", "completion": {"action": null, "arguments": {}, "route": "optimize_agvs"}, "lang": "en", "prompt": "Find the best AGV count for average wait. now"}
+{"category": "run_station_task", "completion": {"action": "run_station_task", "arguments": {"station_id": 7}, "route": "robot_command"}, "lang": "en", "prompt": "Start the process at S7."}
+{"category": "inspect_station", "completion": {"action": "inspect_station", "arguments": {"station_id": 6}, "route": "robot_command"}, "lang": "ko", "prompt": "6번 스테이션 점검해. 바로"}
+{"category": "kpi_acceptance", "completion": {"action": "start_simulation", "arguments": {"acceptance": [{"comparator": ">=", "metric": "throughput", "threshold": 80}, {"comparator": "<=", "metric": "avg_wait_sec", "threshold": 10}, {"comparator": "==", "metric": "collision_count", "threshold": 0}], "agv_count": 2}, "route": "robot_command"}, "lang": "ko", "prompt": "처리량 80 이상, 평균 대기 10초 이하, 충돌 0건이면 통과로 AGV 2대 돌려줘. 간단히"}
+{"category": "compare_runs", "completion": {"action": null, "arguments": {}, "route": "compare_runs"}, "lang": "ko", "prompt": "두 실행의 차이를 알려줘. 간단히"}
+{"category": "optimize_agvs", "completion": {"action": null, "arguments": {}, "route": "optimize_agvs"}, "lang": "en", "prompt": "How many AGVs should I use for the best KPI? now"}
+{"category": "kpi_acceptance", "completion": {"action": "start_simulation", "arguments": {"acceptance": [{"comparator": ">=", "metric": "throughput", "threshold": 65}, {"comparator": "<=", "metric": "avg_wait_sec", "threshold": 15}, {"comparator": "==", "metric": "collision_count", "threshold": 0}], "agv_count": 3}, "route": "robot_command"}, "lang": "ko", "prompt": "처리량 65 이상, 평균 대기 15초 이하, 충돌 0건이면 통과로 AGV 3대 돌려줘. 데모용으로"}
+{"category": "cancel_command", "completion": {"action": "cancel_command", "arguments": {"command_id": "run-88"}, "route": "robot_command"}, "lang": "en", "prompt": "Abort command id run-88. right away"}
+{"category": "process_status", "completion": {"action": null, "arguments": {}, "route": "process_status"}, "lang": "en", "prompt": "Show me the current KPI snapshot. for me"}
+{"category": "cancel_command", "completion": {"action": "cancel_command", "arguments": {"command_id": "cmd-101"}, "route": "robot_command"}, "lang": "ko", "prompt": "명령 cmd-101 취소. 데모용으로"}
+{"category": "compare_runs", "completion": {"action": null, "arguments": {}, "route": "compare_runs"}, "lang": "en", "prompt": "Compare run A and run B. for me"}
+{"category": "process_status", "completion": {"action": null, "arguments": {}, "route": "process_status"}, "lang": "en", "prompt": "Tell me throughput and waiting time. now"}
+{"category": "move_to_station", "completion": {"action": "move_to_station", "arguments": {"station_id": 11}, "route": "robot_command"}, "lang": "en", "prompt": "Move the AGV to S11. this turn"}
+{"category": "simulation_status", "completion": {"action": null, "arguments": {}, "route": "simulation_status"}, "lang": "ko", "prompt": "라이브 시뮬레이션 상태 알려줘. 이번 턴에"}
+{"category": "no_action", "completion": {"action": null, "arguments": {}, "route": "no_action"}, "lang": "ko", "prompt": "농담 하나 해줘. 간단히"}
+{"category": "simulation_status", "completion": {"action": null, "arguments": {}, "route": "simulation_status"}, "lang": "ko", "prompt": "로봇들이 어디 있는지 보여줘. 부탁해"}
+{"category": "optimize_agvs", "completion": {"action": null, "arguments": {}, "route": "optimize_agvs"}, "lang": "ko", "prompt": "최적 운행 대수를 계산해줘. 지금"}
+{"category": "process_status", "completion": {"action": null, "arguments": {}, "route": "process_status"}, "lang": "en", "prompt": "Current process telemetry. right away"}
+{"category": "simulation_status", "completion": {"action": null, "arguments": {}, "route": "simulation_status"}, "lang": "ko", "prompt": "현재 AGV 위치 보여줘. 바로"}
+{"category": "move_to_station", "completion": {"action": "move_to_station", "arguments": {"station_id": 9}, "route": "robot_command"}, "lang": "en", "prompt": "Send the robot to workstation 9. please"}
+{"category": "station_action_query", "completion": {"action": null, "arguments": {}, "route": "station_action_query"}, "lang": "ko", "prompt": "5번 작업대는 어떤 작업을 할 수 있어? 지금"}
+{"category": "station_action_query", "completion": {"action": null, "arguments": {}, "route": "station_action_query"}, "lang": "ko", "prompt": "스테이션 5는 어떤 작업을 할 수 있어? 지금"}
+{"category": "no_action", "completion": {"action": null, "arguments": {}, "route": "no_action"}, "lang": "en", "prompt": "What can you do? now"}
+{"category": "no_action", "completion": {"action": null, "arguments": {}, "route": "no_action"}, "lang": "ko", "prompt": "고마워요."}
+{"category": "no_action", "completion": {"action": null, "arguments": {}, "route": "no_action"}, "lang": "en", "prompt": "Hi there. for me"}
+{"category": "kpi_acceptance", "completion": {"action": "start_simulation", "arguments": {"acceptance": [{"comparator": ">=", "metric": "throughput", "threshold": 65}, {"comparator": "<=", "metric": "avg_wait_sec", "threshold": 15}, {"comparator": "==", "metric": "collision_count", "threshold": 0}], "agv_count": 5}, "route": "robot_command"}, "lang": "en", "prompt": "Start with 5 AGVs and pass only if throughput is at least 65, average wait is under 15 seconds, and collisions are zero. now"}
+{"category": "move_to_station", "completion": {"action": "move_to_station", "arguments": {"station_id": 12}, "route": "robot_command"}, "lang": "ko", "prompt": "AGV 12번 작업대으로 보내."}
+{"category": "process_status", "completion": {"action": null, "arguments": {}, "route": "process_status"}, "lang": "ko", "prompt": "현재 공정 텔레메트리 확인해줘. 데모용으로"}
+{"category": "process_status", "completion": {"action": null, "arguments": {}, "route": "process_status"}, "lang": "en", "prompt": "Show me the current KPI snapshot. this turn"}
+{"category": "stop_simulation", "completion": {"action": "stop_simulation", "arguments": {}, "route": "robot_command"}, "lang": "en", "prompt": "Shut it down. now"}
+{"category": "inspect_station", "completion": {"action": "inspect_station", "arguments": {"station_id": 7}, "route": "robot_command"}, "lang": "en", "prompt": "Examine station number 7. in the cell"}
+{"category": "compare_runs", "completion": {"action": null, "arguments": {}, "route": "compare_runs"}, "lang": "ko", "prompt": "두 실행의 차이를 알려줘. 바로"}
+{"category": "no_action", "completion": {"action": null, "arguments": {}, "route": "no_action"}, "lang": "ko", "prompt": "안녕하세요. 지금"}
+{"category": "move_to_station", "completion": {"action": "move_to_station", "arguments": {"station_id": 2}, "route": "robot_command"}, "lang": "ko", "prompt": "로봇을 스테이션 2으로 보내줘. 데모용으로"}
+{"category": "move_to_station", "completion": {"action": "move_to_station", "arguments": {"station_id": 1}, "route": "robot_command"}, "lang": "en", "prompt": "Drive to workstation 1. now"}
+{"category": "process_status", "completion": {"action": null, "arguments": {}, "route": "process_status"}, "lang": "ko", "prompt": "현재 공정 상태 알려줘. 데모용으로"}
+{"category": "process_status", "completion": {"action": null, "arguments": {}, "route": "process_status"}, "lang": "ko", "prompt": "처리량이랑 대기시간 알려줘. 데모용으로"}
+{"category": "start_with_speed", "completion": {"action": "start_simulation", "arguments": {"agv_count": 3, "speed_multiplier": 0.5}, "route": "robot_command"}, "lang": "en", "prompt": "Start 3 AGVs at 0.5x speed. for the demo"}
+{"category": "inspect_station", "completion": {"action": "inspect_station", "arguments": {"station_id": 2}, "route": "robot_command"}, "lang": "en", "prompt": "Look at station number 2. for me"}
+{"category": "run_station_task", "completion": {"action": "run_station_task", "arguments": {"priority": "high", "station_id": 4}, "route": "robot_command"}, "lang": "en", "prompt": "Work S4. High priority. in the cell"}
+{"category": "no_action", "completion": {"action": null, "arguments": {}, "route": "no_action"}, "lang": "en", "prompt": "Hi there. right away"}
+{"category": "process_status", "completion": {"action": null, "arguments": {}, "route": "process_status"}, "lang": "ko", "prompt": "지금 KPI 보여줘. 지금"}
+{"category": "station_action_query", "completion": {"action": null, "arguments": {}, "route": "station_action_query"}, "lang": "en", "prompt": "What can station 4 do? for the demo"}
+{"category": "run_station_task", "completion": {"action": "run_station_task", "arguments": {"priority": "high", "station_id": 10}, "route": "robot_command"}, "lang": "ko", "prompt": "10번 작업대 작업 실행해. 높은 우선순위로. 지금"}
+{"category": "no_action", "completion": {"action": null, "arguments": {}, "route": "no_action"}, "lang": "en", "prompt": "Thanks for your help. please"}
+{"category": "station_action_query", "completion": {"action": null, "arguments": {}, "route": "station_action_query"}, "lang": "en", "prompt": "Which actions are available for S3? for me"}
+{"category": "stop_simulation", "completion": {"action": "stop_simulation", "arguments": {}, "route": "robot_command"}, "lang": "ko", "prompt": "실행 멈춰. 간단히"}
+{"category": "optimize_agvs", "completion": {"action": null, "arguments": {}, "route": "optimize_agvs"}, "lang": "en", "prompt": "Recommend the AGV count that meets the target. right away"}
+{"category": "clarify", "completion": {"action": null, "arguments": {}, "route": "clarify"}, "lang": "en", "prompt": "Move the AGV. right away"}
+{"category": "stop_simulation", "completion": {"action": "stop_simulation", "arguments": {}, "route": "robot_command"}, "lang": "ko", "prompt": "실행 멈춰. 이번 턴에"}
+{"category": "compare_runs", "completion": {"action": null, "arguments": {}, "route": "compare_runs"}, "lang": "en", "prompt": "Which recent simulation was better? right away"}
+{"category": "station_action_query", "completion": {"action": null, "arguments": {}, "route": "station_action_query"}, "lang": "ko", "prompt": "스테이션 6에서 가능한 작업 알려줘. 바로"}
+{"category": "station_action_query", "completion": {"action": null, "arguments": {}, "route": "station_action_query"}, "lang": "en", "prompt": "Which actions are available for station 8? right away"}
+{"category": "run_station_task", "completion": {"action": "run_station_task", "arguments": {"station_id": 2}, "route": "robot_command"}, "lang": "ko", "prompt": "스테이션 2에서 공정 수행해. 지금"}
+{"category": "move_to_station", "completion": {"action": "move_to_station", "arguments": {"station_id": 7}, "route": "robot_command"}, "lang": "ko", "prompt": "AGV 7번 스테이션으로 보내."}
+{"category": "run_station_task", "completion": {"action": "run_station_task", "arguments": {"station_id": 3}, "route": "robot_command"}, "lang": "en", "prompt": "Work S3. for me"}
+{"category": "run_station_task", "completion": {"action": "run_station_task", "arguments": {"station_id": 4}, "route": "robot_command"}, "lang": "ko", "prompt": "4번 스테이션 작업 실행해. 부탁해"}
+{"category": "compare_runs", "completion": {"action": null, "arguments": {}, "route": "compare_runs"}, "lang": "ko", "prompt": "어떤 시뮬레이션이 더 나았어? 간단히"}
+{"category": "optimize_agvs", "completion": {"action": null, "arguments": {}, "route": "optimize_agvs"}, "lang": "ko", "prompt": "KPI가 제일 좋은 AGV 수 추천해줘. 바로"}
+{"category": "no_action", "completion": {"action": null, "arguments": {}, "route": "no_action"}, "lang": "ko", "prompt": "안녕하세요. 셀 기준으로"}
+{"category": "compare_runs", "completion": {"action": null, "arguments": {}, "route": "compare_runs"}, "lang": "ko", "prompt": "이전 실행과 최신 실행 비교해줘. 간단히"}
+{"category": "start_simulation", "completion": {"action": "start_simulation", "arguments": {"agv_count": 5}, "route": "robot_command"}, "lang": "en", "prompt": "Begin using 5 AGVs. this turn"}
+{"category": "run_station_task", "completion": {"action": "run_station_task", "arguments": {"station_id": 9}, "route": "robot_command"}, "lang": "en", "prompt": "Start the process at S9. this turn"}
+{"category": "process_status", "completion": {"action": null, "arguments": {}, "route": "process_status"}, "lang": "ko", "prompt": "현재 공정 텔레메트리 확인해줘."}
+{"category": "run_station_task", "completion": {"action": "run_station_task", "arguments": {"station_id": 7}, "route": "robot_command"}, "lang": "en", "prompt": "Run the task at station 7. now"}
+{"category": "optimize_agvs", "completion": {"action": null, "arguments": {}, "route": "optimize_agvs"}, "lang": "ko", "prompt": "최적 운행 대수를 계산해줘. 바로"}
+{"category": "move_to_station", "completion": {"action": "move_to_station", "arguments": {"station_id": 11}, "route": "robot_command"}, "lang": "en", "prompt": "Send the robot to station number 11. right away"}
+{"category": "no_action", "completion": {"action": null, "arguments": {}, "route": "no_action"}, "lang": "en", "prompt": "Thanks for your help. for the demo"}
+{"category": "clarify", "completion": {"action": null, "arguments": {}, "route": "clarify"}, "lang": "en", "prompt": "Cancel the command."}
+{"category": "resume_simulation", "completion": {"action": "resume_simulation", "arguments": {}, "route": "robot_command"}, "lang": "ko", "prompt": "시뮬레이션 재개. 간단히"}
+{"category": "resume_simulation", "completion": {"action": "resume_simulation", "arguments": {}, "route": "robot_command"}, "lang": "ko", "prompt": "다시 진행해. 지금"}
+{"category": "move_to_station", "completion": {"action": "move_to_station", "arguments": {"station_id": 8}, "route": "robot_command"}, "lang": "ko", "prompt": "스테이션 8으로 이동시켜. 이번 턴에"}
+{"category": "stop_simulation", "completion": {"action": "stop_simulation", "arguments": {}, "route": "robot_command"}, "lang": "en", "prompt": "Halt the run. for the demo"}
+{"category": "clarify", "completion": {"action": null, "arguments": {}, "route": "clarify"}, "lang": "en", "prompt": "Inspect the station."}
+{"category": "set_sim_speed", "completion": {"action": "set_sim_speed", "arguments": {"speed_multiplier": 1.5}, "route": "robot_command"}, "lang": "en", "prompt": "Set speed to 1.5x. please"}
+{"category": "run_station_task", "completion": {"action": "run_station_task", "arguments": {"station_id": 11}, "route": "robot_command"}, "lang": "ko", "prompt": "11번 스테이션 작업 실행해. 간단히"}
+{"category": "compare_runs", "completion": {"action": null, "arguments": {}, "route": "compare_runs"}, "lang": "en", "prompt": "Compare the last two runs. for me"}
+{"category": "optimize_agvs", "completion": {"action": null, "arguments": {}, "route": "optimize_agvs"}, "lang": "en", "prompt": "Find the best AGV count for collisions. please"}
+{"category": "move_to_station", "completion": {"action": "move_to_station", "arguments": {"station_id": 12}, "route": "robot_command"}, "lang": "ko", "prompt": "AGV 스테이션 12으로 보내. 셀 기준으로"}
+{"category": "cancel_command", "completion": {"action": "cancel_command", "arguments": {"command_id": "sim-77"}, "route": "robot_command"}, "lang": "ko", "prompt": "명령 sim-77 취소. 부탁해"}
+{"category": "process_status", "completion": {"action": null, "arguments": {}, "route": "process_status"}, "lang": "en", "prompt": "Show me the current KPI snapshot. for the demo"}
+{"category": "optimize_agvs", "completion": {"action": null, "arguments": {}, "route": "optimize_agvs"}, "lang": "ko", "prompt": "최적 AGV 대수 찾아줘. 이번 턴에"}
+{"category": "clarify", "completion": {"action": null, "arguments": {}, "route": "clarify"}, "lang": "en", "prompt": "Cancel the command. now"}
+{"category": "clarify", "completion": {"action": null, "arguments": {}, "route": "clarify"}, "lang": "ko", "prompt": "거기로 보내줘."}
+{"category": "process_status", "completion": {"action": null, "arguments": {}, "route": "process_status"}, "lang": "en", "prompt": "How is the cell doing right now? for the demo"}
+{"category": "kpi_acceptance", "completion": {"action": "start_simulation", "arguments": {"acceptance": [{"comparator": ">=", "metric": "throughput", "threshold": 70}, {"comparator": "<=", "metric": "avg_wait_sec", "threshold": 10}, {"comparator": "==", "metric": "collision_count", "threshold": 0}], "agv_count": 2}, "route": "robot_command"}, "lang": "en", "prompt": "Start with 2 AGVs and pass only if throughput is at least 70, average wait is under 10 seconds, and collisions are zero. now"}
+{"category": "clarify", "completion": {"action": null, "arguments": {}, "route": "clarify"}, "lang": "ko", "prompt": "스테이션 -1로 이동해. 바로"}
+{"category": "simulation_status", "completion": {"action": null, "arguments": {}, "route": "simulation_status"}, "lang": "en", "prompt": "Which AGVs are active right now?"}
+{"category": "cancel_command", "completion": {"action": "cancel_command", "arguments": {"command_id": "cmd-204"}, "route": "robot_command"}, "lang": "en", "prompt": "Stop job cmd-204. for me"}
+{"category": "run_station_task", "completion": {"action": "run_station_task", "arguments": {"station_id": 3}, "route": "robot_command"}, "lang": "ko", "prompt": "스테이션 3에서 공정 수행해. 바로"}
+{"category": "station_action_query", "completion": {"action": null, "arguments": {}, "route": "station_action_query"}, "lang": "en", "prompt": "What can workstation 10 do? in the cell"}
+{"category": "simulation_status", "completion": {"action": null, "arguments": {}, "route": "simulation_status"}, "lang": "en", "prompt": "Give me the live simulation status. please"}
+{"category": "resume_simulation", "completion": {"action": "resume_simulation", "arguments": {}, "route": "robot_command"}, "lang": "ko", "prompt": "다시 진행해. 이번 턴에"}
+{"category": "resume_simulation", "completion": {"action": "resume_simulation", "arguments": {}, "route": "robot_command"}, "lang": "en", "prompt": "Pick it back up. for me"}
+{"category": "kpi_acceptance", "completion": {"action": "start_simulation", "arguments": {"acceptance": [{"comparator": ">=", "metric": "throughput", "threshold": 60}, {"comparator": "<=", "metric": "avg_wait_sec", "threshold": 12}, {"comparator": "==", "metric": "collision_count", "threshold": 0}], "agv_count": 2}, "route": "robot_command"}, "lang": "en", "prompt": "Start with 2 AGVs and pass only if throughput is at least 60, average wait is under 12 seconds, and collisions are zero."}
+{"category": "process_status", "completion": {"action": null, "arguments": {}, "route": "process_status"}, "lang": "en", "prompt": "How is the cell doing right now? right away"}
+{"category": "process_status", "completion": {"action": null, "arguments": {}, "route": "process_status"}, "lang": "en", "prompt": "How is the cell doing right now? for me"}
+{"category": "run_station_task", "completion": {"action": "run_station_task", "arguments": {"station_id": 11}, "route": "robot_command"}, "lang": "en", "prompt": "Start the process at S11. right away"}
+{"category": "start_with_speed", "completion": {"action": "start_simulation", "arguments": {"agv_count": 2, "speed_multiplier": 1.5}, "route": "robot_command"}, "lang": "ko", "prompt": "1.5배속 2대 시뮬레이션 돌려줘. 이번 턴에"}
+{"category": "set_sim_speed", "completion": {"action": "set_sim_speed", "arguments": {"speed_multiplier": 1.5}, "route": "robot_command"}, "lang": "ko", "prompt": "1.5배속으로 바꿔. 지금"}
+{"category": "resume_simulation", "completion": {"action": "resume_simulation", "arguments": {}, "route": "robot_command"}, "lang": "en", "prompt": "Pick it back up."}
+{"category": "station_action_query", "completion": {"action": null, "arguments": {}, "route": "station_action_query"}, "lang": "ko", "prompt": "스테이션 7에서 가능한 작업 알려줘. 셀 기준으로"}
+{"category": "set_sim_speed", "completion": {"action": "set_sim_speed", "arguments": {"speed_multiplier": 1.0}, "route": "robot_command"}, "lang": "en", "prompt": "Set speed to 1.0x. for me"}
+{"category": "kpi_acceptance", "completion": {"action": "start_simulation", "arguments": {"acceptance": [{"comparator": ">=", "metric": "throughput", "threshold": 70}, {"comparator": "<=", "metric": "avg_wait_sec", "threshold": 10}, {"comparator": "==", "metric": "collision_count", "threshold": 0}], "agv_count": 5}, "route": "robot_command"}, "lang": "en", "prompt": "Start with 5 AGVs and pass only if throughput is at least 70, average wait is under 10 seconds, and collisions are zero. now"}
+{"category": "inspect_station", "completion": {"action": "inspect_station", "arguments": {"station_id": 4}, "route": "robot_command"}, "lang": "en", "prompt": "Examine workstation 4."}
+{"category": "process_status", "completion": {"action": null, "arguments": {}, "route": "process_status"}, "lang": "en", "prompt": "Tell me throughput and waiting time."}
+{"category": "run_station_task", "completion": {"action": "run_station_task", "arguments": {"priority": "high", "station_id": 6}, "route": "robot_command"}, "lang": "en", "prompt": "Work station number 6. High priority. in the cell"}
+{"category": "no_action", "completion": {"action": null, "arguments": {}, "route": "no_action"}, "lang": "ko", "prompt": "오늘 날씨 어때? 간단히"}
+{"category": "process_status", "completion": {"action": null, "arguments": {}, "route": "process_status"}, "lang": "en", "prompt": "How is the cell doing right now? in the cell"}
+{"category": "inspect_station", "completion": {"action": "inspect_station", "arguments": {"station_id": 4}, "route": "robot_command"}, "lang": "ko", "prompt": "스테이션 4 상태 봐줘. 간단히"}
+{"category": "clarify", "completion": {"action": null, "arguments": {}, "route": "clarify"}, "lang": "ko", "prompt": "AGV 다섯 대로 시작해. 이번 턴에"}
+{"category": "inspect_station", "completion": {"action": "inspect_station", "arguments": {"station_id": 5}, "route": "robot_command"}, "lang": "en", "prompt": "Look at station 5. this turn"}

@@ -1,0 +1,708 @@
+openapi: 3.1.0
+info:
+  title: PAI Chatbot Backend
+  description: Smart farm digital-twin chatbot backend demo service.
+  version: 0.1.0
+paths:
+  /health:
+    get:
+      tags:
+      - system
+      summary: Health
+      operationId: health_health_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                additionalProperties:
+                  type: string
+                type: object
+                title: Response Health Health Get
+  /dashboard/overlay:
+    get:
+      tags:
+      - dashboard
+      summary: Dashboard Overlay
+      operationId: dashboard_overlay_dashboard_overlay_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OverlayDashboardResponse'
+  /unreal/zones/{zone_id}/focus:
+    post:
+      tags:
+      - unreal
+      summary: Focus Unreal Zone
+      operationId: focus_unreal_zone_unreal_zones__zone_id__focus_post
+      parameters:
+      - name: zone_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Zone Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UnrealZoneFocusRequest'
+      responses:
+        '202':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnrealZoneFocusResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /chat/sessions:
+    post:
+      tags:
+      - chat
+      summary: Create Session
+      operationId: create_session_chat_sessions_post
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateSessionRequest'
+      responses:
+        '201':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SessionResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    get:
+      tags:
+      - chat
+      summary: List Sessions
+      operationId: list_sessions_chat_sessions_get
+      parameters:
+      - name: user_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: User Id
+      - name: unreal_client_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Unreal Client Id
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          default: 20
+          title: Limit
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SessionListResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /chat/sessions/{session_id}/messages:
+    get:
+      tags:
+      - chat
+      summary: List Session Messages
+      operationId: list_session_messages_chat_sessions__session_id__messages_get
+      parameters:
+      - name: session_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Session Id
+      - name: limit
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Limit
+      - name: max_content_chars
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Max Content Chars
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SessionMessagesResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /chat/messages:
+    post:
+      tags:
+      - chat
+      summary: Post Chat Message
+      operationId: post_chat_message_chat_messages_post
+      parameters:
+      - name: x-correlation-id
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: X-Correlation-Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChatRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChatResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /events/robot-command:
+    post:
+      tags:
+      - events
+      summary: Receive Robot Event
+      operationId: receive_robot_event_events_robot_command_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CompletionEventRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChatResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+components:
+  schemas:
+    ChatMessage:
+      properties:
+        message_id:
+          type: string
+          title: Message Id
+        session_id:
+          type: string
+          title: Session Id
+        role:
+          $ref: '#/components/schemas/MessageRole'
+        content:
+          type: string
+          title: Content
+        correlation_id:
+          type: string
+          title: Correlation Id
+        created_at:
+          type: string
+          format: date-time
+          title: Created At
+      type: object
+      required:
+      - session_id
+      - role
+      - content
+      - correlation_id
+      title: ChatMessage
+    ChatRequest:
+      properties:
+        session_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Session Id
+        message:
+          type: string
+          maxLength: 2000
+          minLength: 1
+          title: Message
+        user_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: User Id
+        unreal_client_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Unreal Client Id
+        idempotency_key:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Idempotency Key
+      type: object
+      required:
+      - message
+      title: ChatRequest
+    ChatResponse:
+      properties:
+        session_id:
+          type: string
+          title: Session Id
+        correlation_id:
+          type: string
+          title: Correlation Id
+        message:
+          $ref: '#/components/schemas/ChatMessage'
+        command_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Command Id
+        status:
+          anyOf:
+          - $ref: '#/components/schemas/CommandStatus'
+          - type: 'null'
+        events:
+          items:
+            $ref: '#/components/schemas/DomainEvent'
+          type: array
+          title: Events
+      type: object
+      required:
+      - session_id
+      - correlation_id
+      - message
+      title: ChatResponse
+    CommandStatus:
+      type: string
+      enum:
+      - pending
+      - accepted
+      - running
+      - completed
+      - failed
+      - pending_confirmation
+      title: CommandStatus
+    CompletionEventRequest:
+      properties:
+        event_type:
+          type: string
+          title: Event Type
+        correlation_id:
+          type: string
+          title: Correlation Id
+        session_id:
+          type: string
+          title: Session Id
+        command_id:
+          type: string
+          title: Command Id
+        payload:
+          additionalProperties: true
+          type: object
+          title: Payload
+      type: object
+      required:
+      - event_type
+      - correlation_id
+      - session_id
+      - command_id
+      title: CompletionEventRequest
+    CreateSessionRequest:
+      properties:
+        user_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: User Id
+        unreal_client_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Unreal Client Id
+      type: object
+      title: CreateSessionRequest
+    DomainEvent:
+      properties:
+        event_id:
+          type: string
+          title: Event Id
+        event_type:
+          type: string
+          title: Event Type
+        correlation_id:
+          type: string
+          title: Correlation Id
+        session_id:
+          type: string
+          title: Session Id
+        command_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Command Id
+        occurred_at:
+          type: string
+          format: date-time
+          title: Occurred At
+        payload:
+          additionalProperties: true
+          type: object
+          title: Payload
+      type: object
+      required:
+      - event_type
+      - correlation_id
+      - session_id
+      title: DomainEvent
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    MessageRole:
+      type: string
+      enum:
+      - user
+      - assistant
+      - system
+      title: MessageRole
+    OverlayDashboardResponse:
+      properties:
+        greenhouse_id:
+          type: string
+          title: Greenhouse Id
+        zones:
+          items:
+            $ref: '#/components/schemas/OverlayZone'
+          type: array
+          title: Zones
+        metrics:
+          items:
+            $ref: '#/components/schemas/OverlayMetric'
+          type: array
+          title: Metrics
+        workloads:
+          items:
+            $ref: '#/components/schemas/OverlayWorkload'
+          type: array
+          title: Workloads
+        command_feed:
+          items:
+            type: string
+          type: array
+          title: Command Feed
+        generated_at:
+          type: string
+          title: Generated At
+      type: object
+      required:
+      - greenhouse_id
+      - zones
+      - metrics
+      - workloads
+      - command_feed
+      - generated_at
+      title: OverlayDashboardResponse
+    OverlayMetric:
+      properties:
+        id:
+          type: string
+          title: Id
+        title:
+          type: string
+          title: Title
+        subtitle:
+          type: string
+          title: Subtitle
+        value:
+          type: number
+          title: Value
+        unit:
+          type: string
+          title: Unit
+        trend_percent:
+          type: number
+          title: Trend Percent
+        series:
+          items:
+            type: number
+          type: array
+          title: Series
+      type: object
+      required:
+      - id
+      - title
+      - subtitle
+      - value
+      - unit
+      - trend_percent
+      title: OverlayMetric
+    OverlayWorkload:
+      properties:
+        id:
+          type: string
+          title: Id
+        title:
+          type: string
+          title: Title
+        subtitle:
+          type: string
+          title: Subtitle
+        value:
+          type: number
+          title: Value
+        unit:
+          type: string
+          title: Unit
+        status:
+          type: string
+          title: Status
+        active:
+          type: boolean
+          title: Active
+          default: false
+      type: object
+      required:
+      - id
+      - title
+      - subtitle
+      - value
+      - unit
+      - status
+      title: OverlayWorkload
+    OverlayZone:
+      properties:
+        id:
+          type: string
+          title: Id
+        name:
+          type: string
+          title: Name
+        subtitle:
+          type: string
+          title: Subtitle
+        active:
+          type: boolean
+          title: Active
+          default: false
+      type: object
+      required:
+      - id
+      - name
+      - subtitle
+      title: OverlayZone
+    SessionListResponse:
+      properties:
+        sessions:
+          items:
+            $ref: '#/components/schemas/SessionSummaryResponse'
+          type: array
+          title: Sessions
+      type: object
+      required:
+      - sessions
+      title: SessionListResponse
+    SessionMessagesResponse:
+      properties:
+        session_id:
+          type: string
+          title: Session Id
+        messages:
+          items:
+            $ref: '#/components/schemas/ChatMessage'
+          type: array
+          title: Messages
+      type: object
+      required:
+      - session_id
+      - messages
+      title: SessionMessagesResponse
+    SessionResponse:
+      properties:
+        session_id:
+          type: string
+          title: Session Id
+        user_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: User Id
+        unreal_client_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Unreal Client Id
+        created_at:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Created At
+      type: object
+      required:
+      - session_id
+      - user_id
+      - unreal_client_id
+      title: SessionResponse
+    SessionSummaryResponse:
+      properties:
+        session_id:
+          type: string
+          title: Session Id
+        user_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: User Id
+        unreal_client_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Unreal Client Id
+        created_at:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Created At
+        message_count:
+          type: integer
+          title: Message Count
+          default: 0
+        last_message_at:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Last Message At
+        last_message_preview:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Last Message Preview
+        first_user_message_preview:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: First User Message Preview
+      type: object
+      required:
+      - session_id
+      - user_id
+      - unreal_client_id
+      title: SessionSummaryResponse
+    UnrealZoneFocusRequest:
+      properties:
+        unreal_client_id:
+          type: string
+          title: Unreal Client Id
+          default: ue-webview
+        idempotency_key:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Idempotency Key
+      type: object
+      title: UnrealZoneFocusRequest
+    UnrealZoneFocusResponse:
+      properties:
+        status:
+          type: string
+          title: Status
+        zone_id:
+          type: string
+          title: Zone Id
+        unreal_client_id:
+          type: string
+          title: Unreal Client Id
+        command_id:
+          type: string
+          title: Command Id
+        api_path:
+          type: string
+          title: Api Path
+        issued_at:
+          type: string
+          title: Issued At
+      type: object
+      required:
+      - status
+      - zone_id
+      - unreal_client_id
+      - command_id
+      - api_path
+      - issued_at
+      title: UnrealZoneFocusResponse
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError

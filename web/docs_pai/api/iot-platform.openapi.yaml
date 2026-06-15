@@ -1,0 +1,130 @@
+openapi: 3.1.0
+info:
+  title: PAI IoT Platform Demo
+  version: 0.1.0
+  description: Robot, sensor, actuator, and digital-twin event mock API.
+paths:
+  /health:
+    get:
+      tags: [system]
+      summary: Health check
+      responses:
+        "200":
+          description: Service is healthy.
+  /robots:
+    get:
+      tags: [robots]
+      summary: List demo robots.
+      responses:
+        "200":
+          description: Robot snapshots.
+  /robots/{robot_id}:
+    get:
+      tags: [robots]
+      summary: Get one robot state.
+      parameters:
+        - in: path
+          name: robot_id
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Robot state.
+        "404":
+          description: Unknown robot.
+  /robots/commands:
+    post:
+      tags: [robots]
+      summary: Accept a robot command and emit demo progress events.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            example:
+              command_id: cmd_001
+              session_id: session_001
+              command_name: harvest_bed
+              correlation_id: corr_001
+              idempotency_key: ue-req-001
+              parameters:
+                bed_id: 2
+      responses:
+        "202":
+          description: Command accepted. Reused idempotency keys return the original command.
+  /robots/commands/{command_id}:
+    get:
+      tags: [robots]
+      summary: Get robot command status.
+      parameters:
+        - in: path
+          name: command_id
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Robot command status.
+        "404":
+          description: Unknown command.
+  /robots/commands/{command_id}/simulate-failure:
+    post:
+      tags: [robots]
+      summary: Emit a demo robot command failure event.
+      parameters:
+        - in: path
+          name: command_id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            example:
+              reason: path_blocked
+      responses:
+        "200":
+          description: Command marked as failed and failure event emitted.
+        "404":
+          description: Unknown command.
+  /sensors/snapshot:
+    get:
+      tags: [sensors]
+      summary: Return current mocked sensor snapshot.
+      responses:
+        "200":
+          description: Current sensor values.
+  /actuators:
+    get:
+      tags: [actuators]
+      summary: List actuator states.
+      responses:
+        "200":
+          description: Actuator snapshots.
+  /actuators/{actuator_id}:
+    patch:
+      tags: [actuators]
+      summary: Set a demo actuator status.
+      parameters:
+        - in: path
+          name: actuator_id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            example:
+              status: off
+      responses:
+        "200":
+          description: Updated actuator.
+  /digital-twin/events:
+    get:
+      tags: [events]
+      summary: List emitted digital-twin events for polling clients.
+      responses:
+        "200":
+          description: Robot and actuator events.

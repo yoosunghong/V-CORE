@@ -1,0 +1,10 @@
+Event:
+$event_context
+
+Robot command:
+$command_context
+
+AI evaluation draft (combine into the narrative; "none" means no run metrics to evaluate):
+$evaluation_context
+
+Write the final report.

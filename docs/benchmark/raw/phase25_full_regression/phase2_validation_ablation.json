@@ -1,0 +1,504 @@
+{
+  "generated_at_unix": 1781165445.6866875,
+  "config": {
+    "case_count": 133,
+    "repeats": 5,
+    "seed": 1234,
+    "model": "qwen3.5:2b",
+    "providers": [
+      "ollama"
+    ],
+    "layers": [
+      "on"
+    ],
+    "enable_normalization": false
+  },
+  "cells": {
+    "A2": {
+      "provider": "ollama",
+      "layer": "on",
+      "aggregate": {
+        "cell": "A2",
+        "n_results": 665,
+        "rates": {
+          "task_success": {
+            "successes": 513,
+            "total": 665,
+            "rate": 0.7714285714285715,
+            "ci_low": 0.7380075242927898,
+            "ci_high": 0.801731630688001
+          },
+          "tool_correct": {
+            "successes": 515,
+            "total": 665,
+            "rate": 0.7744360902255639,
+            "ci_low": 0.7411452318859798,
+            "ci_high": 0.8045744123466757
+          },
+          "args_correct": {
+            "successes": 513,
+            "total": 665,
+            "rate": 0.7714285714285715,
+            "ci_low": 0.7380075242927898,
+            "ci_high": 0.801731630688001
+          },
+          "json_parse_success": {
+            "successes": 665,
+            "total": 665,
+            "rate": 1.0,
+            "ci_low": 0.9942563381225092,
+            "ci_high": 1.0
+          },
+          "schema_validation_success": {
+            "successes": 622,
+            "total": 665,
+            "rate": 0.9353383458646617,
+            "ci_low": 0.9140328075012316,
+            "ci_high": 0.9516430117061863
+          },
+          "repair_retry": {
+            "successes": 49,
+            "total": 665,
+            "rate": 0.07368421052631578,
+            "ci_low": 0.056182173265642885,
+            "ci_high": 0.09608347528253354
+          },
+          "rule_based_fallback": {
+            "successes": 10,
+            "total": 665,
+            "rate": 0.015037593984962405,
+            "ci_low": 0.008188178183221448,
+            "ci_high": 0.02745792995359301
+          },
+          "clarification_appropriate": {
+            "successes": 134,
+            "total": 230,
+            "rate": 0.5826086956521739,
+            "ci_low": 0.5180314426453174,
+            "ci_high": 0.6444717218899918
+          }
+        },
+        "diagnostics": {
+          "fallback_correctness": {
+            "successes": 0,
+            "total": 10,
+            "rate": 0.0,
+            "ci_low": 0.0,
+            "ci_high": 0.2775401687666166
+          },
+          "repair_success": {
+            "successes": 33,
+            "total": 49,
+            "rate": 0.673469387755102,
+            "ci_low": 0.5337894368740628,
+            "ci_high": 0.7879267867073578
+          }
+        },
+        "latency_ms": {
+          "mean": 2123.473,
+          "p50": 1734.242,
+          "p95": 3499.879,
+          "p99": 9629.181,
+          "mean_with_retry": 3063.232,
+          "mean_without_retry": 2048.719
+        },
+        "per_category": {
+          "positive_invocation": {
+            "task_success": {
+              "successes": 65,
+              "total": 70,
+              "rate": 0.9285714285714286,
+              "ci_low": 0.8434438687669077,
+              "ci_high": 0.9691062384897065
+            },
+            "tool_correct": {
+              "successes": 65,
+              "total": 70,
+              "rate": 0.9285714285714286,
+              "ci_low": 0.8434438687669077,
+              "ci_high": 0.9691062384897065
+            },
+            "args_correct": {
+              "successes": 65,
+              "total": 70,
+              "rate": 0.9285714285714286,
+              "ci_low": 0.8434438687669077,
+              "ci_high": 0.9691062384897065
+            }
+          },
+          "negative_control": {
+            "task_success": {
+              "successes": 47,
+              "total": 70,
+              "rate": 0.6714285714285714,
+              "ci_low": 0.5550071611698237,
+              "ci_high": 0.7700128817328218
+            },
+            "tool_correct": {
+              "successes": 47,
+              "total": 70,
+              "rate": 0.6714285714285714,
+              "ci_low": 0.5550071611698237,
+              "ci_high": 0.7700128817328218
+            },
+            "args_correct": {
+              "successes": 47,
+              "total": 70,
+              "rate": 0.6714285714285714,
+              "ci_low": 0.5550071611698237,
+              "ci_high": 0.7700128817328218
+            }
+          },
+          "ambiguous": {
+            "task_success": {
+              "successes": 32,
+              "total": 50,
+              "rate": 0.64,
+              "ci_low": 0.5014076201030195,
+              "ci_high": 0.7586143703281711
+            },
+            "tool_correct": {
+              "successes": 32,
+              "total": 50,
+              "rate": 0.64,
+              "ci_low": 0.5014076201030195,
+              "ci_high": 0.7586143703281711
+            },
+            "args_correct": {
+              "successes": 32,
+              "total": 50,
+              "rate": 0.64,
+              "ci_low": 0.5014076201030195,
+              "ci_high": 0.7586143703281711
+            }
+          },
+          "parameter_extraction": {
+            "task_success": {
+              "successes": 55,
+              "total": 55,
+              "rate": 1.0,
+              "ci_low": 0.9347128562105721,
+              "ci_high": 0.9999999999999999
+            },
+            "tool_correct": {
+              "successes": 55,
+              "total": 55,
+              "rate": 1.0,
+              "ci_low": 0.9347128562105721,
+              "ci_high": 0.9999999999999999
+            },
+            "args_correct": {
+              "successes": 55,
+              "total": 55,
+              "rate": 1.0,
+              "ci_low": 0.9347128562105721,
+              "ci_high": 0.9999999999999999
+            }
+          },
+          "multi_parameter": {
+            "task_success": {
+              "successes": 50,
+              "total": 50,
+              "rate": 1.0,
+              "ci_low": 0.9286499658256813,
+              "ci_high": 1.0
+            },
+            "tool_correct": {
+              "successes": 50,
+              "total": 50,
+              "rate": 1.0,
+              "ci_low": 0.9286499658256813,
+              "ci_high": 1.0
+            },
+            "args_correct": {
+              "successes": 50,
+              "total": 50,
+              "rate": 1.0,
+              "ci_low": 0.9286499658256813,
+              "ci_high": 1.0
+            }
+          },
+          "missing_parameter": {
+            "task_success": {
+              "successes": 25,
+              "total": 60,
+              "rate": 0.4166666666666667,
+              "ci_low": 0.30064086487871833,
+              "ci_high": 0.5427214568676039
+            },
+            "tool_correct": {
+              "successes": 25,
+              "total": 60,
+              "rate": 0.4166666666666667,
+              "ci_low": 0.30064086487871833,
+              "ci_high": 0.5427214568676039
+            },
+            "args_correct": {
+              "successes": 25,
+              "total": 60,
+              "rate": 0.4166666666666667,
+              "ci_low": 0.30064086487871833,
+              "ci_high": 0.5427214568676039
+            }
+          },
+          "long_request": {
+            "task_success": {
+              "successes": 50,
+              "total": 50,
+              "rate": 1.0,
+              "ci_low": 0.9286499658256813,
+              "ci_high": 1.0
+            },
+            "tool_correct": {
+              "successes": 50,
+              "total": 50,
+              "rate": 1.0,
+              "ci_low": 0.9286499658256813,
+              "ci_high": 1.0
+            },
+            "args_correct": {
+              "successes": 50,
+              "total": 50,
+              "rate": 1.0,
+              "ci_low": 0.9286499658256813,
+              "ci_high": 1.0
+            }
+          },
+          "kpi_acceptance": {
+            "task_success": {
+              "successes": 47,
+              "total": 50,
+              "rate": 0.94,
+              "ci_low": 0.8378265662912299,
+              "ci_high": 0.9793854036353695
+            },
+            "tool_correct": {
+              "successes": 49,
+              "total": 50,
+              "rate": 0.98,
+              "ci_low": 0.8950431352816304,
+              "ci_high": 0.9964608319110235
+            },
+            "args_correct": {
+              "successes": 47,
+              "total": 50,
+              "rate": 0.94,
+              "ci_low": 0.8378265662912299,
+              "ci_high": 0.9793854036353695
+            }
+          },
+          "invalid_parameter": {
+            "task_success": {
+              "successes": 30,
+              "total": 50,
+              "rate": 0.6,
+              "ci_low": 0.4618118910275937,
+              "ci_high": 0.7239181021375425
+            },
+            "tool_correct": {
+              "successes": 30,
+              "total": 50,
+              "rate": 0.6,
+              "ci_low": 0.4618118910275937,
+              "ci_high": 0.7239181021375425
+            },
+            "args_correct": {
+              "successes": 30,
+              "total": 50,
+              "rate": 0.6,
+              "ci_low": 0.4618118910275937,
+              "ci_high": 0.7239181021375425
+            }
+          },
+          "disambiguation": {
+            "task_success": {
+              "successes": 38,
+              "total": 60,
+              "rate": 0.6333333333333333,
+              "ci_low": 0.5068276736679673,
+              "ci_high": 0.7437926115379172
+            },
+            "tool_correct": {
+              "successes": 38,
+              "total": 60,
+              "rate": 0.6333333333333333,
+              "ci_low": 0.5068276736679673,
+              "ci_high": 0.7437926115379172
+            },
+            "args_correct": {
+              "successes": 38,
+              "total": 60,
+              "rate": 0.6333333333333333,
+              "ci_low": 0.5068276736679673,
+              "ci_high": 0.7437926115379172
+            }
+          },
+          "sequential": {
+            "task_success": {
+              "successes": 45,
+              "total": 50,
+              "rate": 0.9,
+              "ci_low": 0.7863950966521162,
+              "ci_high": 0.956524876008429
+            },
+            "tool_correct": {
+              "successes": 45,
+              "total": 50,
+              "rate": 0.9,
+              "ci_low": 0.7863950966521162,
+              "ci_high": 0.956524876008429
+            },
+            "args_correct": {
+              "successes": 45,
+              "total": 50,
+              "rate": 0.9,
+              "ci_low": 0.7863950966521162,
+              "ci_high": 0.956524876008429
+            }
+          },
+          "state_dependent": {
+            "task_success": {
+              "successes": 29,
+              "total": 50,
+              "rate": 0.58,
+              "ci_low": 0.4423319668777783,
+              "ci_high": 0.7062520276543307
+            },
+            "tool_correct": {
+              "successes": 29,
+              "total": 50,
+              "rate": 0.58,
+              "ci_low": 0.4423319668777783,
+              "ci_high": 0.7062520276543307
+            },
+            "args_correct": {
+              "successes": 29,
+              "total": 50,
+              "rate": 0.58,
+              "ci_low": 0.4423319668777783,
+              "ci_high": 0.7062520276543307
+            }
+          }
+        },
+        "per_lang": {
+          "en": {
+            "successes": 289,
+            "total": 365,
+            "rate": 0.7917808219178082,
+            "ci_low": 0.7471925283353491,
+            "ci_high": 0.830291139450497
+          },
+          "ko": {
+            "successes": 224,
+            "total": 300,
+            "rate": 0.7466666666666667,
+            "ci_low": 0.6945448785767366,
+            "ci_high": 0.7925510292910473
+          }
+        }
+      },
+      "gallery": [
+        {
+          "case_id": "ambiguous_en_004",
+          "category": "ambiguous",
+          "lang": "en",
+          "prompt": "Start it.",
+          "expected_tool": null,
+          "actual_tool": "start_simulation",
+          "arguments": {
+            "agv_count": 10
+          },
+          "output_path": "json_content",
+          "error": null
+        },
+        {
+          "case_id": "ambiguous_ko_009",
+          "category": "ambiguous",
+          "lang": "ko",
+          "prompt": "알아서 해줘.",
+          "expected_tool": null,
+          "actual_tool": "inspect_station",
+          "arguments": {
+            "station_id": 1
+          },
+          "output_path": "json_content",
+          "error": null
+        },
+        {
+          "case_id": "invalid_parameter_en_003",
+          "category": "invalid_parameter",
+          "lang": "en",
+          "prompt": "Set the speed to -2x.",
+          "expected_tool": null,
+          "actual_tool": "set_sim_speed",
+          "arguments": {
+            "speed_multiplier": 2.0
+          },
+          "output_path": "rule_based_fallback",
+          "error": null
+        },
+        {
+          "case_id": "state_dependent_en_004",
+          "category": "state_dependent",
+          "lang": "en",
+          "prompt": "Pick it back up where we left off.",
+          "expected_tool": "resume_simulation",
+          "actual_tool": null,
+          "arguments": null,
+          "output_path": "json_content",
+          "error": null
+        },
+        {
+          "case_id": "ambiguous_ko_007",
+          "category": "ambiguous",
+          "lang": "ko",
+          "prompt": "저거 처리해줘.",
+          "expected_tool": null,
+          "actual_tool": "inspect_station",
+          "arguments": {
+            "station_id": 1
+          },
+          "output_path": "json_content",
+          "error": null
+        },
+        {
+          "case_id": "positive_invocation_ko_010",
+          "category": "positive_invocation",
+          "lang": "ko",
+          "prompt": "시뮬레이션 재개해줘.",
+          "expected_tool": "resume_simulation",
+          "actual_tool": "pause_simulation",
+          "arguments": {},
+          "output_path": "json_content",
+          "error": null
+        },
+        {
+          "case_id": "invalid_parameter_ko_008",
+          "category": "invalid_parameter",
+          "lang": "ko",
+          "prompt": "AGV '다섯'대로 시작해.",
+          "expected_tool": null,
+          "actual_tool": "move_to_station",
+          "arguments": {
+            "station_id": 5
+          },
+          "output_path": "json_content",
+          "error": null
+        },
+        {
+          "case_id": "missing_parameter_en_004",
+          "category": "missing_parameter",
+          "lang": "en",
+          "prompt": "Inspect the station.",
+          "expected_tool": null,
+          "actual_tool": "inspect_station",
+          "arguments": {
+            "station_id": 1
+          },
+          "output_path": "json_content",
+          "error": null
+        }
+      ]
+    }
+  }
+}

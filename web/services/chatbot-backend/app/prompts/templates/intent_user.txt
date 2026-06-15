@@ -1,0 +1,4 @@
+User message:
+$user_message
+
+Classify the intent now.

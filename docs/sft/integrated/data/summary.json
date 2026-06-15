@@ -1,0 +1,51 @@
+{
+  "seed": 20260615,
+  "total": 748,
+  "splits": {
+    "train": 498,
+    "val": 84,
+    "test": 166
+  },
+  "by_category": {
+    "cancel_command": 27,
+    "clarify": 63,
+    "compare_runs": 45,
+    "inspect_station": 54,
+    "kpi_acceptance": 54,
+    "move_to_station": 63,
+    "no_action": 41,
+    "optimize_agvs": 54,
+    "pause_simulation": 16,
+    "process_status": 68,
+    "resume_simulation": 24,
+    "run_station_task": 63,
+    "set_sim_speed": 21,
+    "simulation_status": 54,
+    "start_simulation": 20,
+    "start_with_speed": 9,
+    "station_action_query": 54,
+    "stop_simulation": 18
+  },
+  "by_route": {
+    "clarify": 63,
+    "compare_runs": 45,
+    "no_action": 41,
+    "optimize_agvs": 54,
+    "process_status": 68,
+    "robot_command": 369,
+    "simulation_status": 54,
+    "station_action_query": 54
+  },
+  "by_action": {
+    "cancel_command": 27,
+    "inspect_station": 54,
+    "move_to_station": 63,
+    "null": 379,
+    "pause_simulation": 16,
+    "resume_simulation": 24,
+    "run_station_task": 63,
+    "set_sim_speed": 21,
+    "start_simulation": 83,
+    "stop_simulation": 18
+  }
+}

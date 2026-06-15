@@ -1,0 +1,14 @@
+[
+  {
+    "actuator_id": "fan_zone_a",
+    "greenhouse_id": "greenhouse_demo",
+    "actuator_type": "fan",
+    "status": "auto"
+  },
+  {
+    "actuator_id": "light_zone_b",
+    "greenhouse_id": "greenhouse_demo",
+    "actuator_type": "light",
+    "status": "on"
+  }
+]

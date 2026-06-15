@@ -1,0 +1,16 @@
+# Cloudflare Tunnel config for V-CORE — copy to config.yml and fill in <tunnel-id>.
+#
+# One hostname, served same-origin: the chat-web nginx (:5173) serves the static
+# overlay AND reverse-proxies /api, /chat (WS), /unreal (SSE), /dashboard, /events,
+# /ps to the backend (:8000). So no api.* subdomain and no CORS change are needed.
+# /internal/ue5/* is NOT proxied by nginx, so it never reaches the public edge.
+#
+# UE5 + Ollama + backend all run locally; only the browser <-> nginx hop is tunneled.
+
+tunnel: <tunnel-id>
+credentials-file: C:\Users\PC\.cloudflared\<tunnel-id>.json
+
+ingress:
+  - hostname: v-core.yoosung.dev
+    service: http://localhost:5173
+  - service: http_status:404

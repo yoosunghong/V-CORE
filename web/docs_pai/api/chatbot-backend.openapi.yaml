@@ -1,0 +1,78 @@
+openapi: 3.1.0
+info:
+  title: PAI Chatbot Backend
+  version: 0.1.0
+  description: Smart farm digital-twin chatbot backend demo API.
+paths:
+  /health:
+    get:
+      tags: [system]
+      summary: Health check
+      responses:
+        "200":
+          description: Service is healthy.
+  /chat/sessions:
+    post:
+      tags: [chat]
+      summary: Create a chat session for Unreal chat UI.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            example:
+              user_id: demo-user
+              unreal_client_id: ue-client-01
+      responses:
+        "201":
+          description: Created session.
+  /chat/messages:
+    post:
+      tags: [chat]
+      summary: Send a natural-language chat message.
+      parameters:
+        - in: header
+          name: x-correlation-id
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            example:
+              session_id: session_abc
+              message: 2번 bed의 식물을 수확해줘
+              idempotency_key: ue-req-001
+      responses:
+        "200":
+          description: Assistant acknowledgement and optional robot command id.
+  /events/robot-command:
+    post:
+      tags: [events]
+      summary: Receive robot command completion or failure events.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            example:
+              event_type: robot.command.completed
+              correlation_id: corr_001
+              session_id: session_abc
+              command_id: cmd_abc
+              payload:
+                robot_id: robot_demo_1
+      responses:
+        "200":
+          description: User-facing report message generated from the event.
+  /chat/sessions/{session_id}/events:
+    get:
+      tags: [chat]
+      summary: WebSocket stream for session progress events.
+      parameters:
+        - in: path
+          name: session_id
+          required: true
+          schema:
+            type: string
+      responses:
+        "101":
+          description: WebSocket upgrade.

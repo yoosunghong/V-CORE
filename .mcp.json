@@ -1,0 +1,17 @@
+{
+  "mcpServers": {
+    "narshamcp": {
+      "args": [
+        "connect",
+        "--project-path",
+        "../../../../../../Users/PC/Perforce/yoosung_DESKTOP2_DA_main/",
+        "--engine-path",
+        "../../../Engine/"
+      ],
+      "command": "C:/Program Files/Epic Games/UE_5.7/Engine/Plugins/Marketplace/NarshaADb0a51a29e8f5V1/Source/ThirdParty/bin/narshamcp.exe",
+      "env": {
+        "RUST_LOG": "error"
+      }
+    }
+  }
+}

@@ -1,0 +1,51 @@
+# Phase 3 / SFT-2 — LoRA config for V-CORE Domain Tool Routing.
+# Frozen knobs below are the starting point; tune on val.jsonl loss.
+
+# MUST be the SAME base checkpoint as the deployed/benchmarked production model so
+# before/after comparisons stay valid. Production model = Ollama `qwen3.5:2b`
+# (GGUF blob sha256-b709d815…, 2.74 GB). Train on its HF base; do NOT substitute a
+# different generation/param count (e.g. Qwen2.5-3B) — that breaks benchmark comparability.
+base_model: Qwen/Qwen3.5-2B            # HF source of the deployed `qwen3.5:2b`
+production_ollama_tag: qwen3.5:2b
+production_gguf_blob: sha256-b709d81508a078a686961de6ca07a953b895d9b286c46e17f00fb267f4f2d297
+
+task: causal_lm_sft
+goal: tool_routing_and_argument_extraction   # NOT general chat quality
+
+# Chat formatting: system = frozen MINIMAL prompt (docs/sft/plan.md §0),
+# user = row.prompt, assistant = json.dumps(row.completion).
+prompt_style: minimal
+mask_prompt_tokens: true        # train on the completion JSON only
+
+lora:
+  type: qlora                   # 4-bit NF4 base + LoRA adapters
+  r: 16
+  alpha: 32
+  dropout: 0.05
+  target_modules: [q_proj, k_proj, v_proj, o_proj, gate_proj, up_proj, down_proj]
+  bias: none
+
+train:
+  epochs: 3
+  lr: 2.0e-4
+  lr_scheduler: cosine
+  warmup_ratio: 0.03
+  per_device_batch_size: 8
+  grad_accum: 2
+  max_seq_len: 1024            # kpi_acceptance rows are the longest (nested acceptance[])
+  bf16: true
+  eval_strategy: epoch
+  save_best_on: val_loss
+
+data:
+  train: docs/sft/data/train.jsonl
+  val: docs/sft/data/val.jsonl
+
+export:
+  adapter_dir: docs/sft/data/adapter
+  merged_gguf: docs/sft/data/vcore-toolrouter.gguf   # for llama.cpp serving parity with the benchmark
+  # q5_k_m, NOT q4_k_m: the 2026-06-15 retrain added the start+speed / extra-acceptance-metric
+  # rows, and q4_k_m quantization washed out those (smaller, newer) fine-tuned distinctions —
+  # the model reverted to its base prior (agv_speed_multiplier/run_simulation). q5_k_m preserves
+  # them (eval 98.3% incl. start_with_speed 10/10) at only +0.07 GB. See docs/sft/RESULT_SFT2.md §5.
+  quantize: q5_k_m

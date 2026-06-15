@@ -1,0 +1,16 @@
+{
+  "collections": [
+    {
+      "name": "farm_operations_ko",
+      "vector_size": 768,
+      "distance": "Cosine",
+      "payload_schema": {
+        "document_id": "keyword",
+        "title": "text",
+        "category": "keyword",
+        "language": "keyword",
+        "source": "keyword"
+      }
+    }
+  ]
+}

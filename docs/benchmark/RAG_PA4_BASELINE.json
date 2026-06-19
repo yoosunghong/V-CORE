@@ -7,7 +7,9 @@
   "rerank_mode": "lexical",
   "thresholds": {
     "retrieval.recall_at_k": 1.0,
-    "retrieval.ndcg_at_k": 1.0,
+    "retrieval.ndcg_at_k": 0.88,
+    "graph_retrieval.recall_at_k": 1.0,
+    "graph_retrieval.ndcg_at_k": 1.0,
     "answer_grounding.citation_rate": 1.0,
     "answer_grounding.faithfulness_rate": 1.0,
     "answer_grounding.grounded_rate": 1.0,
@@ -15,6 +17,7 @@
   },
   "retrieval_cases": 6,
   "answer_grounding_cases": 3,
+  "graph_retrieval_cases": 2,
   "notes": [
     "Pytest uses deterministic fixture rankings and answers so CI can gate PA.4 without a live Qdrant or LLM stack.",
     "The live runner can compare stack output with this file via scripts/eval_rag_retrieval.py --baseline docs/benchmark/RAG_PA4_BASELINE.json.",

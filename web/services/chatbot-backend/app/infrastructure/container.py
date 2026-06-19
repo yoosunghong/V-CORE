@@ -11,7 +11,11 @@ from app.infrastructure.config import Settings, load_settings
 from app.infrastructure.control_client import DemoControlServerClient, HttpControlServerClient
 from app.infrastructure.event_bus import InMemoryEventBus
 from app.infrastructure.iot_client import DemoIotCommandClient
-from app.infrastructure.knowledge_gateway import NullKnowledgeGateway, QdrantKnowledgeGateway
+from app.infrastructure.knowledge_gateway import (
+    HybridGraphKnowledgeGateway,
+    NullKnowledgeGateway,
+    QdrantKnowledgeGateway,
+)
 from app.infrastructure.llm_gateway import (
     LlamaCppLlmGateway,
     OllamaLlmGateway,
@@ -140,10 +144,12 @@ class AppContainer:
             return RoutingSplitLlmGateway(general=general, routing=routing)
         return RuleBasedLlmGateway()
 
-    def _build_knowledge_gateway(self) -> NullKnowledgeGateway | QdrantKnowledgeGateway:
+    def _build_knowledge_gateway(
+        self,
+    ) -> NullKnowledgeGateway | QdrantKnowledgeGateway | HybridGraphKnowledgeGateway:
         if not self.settings.rag_enabled:
             return NullKnowledgeGateway()
-        return QdrantKnowledgeGateway(
+        vector_gateway = QdrantKnowledgeGateway(
             qdrant_url=self.settings.qdrant_url,
             collection=self.settings.rag_collection,
             embed_base_url=self.settings.embed_base_url,
@@ -153,6 +159,13 @@ class AppContainer:
             min_score=self.settings.rag_min_score,
             rerank_base_url=self.settings.rag_rerank_base_url,
             rerank_model=self.settings.rag_rerank_model,
+        )
+        if not self.settings.graph_rag_enabled:
+            return vector_gateway
+        return HybridGraphKnowledgeGateway(
+            vector_gateway=vector_gateway,
+            control_client=self.control_client,
+            repository=self.repository,
         )
 
     def _build_ollama_gateway(self) -> OllamaLlmGateway:

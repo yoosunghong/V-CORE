@@ -137,7 +137,23 @@ Relevant existing capabilities this plan extends rather than rebuilds:
 
 ## PB — GraphRAG + Ontology
 
-_No tasks completed yet._
+### PB — GraphRAG + Ontology (2026-06-19)
+- **Ontology spec** [docs/spec_ontology.md](docs/spec_ontology.md): defined the typed AGV-cell graph
+  (`Cell`/`Zone`/`Station`/`Capability`/`Run`/`Kpi`) and the multi-hop retrieval path for
+  station/zone/capability/KPI questions.
+- **Graph construction.** Added `app/domain/ontology.py` with a deterministic `OntologyGraphBuilder`
+  that builds from structured station registry data plus saved `SimulationRun.kpis_json`, including
+  capability derivation from station type and latest KPI evidence. Added
+  `scripts/export_ontology_graph.py` to materialize the projection as JSON for inspection.
+- **Hybrid GraphRAG.** Added `HybridGraphKnowledgeGateway`: relational questions route to the graph
+  path and return citable `RetrievedChunk` context (`source=ontology_graph`,
+  `category=graph_ontology`); free-text SOP/spec questions keep using the PA Qdrant vector path.
+  The container wraps Qdrant when `RAG_ENABLED=true` and `GRAPH_RAG_ENABLED=true`.
+- **PB evals.** Extended the PA.4 harness with two multi-hop GraphRAG cases and baseline thresholds
+  (`graph_retrieval.recall_at_k=1.0`, `graph_retrieval.ndcg_at_k=1.0`). Live eval smoke passes:
+  flat retrieval recall@5 `1.0`, nDCG@5 `0.884`; graph retrieval recall/nDCG `1.0`.
+- **Verified.** Focused RAG/GraphRAG tests pass (`17 passed`); full backend suite passes
+  (`119 passed`). The ontology export job produced the expected cell/zone/station/capability graph.
 
 ## PC — Guardrails + Observability
 

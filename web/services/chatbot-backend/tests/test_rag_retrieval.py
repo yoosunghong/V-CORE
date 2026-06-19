@@ -2,11 +2,12 @@ import pytest
 
 from app.application.chat_orchestrator import ChatOrchestrator
 from app.application.robot_orchestrator import RobotCommandOrchestrator
-from app.domain.models import RetrievedChunk
+from app.domain.models import RetrievedChunk, SimulationRun
+from app.domain.ontology import GraphRagRetriever
 from app.infrastructure.control_client import DemoControlServerClient
 from app.infrastructure.event_bus import InMemoryEventBus
 from app.infrastructure.iot_client import DemoIotCommandClient
-from app.infrastructure.knowledge_gateway import NullKnowledgeGateway, lexical_rerank
+from app.infrastructure.knowledge_gateway import HybridGraphKnowledgeGateway, NullKnowledgeGateway, lexical_rerank
 from app.infrastructure.llm_gateway import OllamaLlmGateway, RuleBasedLlmGateway, format_knowledge_block
 from app.infrastructure.repositories import InMemorySessionRepository
 
@@ -19,6 +20,16 @@ class StubKnowledgeGateway:
     async def retrieve(self, query, correlation_id, *, top_k=5, filters=None):
         self.queries.append(query)
         return self._chunks
+
+
+class RecordingVectorGateway:
+    def __init__(self, chunks: list[RetrievedChunk]) -> None:
+        self._chunks = chunks
+        self.queries: list[str] = []
+
+    async def retrieve(self, query, correlation_id, *, top_k=5, filters=None):
+        self.queries.append(query)
+        return self._chunks[:top_k]
 
 
 class CapturingLlmGateway(RuleBasedLlmGateway):
@@ -89,6 +100,69 @@ def test_lexical_rerank_promotes_query_matching_chunk():
 
     assert reranked[0].document_id == "collision"
     assert reranked[0].rerank_score is not None
+
+
+@pytest.mark.asyncio
+async def test_graph_rag_retrieves_zone_capability_and_latest_bottleneck():
+    repository = InMemorySessionRepository()
+    await repository.create_run(
+        SimulationRun(
+            simulation_id="sim_graph",
+            run_id="run_graph_latest",
+            kpis_json={"bottleneck_rate": 0.31, "bottleneck_zone": "B"},
+        )
+    )
+    stations = await DemoControlServerClient().list_stations("corr_graph")
+
+    chunks = GraphRagRetriever().retrieve(
+        "Which stations in Zone 2 can handle inspection, and what was their last bottleneck rate?",
+        stations,
+        await repository.list_runs(),
+    )
+
+    assert chunks[0].category == "graph_ontology"
+    assert chunks[0].source == "ontology_graph"
+    assert chunks[0].document_id == "ontology_station_b_inspect"
+    assert "Station 3" in chunks[0].text
+    assert "Latest bottleneck_rate: 0.31" in chunks[0].text
+
+
+@pytest.mark.asyncio
+async def test_hybrid_gateway_routes_relational_query_to_graph_without_vector_call():
+    repository = InMemorySessionRepository()
+    await repository.create_run(
+        SimulationRun(
+            simulation_id="sim_graph",
+            run_id="run_graph_latest",
+            kpis_json={"bottleneck_rate": 0.22},
+        )
+    )
+    vector = RecordingVectorGateway(
+        [RetrievedChunk(document_id="vector", title="Vector", text="fallback", score=0.5)]
+    )
+    gateway = HybridGraphKnowledgeGateway(vector, DemoControlServerClient(), repository)
+
+    chunks = await gateway.retrieve(
+        "Which stations in Zone 2 can handle inspection capability?",
+        "corr_graph",
+    )
+
+    assert chunks[0].document_id == "ontology_station_b_inspect"
+    assert vector.queries == []
+
+
+@pytest.mark.asyncio
+async def test_hybrid_gateway_uses_vector_for_free_text_query():
+    repository = InMemorySessionRepository()
+    vector = RecordingVectorGateway(
+        [RetrievedChunk(document_id="sop_collision_001", title="Collision", text="stop", score=0.9)]
+    )
+    gateway = HybridGraphKnowledgeGateway(vector, DemoControlServerClient(), repository)
+
+    chunks = await gateway.retrieve("What should I do after an AGV collision?", "corr_vector")
+
+    assert chunks[0].document_id == "sop_collision_001"
+    assert vector.queries == ["What should I do after an AGV collision?"]
 
 
 def test_chat_prompt_contains_grounding_guard_without_knowledge():

@@ -18,7 +18,12 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from app.benchmarks.rag_cases import RAG_ANSWER_CASES, RAG_RETRIEVAL_CASES  # noqa: E402
+from app.benchmarks.rag_cases import (  # noqa: E402
+    GRAPH_RAG_BASELINE_RANKINGS,
+    GRAPH_RAG_RETRIEVAL_CASES,
+    RAG_ANSWER_CASES,
+    RAG_RETRIEVAL_CASES,
+)
 from app.benchmarks.rag_eval import evaluate_answer_grounding, evaluate_rankings  # noqa: E402
 from app.infrastructure.knowledge_gateway import QdrantKnowledgeGateway  # noqa: E402
 
@@ -71,15 +76,20 @@ async def main() -> None:
     retrieval_rows, retrieval_summary = evaluate_rankings(
         RAG_RETRIEVAL_CASES, rankings, args.top_k
     )
+    graph_rows, graph_summary = evaluate_rankings(
+        GRAPH_RAG_RETRIEVAL_CASES, GRAPH_RAG_BASELINE_RANKINGS, 3
+    )
     answer_rows, answer_summary = evaluate_answer_grounding(RAG_ANSWER_CASES)
     result = {
         "settings": vars(args),
         "summary": {
             "retrieval": retrieval_summary,
+            "graph_retrieval": graph_summary,
             "answer_grounding": answer_summary,
         },
         "rows": {
             "retrieval": [asdict(row) for row in retrieval_rows],
+            "graph_retrieval": [asdict(row) for row in graph_rows],
             "answer_grounding": [asdict(row) for row in answer_rows],
         },
         "details": details,

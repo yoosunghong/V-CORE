@@ -92,15 +92,15 @@ parallel once PA lands.
 > Entities already exist in the domain: `Station`–`AGV`–`Zone`–`Capability`–`Scenario`–`Run/KPI`
 > (`EStationKind`/`CapabilityTags`/`ZoneId` in UE5; `Station`/`ProcessTelemetry` in the backend).
 
-- [ ] Define the ontology (RDF/OWL or a typed `networkx` graph) for the AGV cell domain; document in
+- [x] Define the ontology (RDF/OWL or a typed `networkx` graph) for the AGV cell domain; document in
       `docs/spec_ontology.md`. Build it from existing structured data (station registry +
       run/KPI history), not hand-authored prose.
-- [ ] Graph-construction job: extract entities/relations from the corpus + run history into the graph
+- [x] Graph-construction job: extract entities/relations from the corpus + run history into the graph
       store; keep it in sync with new runs.
-- [ ] GraphRAG retrieval: multi-hop traversal for relational queries ("which stations in Zone 2 can
+- [x] GraphRAG retrieval: multi-hop traversal for relational queries ("which stations in Zone 2 can
       handle capability X, and what was their last bottleneck rate?"). Route relational questions to
       the graph path, free-text to the PA vector path (hybrid retriever).
-- [ ] Extend the PA.4 eval set with multi-hop questions; compare flat-RAG vs GraphRAG.
+- [x] Extend the PA.4 eval set with multi-hop questions; compare flat-RAG vs GraphRAG.
 
 ---
 

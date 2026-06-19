@@ -1,4 +1,6 @@
 from app.benchmarks.rag_cases import (
+    GRAPH_RAG_BASELINE_RANKINGS,
+    GRAPH_RAG_RETRIEVAL_CASES,
     RAG_ANSWER_CASES,
     RAG_BASELINE_RANKINGS,
     RAG_RETRIEVAL_CASES,
@@ -42,6 +44,15 @@ def test_evaluate_rankings_returns_rows_and_macro_summary():
 
 def test_rag_baseline_rankings_clear_pa4_thresholds():
     _, summary = evaluate_rankings(RAG_RETRIEVAL_CASES, RAG_BASELINE_RANKINGS, k=5)
+
+    assert summary["recall_at_k"] >= 1.0
+    assert summary["ndcg_at_k"] >= 1.0
+
+
+def test_graph_rag_baseline_rankings_clear_pb_thresholds():
+    _, summary = evaluate_rankings(
+        GRAPH_RAG_RETRIEVAL_CASES, GRAPH_RAG_BASELINE_RANKINGS, k=3
+    )
 
     assert summary["recall_at_k"] >= 1.0
     assert summary["ndcg_at_k"] >= 1.0

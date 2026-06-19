@@ -57,6 +57,7 @@ class Settings:
     rag_min_score: float = 0.0
     rag_rerank_base_url: str | None = None
     rag_rerank_model: str | None = None
+    graph_rag_enabled: bool = True
     # Embeddings run on Ollama's /v1/embeddings (engine split: LLM on llama.cpp, embeddings on
     # Ollama). Independent of the LLM base URL so they can be served by different engines.
     embed_base_url: str = "http://ollama:11434"
@@ -129,6 +130,8 @@ def load_settings() -> Settings:
         rag_min_score=float(os.getenv("RAG_MIN_SCORE", "0.0")),
         rag_rerank_base_url=os.getenv("RAG_RERANK_BASE_URL"),
         rag_rerank_model=os.getenv("RAG_RERANK_MODEL"),
+        graph_rag_enabled=os.getenv("GRAPH_RAG_ENABLED", "true").lower()
+        in {"1", "true", "yes", "on"},
         embed_base_url=os.getenv(
             "EMBED_BASE_URL", os.getenv("OLLAMA_BASE_URL", "http://ollama:11434")
         ),

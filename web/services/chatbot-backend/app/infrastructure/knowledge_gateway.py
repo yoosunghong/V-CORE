@@ -6,7 +6,9 @@ import re
 
 import httpx
 
+from app.application.ports import ControlServerClient, SessionRepository
 from app.domain.models import RetrievedChunk
+from app.domain.ontology import GraphRagRetriever
 
 
 class NullKnowledgeGateway:
@@ -25,6 +27,52 @@ class NullKnowledgeGateway:
         filters: dict[str, str] | None = None,
     ) -> list[RetrievedChunk]:
         return []
+
+
+class HybridGraphKnowledgeGateway:
+    """PB hybrid retriever: graph path for relational questions, vector path for free text."""
+
+    def __init__(
+        self,
+        vector_gateway: QdrantKnowledgeGateway,
+        control_client: ControlServerClient,
+        repository: SessionRepository,
+        graph_retriever: GraphRagRetriever | None = None,
+    ) -> None:
+        self._vector_gateway = vector_gateway
+        self._control_client = control_client
+        self._repository = repository
+        self._graph = graph_retriever or GraphRagRetriever()
+
+    async def retrieve(
+        self,
+        query: str,
+        correlation_id: str,
+        *,
+        top_k: int = 5,
+        filters: dict[str, str] | None = None,
+    ) -> list[RetrievedChunk]:
+        if self._graph.is_relational_query(query):
+            graph_chunks = await self._retrieve_graph(query, correlation_id, top_k=top_k)
+            if graph_chunks:
+                return graph_chunks
+        return await self._vector_gateway.retrieve(
+            query, correlation_id, top_k=top_k, filters=filters
+        )
+
+    async def _retrieve_graph(
+        self,
+        query: str,
+        correlation_id: str,
+        *,
+        top_k: int,
+    ) -> list[RetrievedChunk]:
+        try:
+            stations = await self._control_client.list_stations(correlation_id)
+            runs = await self._repository.list_runs()
+        except Exception:
+            return []
+        return self._graph.retrieve(query, stations, runs, top_k=top_k)
 
 
 class QdrantKnowledgeGateway:

@@ -104,6 +104,34 @@ RAG_BASELINE_RANKINGS: dict[str, tuple[str, ...]] = {
 }
 
 
+GRAPH_RAG_RETRIEVAL_CASES: tuple[RagRetrievalCase, ...] = (
+    RagRetrievalCase(
+        query="Which stations in Zone 2 can handle inspection, and what was their last bottleneck rate?",
+        relevant_document_ids=("ontology_station_b_inspect",),
+        category="graph_multi_hop",
+    ),
+    RagRetrievalCase(
+        query="Which Zone 1 stations can handle loading capability?",
+        relevant_document_ids=("ontology_station_a_load",),
+        category="graph_station_capability",
+    ),
+)
+
+
+GRAPH_RAG_BASELINE_RANKINGS: dict[str, tuple[str, ...]] = {
+    "Which stations in Zone 2 can handle inspection, and what was their last bottleneck rate?": (
+        "ontology_station_b_inspect",
+        "spec_station_meta_001",
+        "playbook_bottleneck_001",
+    ),
+    "Which Zone 1 stations can handle loading capability?": (
+        "ontology_station_a_load",
+        "spec_station_kinds_001",
+        "spec_station_meta_001",
+    ),
+}
+
+
 RAG_ANSWER_CASES: tuple[RagAnswerCase, ...] = (
     RagAnswerCase(
         case_id="answer_collision_grounded",

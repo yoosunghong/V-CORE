@@ -73,9 +73,9 @@ parallel once PA lands.
       SOP-12 says reduce Zone-2 AGV count").
 
 ### PA.3 — IR optimization
-- [ ] Add a reranker (cross-encoder or LLM-rerank) over the top-k; measure nDCG/recall on a small
+- [x] Add a reranker (cross-encoder or LLM-rerank) over the top-k; measure nDCG/recall on a small
       labeled query set. Tune chunk size + k.
-- [ ] Prompt-engineering pass: citation format, grounded-vs-ungrounded guard ("say 'not in the
+- [x] Prompt-engineering pass: citation format, grounded-vs-ungrounded guard ("say 'not in the
       knowledge base' rather than hallucinate").
 
 ### PA.4 — RAG evals (regression)

@@ -33,7 +33,7 @@ def format_knowledge_block(chunks: list[RetrievedChunk] | None) -> str:
         text = chunk.text.strip().replace("\n", " ")
         if len(text) > 500:
             text = text[:500].rstrip() + "…"
-        lines.append(f"[{index}] {chunk.title} (출처: {chunk.source})\n{text}")
+        lines.append(f"[{index}] [출처: {chunk.title}] (source: {chunk.source})\n{text}")
     return "\n\n".join(lines)
 from app.prompts.templates import PromptTemplateStore
 from app.tools.contracts import ToolValidationError
@@ -340,7 +340,13 @@ class OllamaLlmGateway:
         if knowledge_block != "none":
             system_content += (
                 "\n\n아래 참고 문서를 우선 근거로 답변하고, 사용한 문서 제목을 인용하세요. "
-                "문서에 없는 내용은 지어내지 마세요.\n\n참고 문서:\n" + knowledge_block
+                '문서에 없는 내용은 지어내지 말고 "not in the knowledge base"라고 답하세요.'
+                "\n\n참고 문서:\n" + knowledge_block
+            )
+        else:
+            system_content += (
+                '\n\nIf the user asks for operational facts that require VCORE knowledge, answer '
+                '"not in the knowledge base" instead of inventing details.'
             )
         messages = [
             {"role": "system", "content": system_content},

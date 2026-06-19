@@ -6,8 +6,8 @@ from app.domain.models import RetrievedChunk
 from app.infrastructure.control_client import DemoControlServerClient
 from app.infrastructure.event_bus import InMemoryEventBus
 from app.infrastructure.iot_client import DemoIotCommandClient
-from app.infrastructure.knowledge_gateway import NullKnowledgeGateway
-from app.infrastructure.llm_gateway import RuleBasedLlmGateway, format_knowledge_block
+from app.infrastructure.knowledge_gateway import NullKnowledgeGateway, lexical_rerank
+from app.infrastructure.llm_gateway import OllamaLlmGateway, RuleBasedLlmGateway, format_knowledge_block
 from app.infrastructure.repositories import InMemorySessionRepository
 
 
@@ -64,7 +64,51 @@ def test_format_knowledge_block_renders_titles_and_source():
     block = format_knowledge_block(
         [RetrievedChunk(document_id="d1", title="충돌 대응", text="절차 ...", score=0.7, source="ops_manual")]
     )
-    assert "충돌 대응" in block and "ops_manual" in block
+    assert "[출처: 충돌 대응]" in block and "ops_manual" in block
+
+
+def test_lexical_rerank_promotes_query_matching_chunk():
+    chunks = [
+        RetrievedChunk(
+            document_id="general",
+            title="General KPI policy",
+            text="Throughput and uptime are reviewed after each run.",
+            score=0.72,
+            vector_score=0.72,
+        ),
+        RetrievedChunk(
+            document_id="collision",
+            title="Collision halt response",
+            text="When collision risk appears, stop AGVs and inspect the intersection.",
+            score=0.7,
+            vector_score=0.7,
+        ),
+    ]
+
+    reranked = lexical_rerank("collision stop inspection", chunks)
+
+    assert reranked[0].document_id == "collision"
+    assert reranked[0].rerank_score is not None
+
+
+def test_chat_prompt_contains_grounding_guard_without_knowledge():
+    captured = {}
+
+    class Gateway(OllamaLlmGateway):
+        async def _post_chat(self, payload, correlation_id):
+            captured["payload"] = payload
+            return {"message": {"content": "ok"}}
+
+    gateway = Gateway(base_url="http://unused", model="unused")
+
+    async def run():
+        await gateway.generate_chat_response("unknown policy?", [], "corr", knowledge=[])
+
+    import asyncio
+
+    asyncio.run(run())
+    system = captured["payload"]["messages"][0]["content"]
+    assert "not in the knowledge base" in system
 
 
 @pytest.mark.asyncio

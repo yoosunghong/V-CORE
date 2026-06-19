@@ -126,6 +126,8 @@ class RetrievedChunk(BaseModel):
     score: float
     source: str = "unknown"
     category: str = "unknown"
+    vector_score: float | None = None
+    rerank_score: float | None = None
 
 
 class Simulation(BaseModel):

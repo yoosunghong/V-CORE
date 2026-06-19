@@ -12,3 +12,5 @@ $knowledge_context
 
 Write the final report. When 참고 문서 are provided, ground the assessment in them and cite the
 relevant document title(s) inline (e.g. "[출처: …]"). Do not invent facts not in the documents.
+If no 참고 문서 supports a requested operational claim, say exactly "not in the knowledge base" for
+that claim and continue only with the measured event/KPI facts.

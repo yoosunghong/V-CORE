@@ -101,7 +101,25 @@ Relevant existing capabilities this plan extends rather than rebuilds:
   formatting, knowledge threading into the LLM, and "no `agent.retrieval` event when RAG off"). Live
   adapter check against the running stack: collision query → `sop_collision_001` #1 @ 0.601 over Qdrant.
 
-### PA.3–PA.4
+### PA.3 — IR optimization (2026-06-19)
+- **Configurable rerank stage.** `QdrantKnowledgeGateway` now fetches a wider candidate pool
+  (`RAG_FETCH_K`, default 10) before returning `RAG_TOP_K`. It supports `RAG_RERANK_MODE=vector`
+  (pure Qdrant score), `lexical` (offline-safe token-overlap fusion), and `llm` (OpenAI-compatible
+  `/v1/chat/completions` reranker via `RAG_RERANK_BASE_URL`/`RAG_RERANK_MODEL`, with lexical fallback
+  on invalid output). Returned chunks preserve both `vector_score` and `rerank_score` for tracing and
+  evaluation. `RAG_MIN_SCORE` can suppress weak candidates before prompt injection.
+- **PA.3 eval set + runner.** Added `app/benchmarks/rag_cases.py`, `app/benchmarks/rag_eval.py`, and
+  `scripts/eval_rag_retrieval.py` for labeled recall@k / nDCG@k measurement over the live Qdrant
+  stack. Live run against localhost Qdrant + Ollama `bge-m3`: vector baseline recall@5 **1.0**,
+  nDCG@5 **0.884**; tuned lexical rerank recall@5 **1.0**, nDCG@5 **0.884** on the first 6 labeled
+  AGV-domain queries. The tuning result keeps embeddings dominant (90%) because English-to-Korean
+  queries already rank well semantically and naive lexical fusion can overreact to generic words.
+- **Grounding prompt pass.** Knowledge blocks now cite document titles as `[출처: title]`, and both
+  report/general-chat prompts include the exact `"not in the knowledge base"` miss behavior when no
+  retrieved chunk supports an operational claim.
+- **Verified.** Backend suite: `112 passed` with `python -m pytest -q --basetemp .pytest_tmp`.
+
+### PA.4
 _Not started._
 
 ## PB — GraphRAG + Ontology

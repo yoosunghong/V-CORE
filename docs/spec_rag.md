@@ -148,7 +148,7 @@ visible in the overlay and (PC) traceable.
 
 - Extend `report_user.txt` / the general-chat prompt with a `참고 문서:` block listing retrieved
   chunks + a citation instruction.
-- **Grounding guard (PA.3):** instruct the model to answer *"지식 베이스에 없는 내용입니다"* when no
+- **Grounding guard (PA.3):** instruct the model to answer `"not in the knowledge base"` when no
   chunk is relevant, instead of hallucinating. (Hardened in PC.)
 
 ### 5.5 Config (`infrastructure/config.py`)
@@ -162,15 +162,29 @@ engine-split lever that keeps embeddings on Ollama while the LLM serves from lla
 > **Status (PA.2 done 2026-06-19):** port + `QdrantKnowledgeGateway`/`NullKnowledgeGateway`
 > adapters, the `retrieve` node on the `general_chat` branch, report-path grounding via
 > `_report_retrieval_query`, the `agent.retrieval` event, and the prompt blocks are all implemented
-> behind `RAG_ENABLED`. The grounding guard ("지식 베이스에 없는 내용입니다") and reranking remain PA.3.
+> behind `RAG_ENABLED`. PA.3 adds the `"not in the knowledge base"` guard and reranking.
 
 ---
 
 ## 6. IR optimization (PA.3)
 
-- **Reranker** over the top-k (cross-encoder, or an LLM-rerank pass using the existing gateway).
-- Tune chunk size + `top_k`; measure on a small labeled query set (§7).
-- Citation formatting + the grounding guard.
+- **Candidate fetch + rerank.** Qdrant retrieves `RAG_FETCH_K` candidates (default `max(top_k, 10)`)
+  and the backend returns the best `RAG_TOP_K` after reranking. The production reranker is
+  configurable:
+  - `RAG_RERANK_MODE=lexical` (default): deterministic Korean/English token-overlap reranker fused
+    with the vector score. This is the offline-safe fallback and is fast enough for the local demo.
+  - `RAG_RERANK_MODE=llm`: optional LLM rerank pass over the same candidates using the
+    OpenAI-compatible chat endpoint (`RAG_RERANK_BASE_URL`, `RAG_RERANK_MODEL`). If the call fails or
+    returns invalid ids, the adapter falls back to lexical reranking.
+- **Score filtering.** `RAG_MIN_SCORE` (default `0.0`) can suppress weak candidates before prompt
+  injection. PA.3 keeps the threshold permissive by default because the corpus is still tiny; the
+  eval script reports the score distribution for tuning.
+- **Labeled tuning set.** `app/benchmarks/rag_cases.py` contains the first small query set. The
+  `scripts/eval_rag_retrieval.py` runner measures recall@k and nDCG@k against a live Qdrant stack and
+  can compare `top_k` / `fetch_k` / rerank modes without touching the application graph.
+- **Prompt grounding guard.** Citation prompts now require document-title citations when context is
+  present and the exact miss response `"not in the knowledge base"` when no retrieved chunk supports
+  the answer. This is a prompt-level PA.3 guard; PC later adds input/output safety enforcement.
 
 ---
 

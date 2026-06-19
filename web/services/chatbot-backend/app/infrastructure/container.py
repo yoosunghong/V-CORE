@@ -148,6 +148,11 @@ class AppContainer:
             collection=self.settings.rag_collection,
             embed_base_url=self.settings.embed_base_url,
             embed_model=self.settings.rag_embed_model,
+            fetch_k=self.settings.rag_fetch_k,
+            rerank_mode=self.settings.rag_rerank_mode,
+            min_score=self.settings.rag_min_score,
+            rerank_base_url=self.settings.rag_rerank_base_url,
+            rerank_model=self.settings.rag_rerank_model,
         )
 
     def _build_ollama_gateway(self) -> OllamaLlmGateway:

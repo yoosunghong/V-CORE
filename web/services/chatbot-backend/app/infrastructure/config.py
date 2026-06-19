@@ -52,6 +52,11 @@ class Settings:
     rag_collection: str = "vcore_operations_ko"
     rag_embed_model: str = "bge-m3"
     rag_top_k: int = 5
+    rag_fetch_k: int = 10
+    rag_rerank_mode: str = "lexical"
+    rag_min_score: float = 0.0
+    rag_rerank_base_url: str | None = None
+    rag_rerank_model: str | None = None
     # Embeddings run on Ollama's /v1/embeddings (engine split: LLM on llama.cpp, embeddings on
     # Ollama). Independent of the LLM base URL so they can be served by different engines.
     embed_base_url: str = "http://ollama:11434"
@@ -119,6 +124,11 @@ def load_settings() -> Settings:
         rag_collection=os.getenv("RAG_COLLECTION", "vcore_operations_ko"),
         rag_embed_model=os.getenv("RAG_EMBED_MODEL", "bge-m3"),
         rag_top_k=int(os.getenv("RAG_TOP_K", "5")),
+        rag_fetch_k=int(os.getenv("RAG_FETCH_K", "10")),
+        rag_rerank_mode=os.getenv("RAG_RERANK_MODE", "lexical"),
+        rag_min_score=float(os.getenv("RAG_MIN_SCORE", "0.0")),
+        rag_rerank_base_url=os.getenv("RAG_RERANK_BASE_URL"),
+        rag_rerank_model=os.getenv("RAG_RERANK_MODEL"),
         embed_base_url=os.getenv(
             "EMBED_BASE_URL", os.getenv("OLLAMA_BASE_URL", "http://ollama:11434")
         ),

@@ -1,5 +1,9 @@
 from __future__ import annotations
 
+import json
+import math
+import re
+
 import httpx
 
 from app.domain.models import RetrievedChunk
@@ -39,12 +43,22 @@ class QdrantKnowledgeGateway:
         embed_base_url: str,
         embed_model: str,
         timeout_seconds: float = 30.0,
+        fetch_k: int = 10,
+        rerank_mode: str = "lexical",
+        min_score: float = 0.0,
+        rerank_base_url: str | None = None,
+        rerank_model: str | None = None,
     ) -> None:
         self._qdrant_url = qdrant_url.rstrip("/")
         self._collection = collection
         self._embed_base_url = embed_base_url.rstrip("/")
         self._embed_model = embed_model
         self._timeout_seconds = timeout_seconds
+        self._fetch_k = max(1, fetch_k)
+        self._rerank_mode = rerank_mode.lower().strip()
+        self._min_score = min_score
+        self._rerank_base_url = (rerank_base_url or "").rstrip("/")
+        self._rerank_model = rerank_model or ""
 
     async def retrieve(
         self,
@@ -61,10 +75,15 @@ class QdrantKnowledgeGateway:
                 vector = await self._embed(client, query, correlation_id)
                 if not vector:
                     return []
-                hits = await self._search(client, vector, top_k, filters)
+                hits = await self._search(client, vector, max(top_k, self._fetch_k), filters)
+                chunks = [self._to_chunk(hit) for hit in hits]
+                chunks = [
+                    chunk for chunk in chunks if (chunk.vector_score or chunk.score) >= self._min_score
+                ]
+                chunks = await self._rerank(client, query, chunks, top_k, correlation_id)
         except (httpx.HTTPError, ValueError, KeyError):
             return []
-        return [self._to_chunk(hit) for hit in hits]
+        return chunks[:top_k]
 
     async def _embed(
         self, client: httpx.AsyncClient, query: str, correlation_id: str
@@ -104,11 +123,130 @@ class QdrantKnowledgeGateway:
 
     def _to_chunk(self, hit: dict) -> RetrievedChunk:
         payload = hit.get("payload") or {}
+        vector_score = float(hit.get("score", 0.0))
         return RetrievedChunk(
             document_id=str(payload.get("document_id", hit.get("id", ""))),
             title=str(payload.get("title", "")),
             text=str(payload.get("text", "")),
-            score=float(hit.get("score", 0.0)),
+            score=vector_score,
             source=str(payload.get("source", "unknown")),
             category=str(payload.get("category", "unknown")),
+            vector_score=vector_score,
         )
+
+    async def _rerank(
+        self,
+        client: httpx.AsyncClient,
+        query: str,
+        chunks: list[RetrievedChunk],
+        top_k: int,
+        correlation_id: str,
+    ) -> list[RetrievedChunk]:
+        if not chunks or self._rerank_mode in {"", "off", "none", "vector"}:
+            return chunks
+        if self._rerank_mode == "llm" and self._rerank_base_url and self._rerank_model:
+            try:
+                return await self._llm_rerank(client, query, chunks, top_k, correlation_id)
+            except (httpx.HTTPError, ValueError, KeyError, TypeError):
+                pass
+        return lexical_rerank(query, chunks)
+
+    async def _llm_rerank(
+        self,
+        client: httpx.AsyncClient,
+        query: str,
+        chunks: list[RetrievedChunk],
+        top_k: int,
+        correlation_id: str,
+    ) -> list[RetrievedChunk]:
+        candidates = [
+            {
+                "id": str(index),
+                "document_id": chunk.document_id,
+                "title": chunk.title,
+                "text": chunk.text[:700],
+            }
+            for index, chunk in enumerate(chunks)
+        ]
+        prompt = (
+            "Rank the candidate knowledge chunks for answering the query. "
+            "Return only JSON: {\"ranked_ids\": [\"0\", \"1\"]}. "
+            "Use only candidate ids, most relevant first.\n\n"
+            f"Query: {query}\n\nCandidates:\n{json.dumps(candidates, ensure_ascii=False)}"
+        )
+        response = await client.post(
+            f"{self._rerank_base_url}/v1/chat/completions",
+            json={
+                "model": self._rerank_model,
+                "stream": False,
+                "temperature": 0.0,
+                "max_tokens": 128,
+                "response_format": {"type": "json_object"},
+                "messages": [
+                    {
+                        "role": "system",
+                        "content": "You are a strict search-result reranker.",
+                    },
+                    {"role": "user", "content": prompt},
+                ],
+            },
+            headers={"x-correlation-id": correlation_id},
+        )
+        response.raise_for_status()
+        choices = response.json().get("choices") or []
+        content = choices[0].get("message", {}).get("content", "") if choices else ""
+        ranked_ids = json.loads(content).get("ranked_ids") or []
+        by_id = {str(index): chunk for index, chunk in enumerate(chunks)}
+        reranked: list[RetrievedChunk] = []
+        seen: set[str] = set()
+        for rank, candidate_id in enumerate(ranked_ids):
+            key = str(candidate_id)
+            chunk = by_id.get(key)
+            if chunk is None or key in seen:
+                continue
+            seen.add(key)
+            score = float(len(chunks) - rank) / max(len(chunks), 1)
+            reranked.append(chunk.model_copy(update={"score": score, "rerank_score": score}))
+        reranked.extend(chunk for key, chunk in by_id.items() if key not in seen)
+        return reranked[:top_k]
+
+
+def lexical_rerank(query: str, chunks: list[RetrievedChunk]) -> list[RetrievedChunk]:
+    """Offline-safe PA.3 reranker: fuse vector score with query/document token overlap."""
+
+    query_terms = _tokenize(query)
+    if not query_terms:
+        return chunks
+    max_vector = max((chunk.vector_score or chunk.score for chunk in chunks), default=1.0) or 1.0
+    reranked: list[RetrievedChunk] = []
+    for chunk in chunks:
+        body_terms = _tokenize(chunk.text)
+        title_terms = _tokenize(chunk.title)
+        overlap = len(query_terms & body_terms) + (2 * len(query_terms & title_terms))
+        lexical_score = overlap / math.sqrt(max(len(query_terms), 1) * max(len(body_terms | title_terms), 1))
+        vector_component = (chunk.vector_score or chunk.score) / max_vector
+        score = (0.9 * vector_component) + (0.1 * lexical_score)
+        reranked.append(chunk.model_copy(update={"score": score, "rerank_score": lexical_score}))
+    return sorted(reranked, key=lambda chunk: chunk.score, reverse=True)
+
+
+def _tokenize(text: str) -> set[str]:
+    tokens = re.findall(r"[0-9A-Za-z가-힣_]+", text.lower())
+    stopwords = {
+        "a",
+        "about",
+        "and",
+        "does",
+        "for",
+        "how",
+        "is",
+        "of",
+        "say",
+        "should",
+        "the",
+        "what",
+        "when",
+        "which",
+        "with",
+    }
+    return {token for token in tokens if len(token) > 1 and token not in stopwords}

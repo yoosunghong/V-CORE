@@ -119,8 +119,21 @@ Relevant existing capabilities this plan extends rather than rebuilds:
   retrieved chunk supports an operational claim.
 - **Verified.** Backend suite: `112 passed` with `python -m pytest -q --basetemp .pytest_tmp`.
 
-### PA.4
-_Not started._
+### PA.4 ??RAG evals / regression (2026-06-19)
+- **Regression harness.** Extended `app/benchmarks/rag_cases.py` + `app/benchmarks/rag_eval.py`
+  from retrieval-only PA.3 metrics into a PA.4 harness: labeled retrieval recall/nDCG, deterministic
+  fixture rankings, and answer-grounding/faithfulness checks for citations, grounded terms,
+  hallucinated forbidden terms, and honest `"not in the knowledge base"` abstention.
+- **Locked baseline.** Added `docs/benchmark/RAG_PA4_BASELINE.json` with the PA.4 thresholds
+  (`retrieval.recall_at_k`, `retrieval.ndcg_at_k`, citation/faithfulness/grounded/abstention rates).
+  The live runner `scripts/eval_rag_retrieval.py` now reports both retrieval and answer-grounding
+  summaries and can compare against the baseline via `--baseline`.
+- **Pytest gate.** `tests/test_rag_eval.py` now gates the deterministic baseline and includes a
+  negative ungrounded-answer case, so retrieval or prompting regressions trip the suite even without
+  a live Qdrant/LLM stack.
+- **Verified.** Backend RAG eval tests pass with
+  `python -m pytest tests/test_rag_eval.py -q --basetemp .pytest_tmp`; full backend suite passes
+  with `python -m pytest -q --basetemp .pytest_tmp` (`115 passed`).
 
 ## PB — GraphRAG + Ontology
 

@@ -1,4 +1,4 @@
-"""PA.3 retrieval-quality runner over the live Qdrant knowledge store.
+"""PA.4 RAG regression runner over the live Qdrant knowledge store.
 
 Example:
     python scripts/eval_rag_retrieval.py --qdrant-url http://127.0.0.1:6333 \
@@ -18,13 +18,13 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from app.benchmarks.rag_cases import RAG_RETRIEVAL_CASES  # noqa: E402
-from app.benchmarks.rag_eval import evaluate_rankings  # noqa: E402
+from app.benchmarks.rag_cases import RAG_ANSWER_CASES, RAG_RETRIEVAL_CASES  # noqa: E402
+from app.benchmarks.rag_eval import evaluate_answer_grounding, evaluate_rankings  # noqa: E402
 from app.infrastructure.knowledge_gateway import QdrantKnowledgeGateway  # noqa: E402
 
 
 def parse_args() -> argparse.Namespace:
-    parser = argparse.ArgumentParser(description="Evaluate PA.3 RAG retrieval quality.")
+    parser = argparse.ArgumentParser(description="Evaluate PA.4 RAG retrieval and grounding quality.")
     parser.add_argument("--qdrant-url", default="http://127.0.0.1:6333")
     parser.add_argument("--collection", default="vcore_operations_ko")
     parser.add_argument("--embed-base-url", default="http://127.0.0.1:11434")
@@ -35,6 +35,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--min-score", type=float, default=0.0)
     parser.add_argument("--rerank-base-url", default="")
     parser.add_argument("--rerank-model", default="")
+    parser.add_argument("--baseline", default="")
     parser.add_argument("--out", default="")
     return parser.parse_args()
 
@@ -67,17 +68,46 @@ async def main() -> None:
             }
             for chunk in chunks
         ]
-    rows, summary = evaluate_rankings(RAG_RETRIEVAL_CASES, rankings, args.top_k)
+    retrieval_rows, retrieval_summary = evaluate_rankings(
+        RAG_RETRIEVAL_CASES, rankings, args.top_k
+    )
+    answer_rows, answer_summary = evaluate_answer_grounding(RAG_ANSWER_CASES)
     result = {
         "settings": vars(args),
-        "summary": summary,
-        "rows": [asdict(row) for row in rows],
+        "summary": {
+            "retrieval": retrieval_summary,
+            "answer_grounding": answer_summary,
+        },
+        "rows": {
+            "retrieval": [asdict(row) for row in retrieval_rows],
+            "answer_grounding": [asdict(row) for row in answer_rows],
+        },
         "details": details,
     }
+    if args.baseline:
+        baseline = json.loads(Path(args.baseline).read_text(encoding="utf-8"))
+        result["baseline_check"] = _check_baseline(result["summary"], baseline)
     text = json.dumps(result, ensure_ascii=False, indent=2)
     if args.out:
         Path(args.out).write_text(text, encoding="utf-8")
     print(text)
+
+
+def _check_baseline(
+    summary: dict[str, dict[str, float]],
+    baseline: dict[str, object],
+) -> dict[str, object]:
+    thresholds = baseline.get("thresholds", {})
+    checks: dict[str, bool] = {}
+    for metric_path, threshold in thresholds.items():
+        section, metric = metric_path.split(".", maxsplit=1)
+        value = summary.get(section, {}).get(metric, 0.0)
+        checks[metric_path] = value >= float(threshold)
+    return {
+        "passed": all(checks.values()),
+        "checks": checks,
+        "thresholds": thresholds,
+    }
 
 
 if __name__ == "__main__":

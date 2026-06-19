@@ -79,7 +79,7 @@ parallel once PA lands.
       knowledge base' rather than hallucinate").
 
 ### PA.4 — RAG evals (regression)
-- [ ] Add a RAG eval harness (retrieval recall + answer-grounding/faithfulness) next to the existing
+- [x] Add a RAG eval harness (retrieval recall + answer-grounding/faithfulness) next to the existing
       `benchmark_v2` / SFT eval. Lock a baseline; wire into the pytest suite.
 
 ---

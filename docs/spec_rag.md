@@ -190,13 +190,24 @@ engine-split lever that keeps embeddings on Ollama while the LLM serves from lla
 
 ## 7. Evals (PA.4 — regression)
 
-Add a RAG eval harness next to `benchmarks/` / the SFT eval:
+RAG regression lives beside the existing benchmark harness:
 
-- **Retrieval quality:** recall@k and nDCG@k against a hand-labeled `query → relevant document_id`
-  set (~20–30 queries spanning the categories).
-- **Answer grounding / faithfulness:** does the answer cite a retrieved chunk and avoid
-  unsupported claims? (LLM-judge against the retrieved context.)
-- Lock a baseline; wire into the pytest suite so retrieval changes are regression-gated.
+- **Retrieval quality:** `app/benchmarks/rag_cases.py` defines labeled query -> relevant
+  `document_id` cases and deterministic PA.4 fixture rankings. `app/benchmarks/rag_eval.py`
+  measures recall@k and nDCG@k.
+- **Answer grounding / faithfulness:** `RagAnswerCase` fixtures check whether answers cite retrieved
+  chunks, include required grounded terms, avoid forbidden hallucinated terms, and honestly abstain
+  with `"not in the knowledge base"` when retrieval returns nothing.
+- **Locked baseline:** [benchmark/RAG_PA4_BASELINE.json](benchmark/RAG_PA4_BASELINE.json) records the
+  PA.4 thresholds. `tests/test_rag_eval.py` gates the deterministic baseline in pytest, while the
+  live runner can compare a real stack run with:
+
+  ```powershell
+  python scripts/eval_rag_retrieval.py --baseline ../../../docs/benchmark/RAG_PA4_BASELINE.json
+  ```
+
+The current PA.4 baseline is intentionally small (6 retrieval cases, 3 answer-grounding cases) but
+fully regression-gated. PB extends the same harness with multi-hop GraphRAG cases.
 
 ---
 

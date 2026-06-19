@@ -231,7 +231,7 @@ def lexical_rerank(query: str, chunks: list[RetrievedChunk]) -> list[RetrievedCh
 
 
 def _tokenize(text: str) -> set[str]:
-    tokens = re.findall(r"[0-9A-Za-z가-힣_]+", text.lower())
+    tokens = re.findall(r"[0-9A-Za-z\uac00-\ud7a3_]+", text.lower())
     stopwords = {
         "a",
         "about",

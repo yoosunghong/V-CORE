@@ -1,4 +1,4 @@
-# AGENT.md — Agent Behavior Specification
+# CLAUDE.md — Agent Rules for VCORE Project
 
 ## Project Overview
 
@@ -32,6 +32,10 @@ After completing any task:
 
 ## Architecture Constraints
 
+### This is a Demo Prototype
+- **Speed over scalability.** Implement the simplest thing that works end-to-end.
+- No premature abstraction. No over-engineering. No features not in scope.
+- Hardcode configuration values if needed for demo speed; mark with `# TODO: config` comment.
 
 ### Tech Stack (non-negotiable for demo)
 > **Updated 2026-06-04:** the web stack was migrated to the pai_chatbot-derived
@@ -84,26 +88,33 @@ The web stack is a **LangGraph multi-agent chatbot** that drives the UE5 AGV cel
   `sha256-b709d81508a078a686961de6ca07a953b895d9b286c46e17f00fb267f4f2d297` (2.74 GB).
   - Blob: `C:/Users/PC/.ollama/models/blobs/sha256-b709d815…`
   - Manifest: `C:/Users/PC/.ollama/models/manifests/registry.ollama.ai/library/qwen3.5/2b`
-  - `config.py` default tag is `qwen3.5:0.8b`, but Phase-2/2-B benchmarks and the deployed path
-    use **`qwen3.5:2b`** (`OLLAMA_MODEL=qwen3.5:2b`). **SFT must target this exact base** so the
-    before/after comparison is valid — do not swap to a different generation/param count.
+  - Note: `config.py` default tag is `qwen3.5:0.8b`, but all Phase-2/2-B benchmarks and the
+    deployed path use **`qwen3.5:2b`** (set `OLLAMA_MODEL=qwen3.5:2b`). SFT targets this base.
 - **Ollama serving:** `:11434`, `qwen3.5:2b`, reasoning off (`think:false`), `num_ctx 2048`.
-- **llama.cpp serving (project binary 9559 `715b86a36`, CUDA build):**
+- **llama.cpp serving (project binary, the reasoning-off lever):** version **9559 (`715b86a36`)**
+  at `Intermediate/llama-build/bin/Release/llama-server.exe` — a CUDA build (`GGML_CUDA=ON`).
+  Serve the same blob on `:8080`:
   ```
   Intermediate/llama-build/bin/Release/llama-server.exe \
     -m C:/Users/PC/.ollama/models/blobs/sha256-b709d81508a078a686961de6ca07a953b895d9b286c46e17f00fb267f4f2d297 \
     --host 0.0.0.0 --port 8080 -ngl 99 -c 8192 --jinja --reasoning off --reasoning-budget 0
   ```
-  This is the Phase-2-B baseline regime (disambiguation 91.7%, KPI 94%). Do not rebuild it
-  CPU-only (`GGML_CUDA=OFF`).
-- Benchmarks (host anaconda python):
+  This is the Phase-2-B baseline regime (disambiguation 91.7%, KPI 94%). Do **not** rebuild
+  this binary CPU-only (`GGML_CUDA=OFF`) — that regresses latency ~11.7s→~2.4s the wrong way.
+- Benchmarks run on host anaconda python, not Docker:
   `scripts/benchmark_v2.py --providers ollama,llama_cpp --layers off,on --repeats 5`.
 
 ### Phase 3 — LLM SFT (Domain Tool Routing)
-LoRA fine-tune the production base `Qwen/Qwen3.5-2B` (= `qwen3.5:2b`) to internalize V-CORE
-tool routing under a minimal prompt. Plan + data: [docs/sft/plan.md](docs/sft/plan.md),
-`docs/sft/data/` (450 rows, validated against the live `ToolRouter`). SFT-1 complete; SFT-2 =
-LoRA training on the production base; SFT-3 eval harness `docs/sft/scripts/eval_sft.py`.
+Active LLM work track: LoRA fine-tune the **production base `Qwen/Qwen3.5-2B`** (= `qwen3.5:2b`,
+above) — same checkpoint as deployed so the v2 before/after comparison stays valid — to
+internalize V-CORE tool routing so accurate `{"name","arguments"}` control JSON is produced
+under a **minimal** prompt (reducing dependence on the long `tool_planning_system.txt`). Plan +
+checklist: [docs/sft/plan.md](docs/sft/plan.md). Dataset (450 rows, labels grounded on the 9
+real `tools/contracts.py` tools and validated against the live `ToolRouter`) lives in
+`docs/sft/data/`. SFT-1 (data) is complete; SFT-2 (LoRA training, host Python + GPU); SFT-3 eval
+harness `docs/sft/scripts/eval_sft.py` grades {Base+Full, Base+Minimal, SFT+Minimal}. Goal =
+improve the production model + prove reduced long-prompt dependence (prod baseline 94% KPI /
+91.7% disambiguation).
 
 ---
 

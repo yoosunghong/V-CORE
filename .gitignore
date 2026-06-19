@@ -112,3 +112,8 @@ docs/sft/integrated/data/checkpoints/
 .p4ignore
 # Stale Perforce workspace copy
 web;W/
+
+
+# ─── Coding tools ──────────────────────────────────────────────────────────
+.codex/
+.claude/

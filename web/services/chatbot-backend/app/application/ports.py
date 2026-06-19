@@ -8,6 +8,7 @@ from app.domain.models import (
     ChatSessionSummary,
     DomainEvent,
     ProcessTelemetry,
+    RetrievedChunk,
     RobotCommand,
     SimulationRun,
     SimulationRunStatus,
@@ -63,6 +64,17 @@ class EventPublisher(Protocol):
     async def publish(self, event: DomainEvent) -> None: ...
 
 
+class KnowledgeGateway(Protocol):
+    async def retrieve(
+        self,
+        query: str,
+        correlation_id: str,
+        *,
+        top_k: int = 5,
+        filters: dict[str, str] | None = None,
+    ) -> list[RetrievedChunk]: ...
+
+
 class ControlServerClient(Protocol):
     async def get_station(self, station_id: int, correlation_id: str) -> Station: ...
     async def list_stations(self, correlation_id: str) -> list[Station]: ...
@@ -102,4 +114,13 @@ class LlmGateway(Protocol):
         command: RobotCommand,
         correlation_id: str,
         evaluation: str | None = None,
+        knowledge: list[RetrievedChunk] | None = None,
+    ) -> str: ...
+
+    async def generate_chat_response(
+        self,
+        user_message: str,
+        history: list[dict[str, str]],
+        correlation_id: str,
+        knowledge: list[RetrievedChunk] | None = None,
     ) -> str: ...

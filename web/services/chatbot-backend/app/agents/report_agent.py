@@ -5,6 +5,7 @@ from app.application.ports import LlmGateway
 from app.domain.evaluation import SimulationEvaluation, build_simulation_evaluation
 from app.domain.models import (
     DomainEvent,
+    RetrievedChunk,
     RobotCommand,
     RobotCommandName,
     format_verdict_summary,
@@ -34,6 +35,7 @@ class ReportAgent:
         event: DomainEvent,
         command: RobotCommand,
         correlation_id: str,
+        knowledge: list[RetrievedChunk] | None = None,
     ) -> str:
         # Qualitative evaluation of the heatmap + KPIs, woven into the LLM narrative so the
         # report reads as an assessment rather than a number dump. None for non-run commands.
@@ -41,7 +43,7 @@ class ReportAgent:
         evaluation_block = evaluation.to_prompt_block() if evaluation else None
         try:
             report = await self._llm.generate_report(
-                event, command, correlation_id, evaluation=evaluation_block
+                event, command, correlation_id, evaluation=evaluation_block, knowledge=knowledge
             )
         except LlmGatewayError:
             report = self._fallback_report(event, command, evaluation)

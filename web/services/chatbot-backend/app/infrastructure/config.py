@@ -46,6 +46,15 @@ class Settings:
     llama_cpp_tool_num_predict: int = 128
     llama_cpp_report_num_predict: int = 512
     llm_structured_retry_count: int = 1
+    # RAG / knowledge retrieval (spec_rag.md §5.5). Off by default so the demo runs without Qdrant.
+    rag_enabled: bool = False
+    qdrant_url: str = "http://qdrant:6333"
+    rag_collection: str = "vcore_operations_ko"
+    rag_embed_model: str = "bge-m3"
+    rag_top_k: int = 5
+    # Embeddings run on Ollama's /v1/embeddings (engine split: LLM on llama.cpp, embeddings on
+    # Ollama). Independent of the LLM base URL so they can be served by different engines.
+    embed_base_url: str = "http://ollama:11434"
     session_history_limit: int = 40
     session_history_message_max_chars: int = 1200
     session_preview_max_chars: int = 80
@@ -105,6 +114,14 @@ def load_settings() -> Settings:
         llama_cpp_tool_num_predict=int(os.getenv("LLAMA_CPP_TOOL_NUM_PREDICT", "128")),
         llama_cpp_report_num_predict=int(os.getenv("LLAMA_CPP_REPORT_NUM_PREDICT", "512")),
         llm_structured_retry_count=int(os.getenv("LLM_STRUCTURED_RETRY_COUNT", "1")),
+        rag_enabled=os.getenv("RAG_ENABLED", "false").lower() in {"1", "true", "yes", "on"},
+        qdrant_url=os.getenv("QDRANT_URL", "http://qdrant:6333"),
+        rag_collection=os.getenv("RAG_COLLECTION", "vcore_operations_ko"),
+        rag_embed_model=os.getenv("RAG_EMBED_MODEL", "bge-m3"),
+        rag_top_k=int(os.getenv("RAG_TOP_K", "5")),
+        embed_base_url=os.getenv(
+            "EMBED_BASE_URL", os.getenv("OLLAMA_BASE_URL", "http://ollama:11434")
+        ),
         session_history_limit=int(os.getenv("SESSION_HISTORY_LIMIT", "40")),
         session_history_message_max_chars=int(
             os.getenv("SESSION_HISTORY_MESSAGE_MAX_CHARS", "1200")

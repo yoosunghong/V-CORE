@@ -12,6 +12,7 @@ from app.domain.models import (
     CommandStatus,
     DomainEvent,
     MessageRole,
+    RetrievedChunk,
     RobotCommand,
     RobotCommandName,
     Station,
@@ -30,6 +31,7 @@ class MultiResponseState(TypedDict, total=False):
     events: Annotated[list[DomainEvent], operator.add]
     trace: Annotated[list[dict[str, Any]], operator.add]
     route: str
+    retrieved: list[RetrievedChunk]
     station: Station | None
     validated_tool_call: ValidatedToolCall | None
     command: RobotCommand
@@ -80,6 +82,7 @@ class LangGraphMultiResponseAgent:
         graph.add_node("report_available_actions", self._report_available_actions)
         graph.add_node("report_run_comparison", self._report_run_comparison)
         graph.add_node("optimize_agv_count", self._optimize_agv_count)
+        graph.add_node("retrieve", self._retrieve)
         graph.add_node("report_general_chat", self._report_general_chat)
         graph.add_node("resolve_station", self._resolve_station)
         graph.add_node("plan_tool_call", self._plan_tool_call)
@@ -97,7 +100,7 @@ class LangGraphMultiResponseAgent:
                 "station_action_query": "report_available_actions",
                 "compare_runs": "report_run_comparison",
                 "optimize_agvs": "optimize_agv_count",
-                "general_chat": "report_general_chat",
+                "general_chat": "retrieve",
                 "robot_command": "resolve_station",
             },
         )
@@ -106,6 +109,7 @@ class LangGraphMultiResponseAgent:
         graph.add_edge("report_available_actions", END)
         graph.add_edge("report_run_comparison", END)
         graph.add_edge("optimize_agv_count", END)
+        graph.add_edge("retrieve", "report_general_chat")
         graph.add_edge("report_general_chat", END)
         graph.add_edge("resolve_station", "plan_tool_call")
         graph.add_conditional_edges(
@@ -258,11 +262,31 @@ class LangGraphMultiResponseAgent:
             "result": (assistant, None, None, state["events"]),
         }
 
+    async def _retrieve(self, state: MultiResponseState) -> dict[str, Any]:
+        """Ground free-text Q&A: fetch knowledge-base chunks before the answer is written.
+
+        A no-op when RAG is disabled (the orchestrator returns []), so the general-chat path
+        is unchanged in the default demo configuration.
+        """
+        chunks, event = await self._orchestrator._retrieve_knowledge(
+            state["user_text"],
+            state["session_id"],
+            state["correlation_id"],
+        )
+        out: dict[str, Any] = {
+            "retrieved": chunks,
+            "trace": [{"node": "retrieve", "hits": len(chunks)}],
+        }
+        if event is not None:
+            out["events"] = [event]
+        return out
+
     async def _report_general_chat(self, state: MultiResponseState) -> dict[str, Any]:
         message = await self._orchestrator._general_chat_message(
             state["user_text"],
             state["session_id"],
             state["correlation_id"],
+            knowledge=state.get("retrieved"),
         )
         assistant = await self._orchestrator._add_assistant_message(
             state["session_id"],

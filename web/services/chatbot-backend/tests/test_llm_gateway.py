@@ -312,7 +312,7 @@ def test_report_agent_falls_back_when_llm_report_is_empty() -> None:
         async def propose_tool_call(self, user_message: str, station: Station | None, correlation_id: str):
             return None
 
-        async def generate_report(self, event, command, correlation_id: str, evaluation=None) -> str:
+        async def generate_report(self, event, command, correlation_id: str, evaluation=None, knowledge=None) -> str:
             raise LlmGatewayError("empty report")
 
     event = DomainEvent(
@@ -343,7 +343,7 @@ def test_report_agent_fallback_appends_evaluation_narrative() -> None:
         async def propose_tool_call(self, user_message: str, station: Station | None, correlation_id: str):
             return None
 
-        async def generate_report(self, event, command, correlation_id: str, evaluation=None) -> str:
+        async def generate_report(self, event, command, correlation_id: str, evaluation=None, knowledge=None) -> str:
             raise LlmGatewayError("empty report")
 
     event = DomainEvent(

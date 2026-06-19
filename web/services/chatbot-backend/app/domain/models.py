@@ -117,6 +117,17 @@ class ProcessTelemetry(BaseModel):
     measured_at: datetime = Field(default_factory=utc_now)
 
 
+class RetrievedChunk(BaseModel):
+    """A knowledge-base chunk returned by the KnowledgeGateway for RAG grounding."""
+
+    document_id: str
+    title: str
+    text: str
+    score: float
+    source: str = "unknown"
+    category: str = "unknown"
+
+
 class Simulation(BaseModel):
     """Operator-authored runtime parameters for one UE5 AGV simulation."""
 

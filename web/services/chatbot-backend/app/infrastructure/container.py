@@ -11,6 +11,7 @@ from app.infrastructure.config import Settings, load_settings
 from app.infrastructure.control_client import DemoControlServerClient, HttpControlServerClient
 from app.infrastructure.event_bus import InMemoryEventBus
 from app.infrastructure.iot_client import DemoIotCommandClient
+from app.infrastructure.knowledge_gateway import NullKnowledgeGateway, QdrantKnowledgeGateway
 from app.infrastructure.llm_gateway import (
     LlamaCppLlmGateway,
     OllamaLlmGateway,
@@ -44,6 +45,7 @@ class AppContainer:
         self.control_client = self._build_control_client()
         self.iot_client = self._build_command_client()
         self.tool_router = ToolRouter()
+        self.knowledge = self._build_knowledge_gateway()
         self.llm = self._build_llm_gateway()
         llm_provider = self.settings.llm_provider.lower()
         self.llm_status: dict[str, Any] = {
@@ -68,6 +70,8 @@ class AppContainer:
             events=self.events,
             tool_router=self.tool_router,
             live_telemetry=self.live_telemetry,
+            knowledge=self.knowledge,
+            rag_top_k=self.settings.rag_top_k,
             auto_complete_commands=(
                 self.settings.auto_complete_demo_commands
                 and not self._ue5_enabled()
@@ -135,6 +139,16 @@ class AppContainer:
             )
             return RoutingSplitLlmGateway(general=general, routing=routing)
         return RuleBasedLlmGateway()
+
+    def _build_knowledge_gateway(self) -> NullKnowledgeGateway | QdrantKnowledgeGateway:
+        if not self.settings.rag_enabled:
+            return NullKnowledgeGateway()
+        return QdrantKnowledgeGateway(
+            qdrant_url=self.settings.qdrant_url,
+            collection=self.settings.rag_collection,
+            embed_base_url=self.settings.embed_base_url,
+            embed_model=self.settings.rag_embed_model,
+        )
 
     def _build_ollama_gateway(self) -> OllamaLlmGateway:
         return OllamaLlmGateway(

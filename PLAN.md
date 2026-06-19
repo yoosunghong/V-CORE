@@ -1,188 +1,147 @@
-# PLAN.md - VCORE Project Implementation Plan
+# PLAN.md — VCORE Agentic-AI Enhancement Plan
 
 > **Rule:** Read this before every task. Mark tasks `[x]` immediately upon completion.
 > Completed work is summarized in [DONE.md](DONE.md).
-> **Current Phase:** Phase 6/7 — Virtual Process + Telemetry stabilization
-> **Last reorganized:** 2026-06-12 (added P6 — production-grade UE5 refactor / Phase 10 for portfolio).
+> **Current focus:** Close the Agentic-AI capability gaps — Knowledge Store + RAG/GraphRAG,
+> Guardrails/Observability, and a real CSP deployment.
+> **Prior phases (Phase 1–10: UE5 sim, LangGraph migration, telemetry, SFT/serving):** archived in
+> [legacy/PLAN.md](legacy/PLAN.md) + [legacy/DONE.md](legacy/DONE.md). Those remain the foundation;
+> this plan builds on them.
+
+---
+
+## Why this plan
+
+The platform is already strong on **multi-agent orchestration**, **model training/quantization/serving
+optimization** (LoRA SFT of `qwen3.5:2b`, GGUF, llama.cpp CUDA, adapter-toggle), and **evals**. The
+weak cluster is **Enterprise Knowledge Store + RAG (incl. Advanced/GraphRAG) + IR**, plus
+**Guardrails/PII**, **Observability**, **Ontology-based services**, and a credible **CSP** story.
+
+One well-built feature — **ontology-grounded GraphRAG over the AGV/Station/KPI domain** — closes the
+biggest cluster at once and reuses the existing (currently dead) Qdrant scaffold. The remaining tracks
+are cheap add-ons that round out Safety/Observability and Cloud.
+
+> **Note on the legacy P6 UE5 refactor:** good engineering hygiene, but it moves no capability needle
+> for this track. It stays parked in [legacy/PLAN.md](legacy/PLAN.md) and is **not** a prerequisite here.
 
 ---
 
 ## Critical Path
 
-**2026-06-09: the live-loop blocker is cleared.** The full sim loop is verified end-to-end against
-a `-game` standalone with UE HTTP `:7777` reachable (see P1 / [DONE.md](DONE.md)). What remains is
-**editor-only** asset wiring — zone camera tags, GameMode confirmation, and the Phase 9 F1/F2/F3
-material + camera tuning — none of which is doable from standalone; they need an in-editor pass.
-Treat that in-editor pass as the prerequisite for the rest of P2/P3.
-
-| Phase 9 | Portfolio feature extensions | F1/F2/F3 wiring + tuning open |
-| Phase 10 | Production-grade UE5 refactor (portfolio) | New — see P6 |
-
+`PA (real RAG) → PB (GraphRAG + ontology) → PC (guardrails + observability) → PD (CSP deployment)`.
+PA + PB alone convert four currently-missing capabilities to working. PC and PD can proceed in
+parallel once PA lands.
 
 ---
 
-## P6 — Production-grade UE5 process simulation refactor (Phase 10, portfolio)
+## PA — Real RAG (Enterprise Knowledge Store + RAG + IR)
 
-> **Goal:** Elevate the UE5 subsystem from a demo prototype to a production-grade, portfolio-quality
-> codebase — event-driven, component-partitioned (Lyra-style), with clear class responsibilities and
-> zero "demonstrative" fakery. Supersedes/absorbs the remaining Phase 8 decomposition (P5) where they
-> overlap. Each step must keep the demo compiling and the live loop (P1) green.
+> **Goal:** Replace the fake-vector scaffold with a working retrieval pipeline that grounds agent
+> answers in a real corpus. Closes Knowledge Store + RAG + IR + strengthens Context Engineering.
 >
-> **Driver context:** the current AGV behavior has demo shortcuts — stations are passive (no
-> collision/trigger; AGV drives through them), pickup/dropoff fire at hardcoded spline ratios
-> (`0.22`/`0.72`) unrelated to placed `StationActor`s, battery is faked, and several actors are
-> vestigial (`ALoadingDockActor::AssignNextTask` is dead code; `EStationKind`/`Capacity`/
-> `CapabilityTags`/`ZoneId` are authored but never read). See the "Demo-like elements" note below.
+> **Current state (from legacy):** Qdrant is provisioned in `web/docker-compose.yml` +
+> `web/infra/vector-db/init/collections.json`, and `web/services/data-seeder/scripts/build_qdrant_seed.py`
+> emits **fake SHA-256 hash vectors** from `seeds/rag_documents.jsonl`. The backend app imports **zero**
+> embedding/retrieval code — RAG is dead. This track makes it live.
 
-### P6.0 — Architecture design (do first; gates the rest) ✅ done 2026-06-12 → [docs/spec_p6_refactor.md](docs/spec_p6_refactor.md)
-- [x] **Audit the class list requiring modification** and record current vs. target responsibility
-      for each. Candidates already identified:
-      - `AAGVActor` (~890 lines) — God-actor mixing movement, the `EAGVState` machine, traffic
-        reservation, nameplate widget, chase camera, and task plumbing. **Decompose.**
-      - `AAGVSimController` (~1600 lines) — config + HTTP `:7777` + WS + telemetry transports + sim
-        lifecycle + chat ingest + camera. (Already Phase 8 P3/P4 / P5 here.)
-      - `AStationActor` — passive anchor; needs a real interaction volume + station-kind behavior.
-      - `ADispatcherActor` — command-path only; ignores station kind/capability. Make it the single
-        assignment authority for both autonomous and commanded flows.
-      - `ALoadingDockActor` — vestigial; `AssignNextTask` dead. Either make it a real dock with a
-        docking pose/queue or remove it.
-      - `ATrafficManagerActor` / `AIntersectionManager` — overlapping reservation responsibilities;
-        collapse to one boundary.
-      - `UAGVTaskComponent` + `AGVStateTree*` tasks — `EAGVState` (in `AGVActor`) and the StateTree
-        lifecycle duplicate state; pick one source of truth.
-      - Components: `USplinePathComponent`, `UAGVStatusBillboardComponent`, `UCongestionHeatmapComponent`,
-        `UKPIAccumulator`.
-- [x] **Propose the new directory structure + class architecture** (component-first, Lyra-derived).
-      Candidate layout to evaluate:
-      ```
-      Source/VCORE/
-        Core/        ← GameMode, SimSubsystem (lifecycle), config
-        AGV/         ← AAGVActor (thin pawn) + UAGVMovementComponent,
-                       UAGVTaskRunnerComponent, UAGVStateComponent
-        Stations/    ← AStationActor + UStationInteractionComponent (trigger), station-kind strategies
-        Dispatch/    ← ADispatcherActor (sole assignment authority)
-        Traffic/     ← unified reservation boundary (Traffic+Intersection merged)
-        Telemetry/   ← Net boundary: SimNetworkComponent, SimEventDispatcher, TelemetryEmitter, SimJson
-        Camera/      ← CameraDirector
-        KPI/ Viz/    ← UKPIAccumulator, heatmap, billboards
-      ```
-- [x] **Define the event-driven contract** — replace per-Tick polling / direct calls with delegates
-      or a `GameplayMessageSubsystem`-style bus for: state changes, station arrival, reservation
-      grant/release, task complete/fail, collision. Document the events before refactoring.
-      → `USimEventBus` (PIE-scoped `UWorldSubsystem`) + local delegates; event catalog in §3 of the design doc.
+### PA.0 — Spec & corpus (do first; gates the rest) ✅ done 2026-06-19 → [docs/spec_rag.md](docs/spec_rag.md)
+- [x] Write `docs/spec_rag.md` — retrieval architecture, corpus schema, embedding model choice,
+      chunking, the LangGraph wiring points, and eval metrics.
+- [x] Define the **domain corpus** + metadata schema; replaced the stale farm/greenhouse seed with
+      14 AGV-domain docs and renamed the Qdrant collection `farm_operations_ko → vcore_operations_ko`.
+      Added `seeds/docs/` for long source files. (Run/KPI-history ingestion stays in PA.2.)
 
-> **P6.0 decisions locked 2026-06-12 (design doc §5):** battery → ~~remove~~ **reversed: keep the
-> existing fake battery** (restored after P6.1d — a battery readout is needed for the demo); StateTree
-> runtime → **retire** (`UAGVTaskComponent` lifecycle is sole control path, `EAGVState` deleted);
-> LoadingDock → **delete & subsume** into stations. P6.1 proceeds on these.
+### PA.1 — Real embeddings + ingestion ✅ code done 2026-06-19 (live run pending stack)
+- [x] Swapped `deterministic_vector()` for real Ollama embeddings (`bge-m3`, configurable via
+      `RAG_EMBED_MODEL`); collection dim set to 1024, self-pulled by the `ollama-model` compose step.
+- [x] Rewrote `build_qdrant_seed.py` into a real ingest job: loads `rag_documents.jsonl` + chunks
+      `seeds/docs/*.md` (frontmatter-aware), embeds (title-prepended), ensures the Qdrant collection,
+      and upserts with metadata payloads. Idempotent (UUID5 point ids from `document_id`+chunk),
+      `--dry-run`/`--recreate` flags, runs from host anaconda python or in-stack. httpx dep added.
+- [x] **Verified live 2026-06-19:** `bge-m3` (1024-dim) on host Ollama via OpenAI-compatible
+      `/v1/embeddings` (engine-agnostic — same call works on llama.cpp), Qdrant container up. 16 points
+      upserted into `vcore_operations_ko` (status green). Retrieval correct: collision query →
+      `sop_collision_001` #1 @ 0.719 vs #2 @ 0.601; cos(query, relevant)=0.903, cos across unrelated
+      docs=0.397.
 
-### P6.1 — Remove demo/legacy code & de-fake behavior
-- [x] **Station interaction** (P6.1a bus + P6.1b trigger) — `AStationActor` now owns a
-      `UStationInteractionComponent` trigger volume; an AGV arriving by proximity drives Load/Unload off
-      `EStationKind` (Pickup/Dropoff). Removed the hardcoded `PickupDistanceRatio`/`DropoffDistanceRatio`
-      checkpoints. Controller seeds a Pickup+Dropoff pair per path if none authored (loop stays green);
-      `StationArrived` published on the bus. Charger/Inspection kinds carry no action yet (Charger N/A —
-      battery removed in P6.1d).
-- [x] **Battery model — decision reversed 2026-06-12: keep the existing fake battery.** P6.1d had
-      removed it, but a battery readout is needed for the demo, so the fake model was **restored**:
-      `BatteryPercent` drains a flat `0.15/s` (floored at 20%, reset to 100% on configure), surfaced via
-      the dispatcher `BatteryScore`, F2 billboard, `AGV_STATE_CHANGE` event + telemetry JSON, and the web
-      `BatteryBar` gauge. Still fake (no real charge/discharge or `Charger` station) — revisit only if a
-      real model is wanted later.
-- [x] **Delete dead/vestigial paths** (P6.1c CreateFallbackStation + P6.1d) — removed `ALoadingDockActor`
-      entirely (subsumed by stations; task counting already lives in `UKPIAccumulator`),
-      `CreateFallbackStation` (P6.1c), and moved the `BaseMoveSpeed`/`ActionDurationSeconds` `// TODO: config`
-      hardcodes to `EditAnywhere` UPROPERTYs on `AAGVActor` (editor-authored config).
-- [x] **Make station metadata meaningful** (P6.1c) — `Capacity` gates dispatcher eligibility
-      (`Capacity>0`) and scores throughput; `CapabilityTags` breadth and a configured `ZoneId` are
-      tie-breaking fit signals folded into `StationScore` + the dispatch explanation. The autonomous
-      loop now routes through `ADispatcherActor::SelectStationForAgv` (no more direct
-      `AssignDeliveryTask(nullptr)` bypass) — the dispatcher is the sole assignment authority.
+### PA.2 — Retrieval node in the LangGraph ✅ done 2026-06-19
+- [x] Add a `KnowledgeGateway` (hexagonal port + Qdrant adapter) in `chatbot-backend` alongside the
+      existing gateways. Validate at the boundary only.
+- [x] Add a `retrieve` graph node that grounds `report` and `general_chat`: query → embed → top-k
+      (with metadata filter) → inject as context. Emit a `agent.retrieval` event for observability.
+- [x] Ground the `ReportAgent` so a KPI verdict cites the relevant SOP/spec ("throughput dropped;
+      SOP-12 says reduce Zone-2 AGV count").
 
-### P6.2 — Decompose & optimize
-- [ ] **Split `AAGVActor`** into a thin pawn + components (movement, state, task-runner) per the
-      P6.0 layout. Target: no single class owning movement + state + traffic + UI + camera.
-- [ ] **Finish `AAGVSimController` decomposition** (folds in Phase 8 P3/P4 / P5): extract the `Net/`
-      boundary (`SimNetworkComponent`, `SimEventDispatcher`, `TelemetryEmitter`, `SimJson`) and
-      `CameraDirector`.
-- [ ] **Apply component/ECS-style patterns** for the per-AGV hot path; convert remaining Tick polling
-      to the event bus from P6.0.
+### PA.3 — IR optimization
+- [ ] Add a reranker (cross-encoder or LLM-rerank) over the top-k; measure nDCG/recall on a small
+      labeled query set. Tune chunk size + k.
+- [ ] Prompt-engineering pass: citation format, grounded-vs-ungrounded guard ("say 'not in the
+      knowledge base' rather than hallucinate").
 
-### P6.3 — Documentation & quality gate
-- [ ] **Comment every function in every public header** — a clear one-line purpose (and non-obvious
-      `why`) on each declaration across `Source/VCORE/Public/**`.
-- [ ] **Update specs** — [docs/spec_unreal.md](docs/spec_unreal.md) Part 11 (architecture) to reflect
-      the new directory/class structure before landing the code.
-- [ ] **Quality gate** — `ue-architecture-lint` + `ue-perf-lint` run clean; demo loop (P1) still
-      green end-to-end after the refactor.
+### PA.4 — RAG evals (regression)
+- [ ] Add a RAG eval harness (retrieval recall + answer-grounding/faithfulness) next to the existing
+      `benchmark_v2` / SFT eval. Lock a baseline; wire into the pytest suite.
+
+---
+
+## PB — GraphRAG + Ontology (Advanced RAG + Ontology-based service)
+
+> **Goal:** Formalize the domain as an ontology and do multi-hop retrieval flat RAG can't. Upgrades
+> RAG to "Advanced/GraphRAG" and closes the Ontology-based-service capability.
+>
+> Entities already exist in the domain: `Station`–`AGV`–`Zone`–`Capability`–`Scenario`–`Run/KPI`
+> (`EStationKind`/`CapabilityTags`/`ZoneId` in UE5; `Station`/`ProcessTelemetry` in the backend).
+
+- [ ] Define the ontology (RDF/OWL or a typed `networkx` graph) for the AGV cell domain; document in
+      `docs/spec_ontology.md`. Build it from existing structured data (station registry +
+      run/KPI history), not hand-authored prose.
+- [ ] Graph-construction job: extract entities/relations from the corpus + run history into the graph
+      store; keep it in sync with new runs.
+- [ ] GraphRAG retrieval: multi-hop traversal for relational queries ("which stations in Zone 2 can
+      handle capability X, and what was their last bottleneck rate?"). Route relational questions to
+      the graph path, free-text to the PA vector path (hybrid retriever).
+- [ ] Extend the PA.4 eval set with multi-hop questions; compare flat-RAG vs GraphRAG.
+
+---
+
+## PC — Guardrails + Observability (Safety / Observability)
+
+> **Goal:** Implement the safety boundary CLAUDE.md already mandates but the code lacks, and add real
+> tracing so retrieval/answer quality is measurable.
+
+- [ ] **Guardrails / PII boundary.** Input + output sanitization at the chat boundary (the
+      DOMPurify/sanitization rule in CLAUDE.md is currently unimplemented). Add a scope/refusal guard,
+      PII detection + redaction on logged content, and prompt-injection mitigation for retrieved text.
+- [ ] **Tracing.** Wrap the LangGraph in Langfuse (or OTel) — per-turn traces of route, retrieval
+      hits, token counts, latency. Replaces the ad-hoc `agent.route.selected` event story.
+- [ ] **Observability-driven improvement loop.** Use traces to surface a low-grounding or
+      misrouted-query bucket; feed it back into the PA.3/PA.4 tuning. Document one concrete
+      before/after improvement.
+
+---
+
+## PD — Real CSP Deployment (Cloud-based AI platform)
+
+> **Goal:** Convert the "Cloudflare Tunnel → local box" story into a credible CSP AI-platform line by
+> moving at least one real component to a managed cloud AI service.
+
+- [ ] Pick the component + CSP (recommended: vector store on **Qdrant Cloud / Vertex Vector Search**,
+      or the SFT model behind a **Bedrock / SageMaker / Vertex** endpoint). Decide based on cost +
+      what best demonstrates the platform skill.
+- [ ] Deploy + wire the backend to the managed service via env config (keep local fallback for the
+      offline demo). Document setup in `docs/deploy_csp.md`.
+- [ ] Update the portfolio narrative (live demo) to show the hybrid local-sim + cloud-AI topology.
 
 ---
 
 ## Backlog / Lower priority
-
-- [ ] Redis pub/sub for backend WebSocket fan-out (only needed if >1 concurrent frontend client).
-- [ ] UE5 time-acceleration mode (1 sec = N simulated minutes, configurable).
-
----
-
-## Editor Setup Required (post-code-change)
-
-- **`AuthoredAgvs` wiring (now optional — auto-discovered).** `AuthoredAgvs` and `AuthoredPaths`
-  are independent arrays and a unit needs an entry in both, so the cell's max AGV count is
-  `min(AGV actors in the level, AuthoredPaths)`. As of 2026-06-13 `InitializeRuntimeSimulationActors`
-  auto-discovers any level-placed `AGVActor` not already in `AuthoredAgvs` (name-sorted) up to the
-  path count, so **placing N AGV actors + N paths in the level is enough** — you no longer have to
-  hand-wire `AuthoredAgvs`. To run 5 AGVs, place 5 `AGVActor` instances and assign 5 `AuthoredPaths`.
-  You may still hand-assign `AuthoredAgvs` if you need a specific `AuthoredAgvs[i]`↔`AuthoredPaths[i]`
-  pairing. Remove any references to the now-unused `AGVActorClass`.
-- **Collision detection radius** — `CollisionDetectionRadius` (default 300 cm) is editable on the
-  controller. Increase if AGVs still pass through each other; decrease to require closer proximity.
-- **Collision-halt termination (2026-06-14) — needs an editor build.** `AGVSimController` now ends a
-  run when every spawned AGV is `STOPPED_COLLISION` (`AllSpawnedAgvsCollisionStopped()` → existing
-  `CompleteRuntimeRun("collision_halt")`), so the chatbot reports the collision and final KPIs. The
-  backend half (collision-halt report notice, internal-only `move_to_station`, live
-  `simulation_status` route) is done and `pytest`-green; the UE5 C++ half is **build-deferred**
-  (Perforce read-only cleared on `AGVSimController.{h,cpp}`; reconcile + compile in the editor, then
-  verify by driving all AGVs into a mutual collision in PIE). See [DONE.md](DONE.md) 2026-06-14.
+- [ ] VLM/LAM track (the JD lists VLM/LAM; current training is LLM-only) — only if a concrete
+      vision/action use case emerges in the AGV domain.
+- [ ] Legacy P6 UE5 production-grade refactor — see [legacy/PLAN.md](legacy/PLAN.md); orthogonal to
+      this track.
 
 ---
 
-## Discovered Issues / Notes
-
-- **Phase 2 reconciliation (action: confirm in PIE, then close).** The original Phase 2 checklist
-  is stale — most of it is either already built or superseded by later architecture:
-  - 2.1 AGV cell (3 AGVs, spline paths, intersection, dock): built in the "First real UE5 AGV
-    runtime loop" (see [DONE.md](DONE.md) Phase 1 infra). **Verify in P1 PIE, then mark done.**
-  - 2.2 Collision detection: built. Bottleneck detection emitter exists (`EmitBottleneckEvent`).
-    `timeline_logs` WebSocket logging was part of the **old web stack and is gone** — re-scope to
-    the current SSE/telemetry pipeline, do not restore `timeline_logs`.
-  - 2.3 UE5 in-viewport HUD: **superseded** — F5 HUD migrated to the web `VcoreHud` component.
-    Drop this item.
-  - 2.4 Backend KPI calculation: **superseded** — KPIs now computed in-engine by `UKPIAccumulator`
-    (Phase 8 P2). The old `kpi_results` table belonged to the dropped web stack. Drop this item.
-  - **TODO:** after P1 PIE, fold the surviving 2.1/2.2 items into "verified" and delete the rest.
-
-- **`AGVSimController` God Class** (~1600 lines) — tracked as Phase 8 P3/P4 above. Still owns
-  config + HTTP server + WS + telemetry transports + sim lifecycle + chat ingest + camera even
-  after the `UKPIAccumulator` extraction. Net/Camera extraction (P5) is the main remaining
-  separation-of-responsibility work.
-
-- **Known platform constraint:** UE5 raw-socket UDP/TCP to the Dockerized collector fails on this
-  Windows host (Docker Desktop proxy drops bytes silently). Telemetry default is `ws` transport —
-  do not regress to raw sockets. (See [DONE.md](DONE.md) Known Constraints.)
-
-- **Demo-like elements in current AGV behavior (drives P6).** Source review 2026-06-12:
-  - `AStationActor` is fully passive (`bCanEverTick=false`, no collision primitive). The AGV's only
-    overlap handler reacts to *other AGVs* — so an AGV physically drives through a placed station with
-    no state change. Stations are only reachable by `StationId` via chat command (`DirectToStation`),
-    never by proximity.
-  - Autonomous Load/Unload fires at hardcoded spline ratios `PickupDistanceRatio=0.22` /
-    `DropoffDistanceRatio=0.72`, unrelated to placed station positions. `EStationKind` (Pickup/Dropoff/
-    Charger/Inspection) and `Capacity`/`CapabilityTags`/`ZoneId` are authored but never read.
-  - Battery is faked: flat `0.15/s` drain, floored at 20%, reset to 100 on configure, never recharges;
-    `Charger` kind unused.
-  - `ADispatcherActor` is consulted only on the command path; the autonomous loop calls
-    `AssignDeliveryTask(nullptr)` directly. `ALoadingDockActor::AssignNextTask` is dead code (only
-    `CompleteTask`, a counter, is live). `CreateFallbackStation` invents a station on the spline if a
-    commanded `StationId` isn't found. Commanded moves set `bCarryingLoad=true` immediately and skip a
-    real pickup step.
+## Definition of "Done" (unchanged from CLAUDE.md)
+A task is complete when: code works end-to-end in the demo; the relevant spec doc is updated;
+[DONE.md](DONE.md) is updated; the PLAN task is marked `[x]`.

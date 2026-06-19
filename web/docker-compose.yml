@@ -244,8 +244,9 @@ services:
     environment:
       OLLAMA_HOST: http://ollama:11434
       OLLAMA_MODEL: ${OLLAMA_MODEL:-qwen3.5:0.8b}
+      RAG_EMBED_MODEL: ${RAG_EMBED_MODEL:-bge-m3}
     entrypoint: ["sh", "-c"]
-    command: ["ollama pull $${OLLAMA_MODEL}"]
+    command: ["ollama pull $${OLLAMA_MODEL} && ollama pull $${RAG_EMBED_MODEL}"]
     depends_on:
       ollama:
         condition: service_healthy

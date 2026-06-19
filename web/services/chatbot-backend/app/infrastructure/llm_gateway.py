@@ -11,12 +11,30 @@ from app.agents.llm_schemas import IntentDecision, PlanDecision, ToolCallDecisio
 from app.agents.planning_fallback import RuleBasedPlanningFallback
 from app.domain.models import (
     DomainEvent,
+    RetrievedChunk,
     RobotCommand,
     RobotCommandName,
     Station,
     ToolCall,
     format_verdict_summary,
 )
+
+
+def format_knowledge_block(chunks: list[RetrievedChunk] | None) -> str:
+    """Render retrieved chunks into a numbered, citable prompt block (spec_rag.md §5.4).
+
+    Returns "none" when there is nothing to ground on, so the prompt reads naturally and the
+    model can fall back to its general behavior.
+    """
+    if not chunks:
+        return "none"
+    lines: list[str] = []
+    for index, chunk in enumerate(chunks, start=1):
+        text = chunk.text.strip().replace("\n", " ")
+        if len(text) > 500:
+            text = text[:500].rstrip() + "…"
+        lines.append(f"[{index}] {chunk.title} (출처: {chunk.source})\n{text}")
+    return "\n\n".join(lines)
 from app.prompts.templates import PromptTemplateStore
 from app.tools.contracts import ToolValidationError
 from app.tools.router import ToolRouter
@@ -275,6 +293,7 @@ class OllamaLlmGateway:
         command: RobotCommand,
         correlation_id: str,
         evaluation: str | None = None,
+        knowledge: list[RetrievedChunk] | None = None,
     ) -> str:
         payload = {
             "model": self._model,
@@ -292,6 +311,7 @@ class OllamaLlmGateway:
                         event_context=self._compact_event_context(event),
                         command_context=self._compact_command_context(command),
                         evaluation_context=evaluation or "none",
+                        knowledge_context=format_knowledge_block(knowledge),
                     ),
                 },
             ],
@@ -308,17 +328,22 @@ class OllamaLlmGateway:
         user_message: str,
         history: list[dict[str, str]],
         correlation_id: str,
+        knowledge: list[RetrievedChunk] | None = None,
     ) -> str:
+        system_content = (
+            "당신은 AGV 공정 제어 가상 디지털 트윈 어시스턴트입니다. "
+            "이전 대화 맥락을 참고해 자연스럽게 답변하세요. "
+            "공정 제어 명령(시뮬레이션 시작/정지, 스테이션 작업 등)은 직접 실행하지 말고 "
+            "사용자가 명확한 명령어를 입력하도록 안내하세요. 답변은 한국어로 간결하게 하세요."
+        )
+        knowledge_block = format_knowledge_block(knowledge)
+        if knowledge_block != "none":
+            system_content += (
+                "\n\n아래 참고 문서를 우선 근거로 답변하고, 사용한 문서 제목을 인용하세요. "
+                "문서에 없는 내용은 지어내지 마세요.\n\n참고 문서:\n" + knowledge_block
+            )
         messages = [
-            {
-                "role": "system",
-                "content": (
-                    "당신은 AGV 공정 제어 가상 디지털 트윈 어시스턴트입니다. "
-                    "이전 대화 맥락을 참고해 자연스럽게 답변하세요. "
-                    "공정 제어 명령(시뮬레이션 시작/정지, 스테이션 작업 등)은 직접 실행하지 말고 "
-                    "사용자가 명확한 명령어를 입력하도록 안내하세요. 답변은 한국어로 간결하게 하세요."
-                ),
-            },
+            {"role": "system", "content": system_content},
             *history[-8:],
             {"role": "user", "content": user_message},
         ]
@@ -708,16 +733,22 @@ class RoutingSplitLlmGateway:
         command: RobotCommand,
         correlation_id: str,
         evaluation: str | None = None,
+        knowledge: list[RetrievedChunk] | None = None,
     ) -> str:
-        return await self._general.generate_report(event, command, correlation_id, evaluation)
+        return await self._general.generate_report(
+            event, command, correlation_id, evaluation, knowledge
+        )
 
     async def generate_chat_response(
         self,
         user_message: str,
         history: list[dict[str, str]],
         correlation_id: str,
+        knowledge: list[RetrievedChunk] | None = None,
     ) -> str:
-        return await self._general.generate_chat_response(user_message, history, correlation_id)
+        return await self._general.generate_chat_response(
+            user_message, history, correlation_id, knowledge
+        )
 
 
 class RuleBasedLlmGateway:
@@ -754,6 +785,7 @@ class RuleBasedLlmGateway:
         user_message: str,
         history: list[dict[str, str]],
         correlation_id: str,
+        knowledge: list[RetrievedChunk] | None = None,
     ) -> str:
         return (
             "저는 AGV 공정 제어 어시스턴트입니다. "
@@ -767,6 +799,7 @@ class RuleBasedLlmGateway:
         command: RobotCommand,
         correlation_id: str,
         evaluation: str | None = None,
+        knowledge: list[RetrievedChunk] | None = None,
     ) -> str:
         station_id = command.parameters.get("station_id")
         if event.event_type == "robot.command.completed":
@@ -994,6 +1027,7 @@ async def _clean_rule_based_generate_report(
     command: RobotCommand,
     correlation_id: str,
     evaluation: str | None = None,
+    knowledge: list[RetrievedChunk] | None = None,
 ) -> str:
     station_id = command.parameters.get("station_id")
     if event.event_type == "robot.command.completed":

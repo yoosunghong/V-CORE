@@ -1,15 +1,18 @@
 {
   "collections": [
     {
-      "name": "farm_operations_ko",
-      "vector_size": 768,
+      "name": "vcore_operations_ko",
+      "vector_size": 1024,
       "distance": "Cosine",
       "payload_schema": {
         "document_id": "keyword",
         "title": "text",
         "category": "keyword",
         "language": "keyword",
-        "source": "keyword"
+        "source": "keyword",
+        "tags": "keyword",
+        "zone_id": "keyword",
+        "capability": "keyword"
       }
     }
   ]

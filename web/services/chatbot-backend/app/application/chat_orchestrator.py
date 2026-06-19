@@ -15,6 +15,7 @@ from app.application.ports import (
     ControlServerClient,
     EventPublisher,
     IotTelemetryClient,
+    KnowledgeGateway,
     LlmGateway,
     SessionRepository,
 )
@@ -35,6 +36,7 @@ from app.domain.models import (
     DomainEvent,
     MessageRole,
     ProcessTelemetry,
+    RetrievedChunk,
     RobotCommand,
     RobotCommandName,
     SimulationRun,
@@ -114,6 +116,8 @@ class ChatOrchestrator:
         auto_complete_commands: bool = False,
         agv_fleet_max: int = 5,
         live_telemetry: LiveTelemetryHub | None = None,
+        knowledge: KnowledgeGateway | None = None,
+        rag_top_k: int = 5,
     ) -> None:
         self._repository = repository
         self._control_client = control_client
@@ -137,6 +141,11 @@ class ChatOrchestrator:
         # Live per-AGV / process frames cached from the UE5 WebSocket stream, used to answer
         # mid-run "current status" questions with per-AGV state + collisions (not just KPIs).
         self._live_telemetry = live_telemetry or LiveTelemetryHub()
+        # RAG knowledge retrieval (spec_rag.md §5). None = retrieval disabled (no grounding),
+        # so the demo runs ungrounded when RAG_ENABLED is off; the container injects the
+        # Qdrant gateway when RAG is on (the Null gateway covers the "enabled but down" case).
+        self._knowledge = knowledge
+        self._rag_top_k = rag_top_k
         self._pending_confirmations: dict[str, ValidatedToolCall] = {}
         # Long-running optimization searches drive the live UE5 loop across many real runs, which
         # outlives a single chat turn. Keep strong refs so the tasks aren't GC'd mid-flight.
@@ -216,7 +225,14 @@ class ChatOrchestrator:
                 payload={"status": "generating"},
             )
         )
-        report = await self._report_agent.generate_report(event, command, event.correlation_id)
+        knowledge, _ = await self._retrieve_knowledge(
+            self._report_retrieval_query(event, command),
+            event.session_id,
+            event.correlation_id,
+        )
+        report = await self._report_agent.generate_report(
+            event, command, event.correlation_id, knowledge=knowledge
+        )
         message = ChatMessage(
             session_id=event.session_id,
             role=MessageRole.ASSISTANT,
@@ -258,6 +274,74 @@ class ChatOrchestrator:
         )
         await self._repository.add_message(assistant)
         return assistant
+
+    async def _retrieve_knowledge(
+        self,
+        query: str,
+        session_id: str,
+        correlation_id: str,
+    ) -> tuple[list[RetrievedChunk], DomainEvent | None]:
+        """Retrieve grounding chunks and publish an ``agent.retrieval`` event when there are hits.
+
+        Returns ``([], None)`` when RAG is disabled (no gateway injected) or retrieval yields
+        nothing, so callers can treat grounding as best-effort. Retrieval failures inside the
+        gateway are already swallowed to [] there — the demo never hard-fails on a degraded
+        store. The published event is also returned so the graph can accumulate it into the
+        response (the report path, which only feeds the live bus, ignores it).
+        """
+        if self._knowledge is None or not query.strip():
+            return [], None
+        chunks = await self._knowledge.retrieve(
+            query, correlation_id, top_k=self._rag_top_k
+        )
+        # Only surface retrieval that found something. An empty result (RAG disabled via the
+        # Null gateway, or an honest miss) carries no grounding for the overlay to show.
+        if not chunks:
+            return [], None
+        event = DomainEvent(
+            event_type="agent.retrieval",
+            correlation_id=correlation_id,
+            session_id=session_id,
+            payload={
+                "query": query,
+                "hits": [
+                    {
+                        "document_id": chunk.document_id,
+                        "title": chunk.title,
+                        "score": chunk.score,
+                    }
+                    for chunk in chunks
+                ],
+            },
+        )
+        await self._events.publish(event)
+        return chunks, event
+
+    def _report_retrieval_query(self, event: DomainEvent, command: RobotCommand) -> str:
+        """Build a retrieval query for a run report, biased toward the concerning KPIs.
+
+        A bare command name retrieves little; surfacing the metrics that look bad (collisions,
+        bottlenecks, low throughput) pulls the matching SOP/playbook so the verdict is grounded.
+        """
+        parts = ["AGV 가상 공정 시뮬레이션 결과 분석"]
+        kpis = event.payload.get("kpis")
+        if isinstance(kpis, dict):
+            def _num(value: object) -> float | None:
+                if isinstance(value, bool) or not isinstance(value, (int, float)):
+                    return None
+                return float(value)
+
+            collisions = _num(kpis.get("collisions")) or _num(kpis.get("collision_risk"))
+            if collisions:
+                parts.append("AGV 충돌 위험 대응 절차")
+            if _num(kpis.get("bottleneck_rate")):
+                parts.append("병목 구간 처리량 개선")
+            throughput = _num(kpis.get("throughput"))
+            if throughput is not None and throughput < 1.0:
+                parts.append("처리량 저하 원인")
+            if _num(kpis.get("avg_wait_time")):
+                parts.append("대기 시간 단축")
+        return " ".join(parts)
 
     async def _complete_demo_command(self, command: RobotCommand) -> tuple[ChatMessage, list[DomainEvent]]:
         events: list[DomainEvent] = []
@@ -1637,6 +1721,7 @@ async def _clean_general_chat_message(
     user_text: str,
     session_id: str,
     correlation_id: str,
+    knowledge: list[RetrievedChunk] | None = None,
 ) -> str:
     """Free-form conversational response using recent session history as context."""
     recent = await self._repository.list_messages(session_id, limit=10)
@@ -1646,7 +1731,9 @@ async def _clean_general_chat_message(
         if msg.content and msg.role.value in ("user", "assistant")
     ]
     try:
-        return await self._llm.generate_chat_response(user_text, history, correlation_id)
+        return await self._llm.generate_chat_response(
+            user_text, history, correlation_id, knowledge=knowledge
+        )
     except Exception:
         return (
             "저는 AGV 공정 제어 어시스턴트입니다. "

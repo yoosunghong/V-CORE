@@ -64,6 +64,32 @@ class EventPublisher(Protocol):
     async def publish(self, event: DomainEvent) -> None: ...
 
 
+class SafetyGateway(Protocol):
+    refusal_message: str
+
+    def sanitize_user_input(self, text: str): ...
+    def sanitize_output(self, text: str) -> str: ...
+    def sanitize_chunks(self, chunks: list[RetrievedChunk]) -> list[RetrievedChunk]: ...
+    def redact_event(self, event: DomainEvent) -> DomainEvent: ...
+    def redact_payload(self, value): ...
+
+
+class TurnTraceSink(Protocol):
+    def start(self) -> float: ...
+
+    async def publish(
+        self,
+        publisher,
+        *,
+        session_id: str,
+        correlation_id: str,
+        trace: list[dict],
+        user_text: str,
+        assistant_text: str,
+        started_at: float,
+    ) -> DomainEvent: ...
+
+
 class KnowledgeGateway(Protocol):
     async def retrieve(
         self,

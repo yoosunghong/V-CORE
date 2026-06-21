@@ -195,6 +195,27 @@ All accept `X-AGV-API-Key`. Command bodies carry `session_id`, `correlation_id`,
 UE5 posts chat-correlated events back to the backend at `POST /internal/ue5/events`, and
 fans per-AGV + process telemetry out as UDP datagrams to the telemetry-collector (below).
 
+## PC safety and observability boundary (2026-06-19)
+
+The chat boundary now has a compact backend guardrail layer before LangGraph and before any
+assistant text is stored or returned:
+
+- `SafetyGateway` sanitizes user and assistant text by removing script/style blocks, stripping
+  HTML tags, collapsing control characters, and redacting common PII patterns (email, phone
+  number, Korean resident-registration number, and API/bearer-key shaped secrets).
+- Obvious off-domain or hostile requests are refused before the LangGraph turn starts. The
+  refusal is stored as a normal assistant message and emitted with a redacted `safety.refused`
+  event so the UI still has an auditable turn.
+- Retrieved RAG/GraphRAG chunks are treated as untrusted data. Before prompt injection they are
+  PII-redacted and instruction-like phrases (`ignore previous`, `system prompt`, `developer
+  message`, etc.) are replaced with neutral `[retrieved-instruction-redacted]` markers.
+- `InMemoryEventBus` redacts event payloads before storing/fanning them out. Operator events still
+  show route/retrieval/command facts, but logged text does not contain PII or secrets.
+- `TurnTraceSink` publishes an `agent.turn.traced` event at the end of each LangGraph turn with an
+  OTel-shaped span payload: route, node sequence, retrieval hit count, approximate input/output
+  token counts, latency, and low-grounding/misroute bucket hints. The current sink is local and
+  dependency-free; it is the handoff point for Langfuse/OTel export in a deployed environment.
+
 ## Chat session API (`chatbot-backend`, port 8000)
 
 | Method | Path | Purpose |

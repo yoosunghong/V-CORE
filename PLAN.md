@@ -109,12 +109,12 @@ parallel once PA lands.
 > **Goal:** Implement the safety boundary CLAUDE.md already mandates but the code lacks, and add real
 > tracing so retrieval/answer quality is measurable.
 
-- [ ] **Guardrails / PII boundary.** Input + output sanitization at the chat boundary (the
+- [x] **Guardrails / PII boundary.** Input + output sanitization at the chat boundary (the
       DOMPurify/sanitization rule in CLAUDE.md is currently unimplemented). Add a scope/refusal guard,
       PII detection + redaction on logged content, and prompt-injection mitigation for retrieved text.
-- [ ] **Tracing.** Wrap the LangGraph in Langfuse (or OTel) — per-turn traces of route, retrieval
+- [x] **Tracing.** Wrap the LangGraph in Langfuse (or OTel) — per-turn traces of route, retrieval
       hits, token counts, latency. Replaces the ad-hoc `agent.route.selected` event story.
-- [ ] **Observability-driven improvement loop.** Use traces to surface a low-grounding or
+- [x] **Observability-driven improvement loop.** Use traces to surface a low-grounding or
       misrouted-query bucket; feed it back into the PA.3/PA.4 tuning. Document one concrete
       before/after improvement.
 
@@ -125,12 +125,16 @@ parallel once PA lands.
 > **Goal:** Convert the "Cloudflare Tunnel → local box" story into a credible CSP AI-platform line by
 > moving at least one real component to a managed cloud AI service.
 
-- [ ] Pick the component + CSP (recommended: vector store on **Qdrant Cloud / Vertex Vector Search**,
+- [x] Pick the component + CSP (recommended: vector store on **Qdrant Cloud / Vertex Vector Search**,
       or the SFT model behind a **Bedrock / SageMaker / Vertex** endpoint). Decide based on cost +
-      what best demonstrates the platform skill.
-- [ ] Deploy + wire the backend to the managed service via env config (keep local fallback for the
-      offline demo). Document setup in `docs/deploy_csp.md`.
-- [ ] Update the portfolio narrative (live demo) to show the hybrid local-sim + cloud-AI topology.
+      what best demonstrates the platform skill. **Chosen: Qdrant Managed Cloud Free Tier** — the
+      existing vector contract makes it the lowest-risk real cloud cut, while UE5/model inference
+      stay local for latency and cost.
+- [x] Deploy + wire the backend to the managed service via env config (keep local fallback for the
+      offline demo). Document setup in `docs/deploy_csp.md`. **Live 2026-06-21:** Qdrant Managed
+      Cloud on GCP `australia-southeast1`; green 1024-dim Cosine collection with 16 points.
+      Cloud-primary and forced local-failback retrieval both rank `sop_collision_001` first.
+- [x] Update the portfolio narrative (live demo) to show the hybrid local-sim + cloud-AI topology.
 
 ---
 

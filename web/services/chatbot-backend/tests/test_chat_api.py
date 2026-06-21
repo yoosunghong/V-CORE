@@ -215,7 +215,9 @@ def test_process_status_returns_telemetry_without_command() -> None:
     assert body["command_id"] is None
     assert body["status"] is None
     assert "68.2" in body["message"]["content"]
-    assert event_types(body)[-1] == "process.telemetry.reported"
+    types = event_types(body)
+    assert "process.telemetry.reported" in types
+    assert types[-1] == "agent.turn.traced"
 
 
 def test_session_delete_removes_session_and_history() -> None:

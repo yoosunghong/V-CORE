@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import operator
+import time
 from typing import Annotated, Any, TypedDict
 
 from langgraph.checkpoint.memory import MemorySaver
@@ -55,6 +56,11 @@ class LangGraphMultiResponseAgent:
         correlation_id: str,
         idempotency_key: str,
     ) -> tuple[ChatMessage, str | None, CommandStatus | None, list[DomainEvent]]:
+        started_at = (
+            self._orchestrator._trace_sink.start()
+            if self._orchestrator._trace_sink is not None
+            else time.perf_counter()
+        )
         state = await self._graph.ainvoke(
             {
                 "session_id": session_id,
@@ -70,7 +76,19 @@ class LangGraphMultiResponseAgent:
                 }
             },
         )
-        return state["result"]
+        result = state["result"]
+        if self._orchestrator._trace_sink is not None:
+            trace_event = await self._orchestrator._trace_sink.publish(
+                self._orchestrator._events,
+                session_id=session_id,
+                correlation_id=correlation_id,
+                trace=state.get("trace", []),
+                user_text=user_text,
+                assistant_text=result[0].content if result and result[0] else "",
+                started_at=started_at,
+            )
+            result = (result[0], result[1], result[2], [*result[3], trace_event])
+        return result
 
     def _build_graph(self):
         graph = StateGraph(MultiResponseState)
@@ -516,11 +534,13 @@ class LangGraphMultiResponseAgent:
         assistant = ChatMessage(
             session_id=state["session_id"],
             role=MessageRole.ASSISTANT,
-            content=self._orchestrator._accepted_message(
-                validated_tool_call.name,
-                validated_tool_call.arguments,
-                command.command_id,
-                run_id=run_id,
+            content=self._orchestrator._sanitize_output(
+                self._orchestrator._accepted_message(
+                    validated_tool_call.name,
+                    validated_tool_call.arguments,
+                    command.command_id,
+                    run_id=run_id,
+                )
             ),
             correlation_id=state["correlation_id"],
         )

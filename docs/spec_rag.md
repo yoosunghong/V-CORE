@@ -155,6 +155,8 @@ visible in the overlay and (PC) traceable.
 
 New settings (env-overridable, following the existing pattern):
 `rag_enabled` (`RAG_ENABLED`, default `false`), `qdrant_url` (`QDRANT_URL`),
+`qdrant_api_key` (`QDRANT_API_KEY`, optional and server-side only),
+`qdrant_fallback_url` (`QDRANT_FALLBACK_URL`, optional local retry target),
 `rag_collection` (`RAG_COLLECTION=vcore_operations_ko`), `rag_embed_model` (`RAG_EMBED_MODEL`),
 `rag_top_k` (`RAG_TOP_K=5`), `embed_base_url` (`EMBED_BASE_URL`, default the Ollama base — the
 engine-split lever that keeps embeddings on Ollama while the LLM serves from llama.cpp).
@@ -163,6 +165,12 @@ engine-split lever that keeps embeddings on Ollama while the LLM serves from lla
 > adapters, the `retrieve` node on the `general_chat` branch, report-path grounding via
 > `_report_retrieval_query`, the `agent.retrieval` event, and the prompt blocks are all implemented
 > behind `RAG_ENABLED`. PA.3 adds the `"not in the knowledge base"` guard and reranking.
+
+> **PD cloud profile (2026-06-20):** the same gateway supports Qdrant Managed Cloud through an
+> HTTPS `QDRANT_URL` plus the REST `api-key` header. `QDRANT_FALLBACK_URL=http://qdrant:6333`
+> optionally retries the local mirror after a cloud transport/status failure; the cloud key is never
+> forwarded to that fallback. Deployment and data-boundary details are in
+> [deploy_csp.md](deploy_csp.md).
 
 ---
 

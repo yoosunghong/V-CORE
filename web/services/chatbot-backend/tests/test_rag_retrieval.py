@@ -1,3 +1,4 @@
+import httpx
 import pytest
 
 from app.application.chat_orchestrator import ChatOrchestrator
@@ -7,7 +8,12 @@ from app.domain.ontology import GraphRagRetriever
 from app.infrastructure.control_client import DemoControlServerClient
 from app.infrastructure.event_bus import InMemoryEventBus
 from app.infrastructure.iot_client import DemoIotCommandClient
-from app.infrastructure.knowledge_gateway import HybridGraphKnowledgeGateway, NullKnowledgeGateway, lexical_rerank
+from app.infrastructure.knowledge_gateway import (
+    HybridGraphKnowledgeGateway,
+    NullKnowledgeGateway,
+    QdrantKnowledgeGateway,
+    lexical_rerank,
+)
 from app.infrastructure.llm_gateway import OllamaLlmGateway, RuleBasedLlmGateway, format_knowledge_block
 from app.infrastructure.repositories import InMemorySessionRepository
 
@@ -64,6 +70,37 @@ def _orchestrator(llm, knowledge):
 @pytest.mark.asyncio
 async def test_null_gateway_returns_empty():
     assert await NullKnowledgeGateway().retrieve("anything", "corr") == []
+
+
+@pytest.mark.asyncio
+async def test_qdrant_cloud_auth_and_local_fallback_do_not_share_secret():
+    requests: list[httpx.Request] = []
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        requests.append(request)
+        if request.url.host == "cloud.example":
+            return httpx.Response(503, request=request)
+        return httpx.Response(
+            200,
+            json={"result": [{"id": "local-hit", "score": 0.9, "payload": {}}]},
+            request=request,
+        )
+
+    gateway = QdrantKnowledgeGateway(
+        qdrant_url="https://cloud.example",
+        qdrant_api_key="cloud-secret",
+        qdrant_fallback_url="http://qdrant:6333",
+        collection="vcore_operations_ko",
+        embed_base_url="http://ollama:11434",
+        embed_model="bge-m3",
+    )
+    async with httpx.AsyncClient(transport=httpx.MockTransport(handler)) as client:
+        hits = await gateway._search(client, [0.1, 0.2], 5, None)
+
+    assert hits[0]["id"] == "local-hit"
+    assert requests[0].headers["api-key"] == "cloud-secret"
+    assert "api-key" not in requests[1].headers
+    assert requests[1].url.host == "qdrant"
 
 
 def test_format_knowledge_block_none():

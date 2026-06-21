@@ -32,6 +32,7 @@ SEED_DIR = BASE_DIR / "seeds"
 DOCS_DIR = SEED_DIR / "docs"
 
 QDRANT_URL = os.getenv("QDRANT_URL", "http://localhost:6333")
+QDRANT_API_KEY = os.getenv("QDRANT_API_KEY") or None
 # Embeddings use the OpenAI-compatible /v1/embeddings endpoint, which BOTH Ollama and
 # llama.cpp serve — switching engines is a base-URL change, no code change (spec_rag.md §4).
 EMBED_BASE_URL = os.getenv("EMBED_BASE_URL", os.getenv("OLLAMA_BASE_URL", "http://localhost:11434"))
@@ -140,22 +141,26 @@ def embed(client: httpx.Client, text: str) -> list[float]:
 
 def ensure_collection(client: httpx.Client, dim: int, recreate: bool) -> None:
     url = f"{QDRANT_URL}/collections/{COLLECTION}"
+    headers = {"api-key": QDRANT_API_KEY} if QDRANT_API_KEY else None
     if recreate:
-        client.delete(url, timeout=30.0)
-    elif client.get(url, timeout=30.0).status_code == 200:
+        client.delete(url, headers=headers, timeout=30.0)
+    elif client.get(url, headers=headers, timeout=30.0).status_code == 200:
         return
     response = client.put(
         url,
         json={"vectors": {"size": dim, "distance": DISTANCE}},
+        headers=headers,
         timeout=30.0,
     )
     response.raise_for_status()
 
 
 def upsert(client: httpx.Client, points: list[dict[str, Any]]) -> None:
+    headers = {"api-key": QDRANT_API_KEY} if QDRANT_API_KEY else None
     response = client.put(
         f"{QDRANT_URL}/collections/{COLLECTION}/points?wait=true",
         json={"points": points},
+        headers=headers,
         timeout=120.0,
     )
     response.raise_for_status()

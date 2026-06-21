@@ -47,6 +47,14 @@ chatbot-backend (FastAPI + LangGraph multi-agent, Ollama/Gemma)
 | postgres / redis / qdrant / timescaledb | Data stores (session/command + optional RAG/timeseries) | — |
 | `data-seeder` | Optional DB seeding — `tools` profile only (`--profile tools`) | — |
 
+### Hybrid edge/cloud AI deployment
+
+The portfolio deployment keeps UE5, LangGraph, the fine-tuned local model, and `bge-m3` embedding
+inference on the workstation while serving the `vcore_operations_ko` knowledge index from Qdrant
+Managed Cloud over authenticated HTTPS. A mirrored local Qdrant remains available for automatic
+retrieval failback and a fully offline demo. Setup, data boundaries, cost rationale, and the live-demo
+narrative are documented in [docs/deploy_csp.md](docs/deploy_csp.md).
+
 ### Agent command set
 
 - **Station-targeted:** `run_station_task`, `move_to_station`, `inspect_station`, `cancel_command`

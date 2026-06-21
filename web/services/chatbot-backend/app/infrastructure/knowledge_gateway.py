@@ -90,6 +90,8 @@ class QdrantKnowledgeGateway:
         collection: str,
         embed_base_url: str,
         embed_model: str,
+        qdrant_api_key: str | None = None,
+        qdrant_fallback_url: str | None = None,
         timeout_seconds: float = 30.0,
         fetch_k: int = 10,
         rerank_mode: str = "lexical",
@@ -98,6 +100,8 @@ class QdrantKnowledgeGateway:
         rerank_model: str | None = None,
     ) -> None:
         self._qdrant_url = qdrant_url.rstrip("/")
+        self._qdrant_api_key = qdrant_api_key
+        self._qdrant_fallback_url = (qdrant_fallback_url or "").rstrip("/")
         self._collection = collection
         self._embed_base_url = embed_base_url.rstrip("/")
         self._embed_model = embed_model
@@ -162,9 +166,28 @@ class QdrantKnowledgeGateway:
                     for key, value in filters.items()
                 ]
             }
+        try:
+            return await self._search_endpoint(
+                client, self._qdrant_url, body, api_key=self._qdrant_api_key
+            )
+        except httpx.HTTPError:
+            if not self._qdrant_fallback_url:
+                raise
+            return await self._search_endpoint(client, self._qdrant_fallback_url, body)
+
+    async def _search_endpoint(
+        self,
+        client: httpx.AsyncClient,
+        base_url: str,
+        body: dict,
+        *,
+        api_key: str | None = None,
+    ) -> list[dict]:
+        headers = {"api-key": api_key} if api_key else None
         response = await client.post(
-            f"{self._qdrant_url}/collections/{self._collection}/points/search",
+            f"{base_url}/collections/{self._collection}/points/search",
             json=body,
+            headers=headers,
         )
         response.raise_for_status()
         return response.json().get("result") or []

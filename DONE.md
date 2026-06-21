@@ -157,8 +157,35 @@ Relevant existing capabilities this plan extends rather than rebuilds:
 
 ## PC — Guardrails + Observability
 
-_No tasks completed yet._
+### PC — Guardrails + Observability (2026-06-19)
+- **Safety boundary.** Added `SafetyGateway` at the chat boundary: user input and assistant output are HTML/script stripped, control-character cleaned, and PII/secret redacted before storage or response. Prompt-injection and obvious off-domain requests short-circuit before LangGraph with a normal assistant refusal plus a redacted `safety.refused` event.
+- **Retrieved-text hardening.** RAG/GraphRAG chunks are now treated as untrusted input before prompt injection: titles/sources/text are sanitized, PII is redacted, and instruction-like retrieved phrases such as "ignore previous instructions" / "system prompt" are replaced with `[retrieved-instruction-redacted]`.
+- **Redacted event logs + traces.** `InMemoryEventBus` redacts payloads before storing and fanning out events. `TurnTraceSink` appends an `agent.turn.traced` event to every LangGraph turn with an OTel-shaped local span: route, node path, retrieval hits, estimated input/output tokens, latency, and quality buckets (`low_grounding`, `possible_misroute`).
+- **Observability loop.** The first concrete improvement from the new trace/safety pass was the RAG prompt-injection path: before PC, retrieved text could carry hostile instructions and PII into the prompt/log payload; after PC, the trace still records retrieval hit count while the injected chunk is redacted and neutralized before LLM use. This is locked by `tests/test_safety_observability.py`.
+- **Verified.** Focused PC tests pass (`3 passed`); full backend suite passes with `python -m pytest -q --basetemp .pytest_tmp` (`122 passed`).
 
 ## PD — Real CSP Deployment
 
-_No tasks completed yet._
+### PD — Qdrant Managed Cloud deployment (2026-06-21)
+
+- **CSP decision.** Selected Qdrant Managed Cloud Free Tier for the real cloud component: it moves
+  the enterprise knowledge index off-box while retaining UE5, LangGraph, the fine-tuned router, and
+  `bge-m3` inference locally. This reuses the production Qdrant REST contract and avoids a paid model
+  endpoint for the portfolio workload.
+- **Cloud wiring + offline failback.** Added `QDRANT_API_KEY` authentication to backend retrieval and
+  corpus ingestion. `QDRANT_FALLBACK_URL` retries the local mirror after a cloud HTTP failure and
+  deliberately does not forward the cloud key. Default configuration remains local/offline-safe.
+- **Deployment runbook + narrative.** Added [docs/deploy_csp.md](docs/deploy_csp.md) with topology,
+  data boundary, current Free Tier constraints, account/seed/verification steps, offline profile,
+  and the live-demo portfolio script. Updated the top-level README with the hybrid deployment story.
+- **Managed deployment live.** Created and seeded `vcore_operations_ko` on Qdrant Managed Cloud
+  (GCP `australia-southeast1`). The sanitized verifier reports green status, 1024-dim Cosine vectors,
+  16 points, and `sop_collision_001` ranked first at `0.62117743` for the collision-response query.
+  The backend adapter returns that document from cloud-primary and from a forced local failback.
+- **Regression verification.** Cloud-auth/failback regression test passes, corpus dry run finds 16
+  chunks, and the full backend suite passes (`123 passed`). Credentials remain only in ignored
+  `web/.env`; no API key is present in tracked files or verifier output.
+- **Live verification gate.** Added `verify_qdrant_deployment.py`, which returns sanitized JSON and a
+  nonzero exit code unless the deployed collection is green, 1024-dim Cosine, has at least 16 points,
+  and ranks `sop_collision_001` first for the collision-response query. The command passes against
+  both the managed deployment and local mirror with all checks true and top score `0.62117743`.

@@ -17,7 +17,9 @@ from app.application.ports import (
     IotTelemetryClient,
     KnowledgeGateway,
     LlmGateway,
+    SafetyGateway,
     SessionRepository,
+    TurnTraceSink,
 )
 from app.application.robot_orchestrator import RobotCommandOrchestrator
 from app.domain.evaluation import ComparedRun, RunComparison, build_run_comparison
@@ -117,6 +119,8 @@ class ChatOrchestrator:
         agv_fleet_max: int = 5,
         live_telemetry: LiveTelemetryHub | None = None,
         knowledge: KnowledgeGateway | None = None,
+        safety: SafetyGateway | None = None,
+        trace_sink: TurnTraceSink | None = None,
         rag_top_k: int = 5,
     ) -> None:
         self._repository = repository
@@ -145,12 +149,19 @@ class ChatOrchestrator:
         # so the demo runs ungrounded when RAG_ENABLED is off; the container injects the
         # Qdrant gateway when RAG is on (the Null gateway covers the "enabled but down" case).
         self._knowledge = knowledge
+        self._safety = safety
+        self._trace_sink = trace_sink
         self._rag_top_k = rag_top_k
         self._pending_confirmations: dict[str, ValidatedToolCall] = {}
         # Long-running optimization searches drive the live UE5 loop across many real runs, which
         # outlives a single chat turn. Keep strong refs so the tasks aren't GC'd mid-flight.
         self._background_tasks: set[asyncio.Task] = set()
         self._multi_response_agent = LangGraphMultiResponseAgent(self)
+
+    def _sanitize_output(self, content: str) -> str:
+        if self._safety is None:
+            return content
+        return self._safety.sanitize_output(content)
 
     async def handle_user_message(
         self,
@@ -163,6 +174,33 @@ class ChatOrchestrator:
 
         correlation_id = correlation_id or new_id("corr")
         idempotency_key = idempotency_key or f"{session_id}:{correlation_id}"
+        if self._safety is not None:
+            decision = self._safety.sanitize_user_input(user_text)
+            user_text = decision.text
+            if not decision.allowed:
+                user_message = ChatMessage(
+                    session_id=session_id,
+                    role=MessageRole.USER,
+                    content=user_text,
+                    correlation_id=correlation_id,
+                )
+                await self._repository.add_message(user_message)
+                refused = DomainEvent(
+                    event_type="safety.refused",
+                    correlation_id=correlation_id,
+                    session_id=session_id,
+                    payload={
+                        "reason": decision.reason,
+                        "redactions": decision.redactions,
+                    },
+                )
+                await self._events.publish(refused)
+                assistant = await self._add_assistant_message(
+                    session_id,
+                    self._safety.refusal_message,
+                    correlation_id,
+                )
+                return assistant, None, None, [refused]
         return await self._multi_response_agent.handle(
             session_id=session_id,
             user_text=user_text,
@@ -189,7 +227,7 @@ class ChatOrchestrator:
             return ChatMessage(
                 session_id=event.session_id,
                 role=MessageRole.ASSISTANT,
-                content="",
+                content=self._sanitize_output(""),
                 correlation_id=event.correlation_id,
             )
 
@@ -210,7 +248,7 @@ class ChatOrchestrator:
             ack = ChatMessage(
                 session_id=event.session_id,
                 role=MessageRole.ASSISTANT,
-                content=content,
+                content=self._sanitize_output(content),
                 correlation_id=event.correlation_id,
             )
             await self._repository.add_message(ack)
@@ -236,7 +274,7 @@ class ChatOrchestrator:
         message = ChatMessage(
             session_id=event.session_id,
             role=MessageRole.ASSISTANT,
-            content=report,
+            content=self._sanitize_output(report),
             correlation_id=event.correlation_id,
         )
         await self._repository.add_message(message)
@@ -269,7 +307,7 @@ class ChatOrchestrator:
         assistant = ChatMessage(
             session_id=session_id,
             role=MessageRole.ASSISTANT,
-            content=content,
+            content=self._sanitize_output(content),
             correlation_id=correlation_id,
         )
         await self._repository.add_message(assistant)
@@ -294,6 +332,8 @@ class ChatOrchestrator:
         chunks = await self._knowledge.retrieve(
             query, correlation_id, top_k=self._rag_top_k
         )
+        if self._safety is not None:
+            chunks = self._safety.sanitize_chunks(chunks)
         # Only surface retrieval that found something. An empty result (RAG disabled via the
         # Null gateway, or an honest miss) carries no grounding for the overlay to show.
         if not chunks:

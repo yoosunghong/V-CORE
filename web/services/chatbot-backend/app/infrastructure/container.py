@@ -24,6 +24,7 @@ from app.infrastructure.llm_gateway import (
     RuleBasedLlmGateway,
 )
 from app.infrastructure.repositories import InMemorySessionRepository, PostgresSessionRepository
+from app.infrastructure.safety import SafetyGateway, TurnTraceSink
 from app.infrastructure.ue5_client import Ue5CommandClient
 from app.tools.router import ToolRouter
 
@@ -43,8 +44,10 @@ _LOCAL_LLM_PROVIDERS = {
 class AppContainer:
     def __init__(self, settings: Settings | None = None) -> None:
         self.settings = settings or load_settings()
+        self.safety = SafetyGateway()
         self.repository = self._build_repository()
-        self.events = InMemoryEventBus()
+        self.events = InMemoryEventBus(safety=self.safety)
+        self.trace_sink = TurnTraceSink(self.safety)
         self.live_telemetry = LiveTelemetryHub()
         self.control_client = self._build_control_client()
         self.iot_client = self._build_command_client()
@@ -75,6 +78,8 @@ class AppContainer:
             tool_router=self.tool_router,
             live_telemetry=self.live_telemetry,
             knowledge=self.knowledge,
+            safety=self.safety,
+            trace_sink=self.trace_sink,
             rag_top_k=self.settings.rag_top_k,
             auto_complete_commands=(
                 self.settings.auto_complete_demo_commands
@@ -151,6 +156,8 @@ class AppContainer:
             return NullKnowledgeGateway()
         vector_gateway = QdrantKnowledgeGateway(
             qdrant_url=self.settings.qdrant_url,
+            qdrant_api_key=self.settings.qdrant_api_key,
+            qdrant_fallback_url=self.settings.qdrant_fallback_url,
             collection=self.settings.rag_collection,
             embed_base_url=self.settings.embed_base_url,
             embed_model=self.settings.rag_embed_model,

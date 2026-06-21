@@ -1,16 +1,20 @@
 from __future__ import annotations
 
 import asyncio
+from typing import Any
 
 from app.domain.models import DomainEvent
 
 
 class InMemoryEventBus:
-    def __init__(self) -> None:
+    def __init__(self, safety: Any | None = None) -> None:
         self._events: list[DomainEvent] = []
         self._queues: dict[str, set[asyncio.Queue[DomainEvent]]] = {}
+        self._safety = safety
 
     async def publish(self, event: DomainEvent) -> None:
+        if self._safety is not None:
+            event = self._safety.redact_event(event)
         self._events.append(event)
         queues = list(self._queues.get(event.session_id, set()))
         for queue in queues:

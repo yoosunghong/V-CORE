@@ -49,6 +49,8 @@ class Settings:
     # RAG / knowledge retrieval (spec_rag.md §5.5). Off by default so the demo runs without Qdrant.
     rag_enabled: bool = False
     qdrant_url: str = "http://qdrant:6333"
+    qdrant_api_key: str | None = None
+    qdrant_fallback_url: str | None = None
     rag_collection: str = "vcore_operations_ko"
     rag_embed_model: str = "bge-m3"
     rag_top_k: int = 5
@@ -122,6 +124,8 @@ def load_settings() -> Settings:
         llm_structured_retry_count=int(os.getenv("LLM_STRUCTURED_RETRY_COUNT", "1")),
         rag_enabled=os.getenv("RAG_ENABLED", "false").lower() in {"1", "true", "yes", "on"},
         qdrant_url=os.getenv("QDRANT_URL", "http://qdrant:6333"),
+        qdrant_api_key=os.getenv("QDRANT_API_KEY") or None,
+        qdrant_fallback_url=os.getenv("QDRANT_FALLBACK_URL") or None,
         rag_collection=os.getenv("RAG_COLLECTION", "vcore_operations_ko"),
         rag_embed_model=os.getenv("RAG_EMBED_MODEL", "bge-m3"),
         rag_top_k=int(os.getenv("RAG_TOP_K", "5")),

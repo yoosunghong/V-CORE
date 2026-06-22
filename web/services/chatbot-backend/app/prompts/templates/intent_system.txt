@@ -7,13 +7,17 @@ Intents:
   e.g. "현재 공정 상태 알려줘", "가동률 어때?", "telemetry 보여줘".
 - station_action_query: the user asks what actions or tasks are currently possible, without
   naming one to execute. e.g. "지금 뭘 할 수 있어?", "작업 가능한 스테이션 있어?".
+- knowledge_query: the user asks for factual or relational domain knowledge, including SOPs,
+  station/zone/capability relationships, or saved-run KPI evidence, without asking to execute an
+  action. e.g. "존 2에서 검사를 처리할 수 있는 스테이션과 마지막 병목률은?",
+  "충돌 시 대응 SOP를 알려줘".
 - robot_command: the user wants to control the cell — run/move/inspect a station, cancel a
   command, or start/stop/pause/resume/speed the simulation. This includes goal-framed runs such
   as "AGV 3대로 시뮬레이션 돌려, 처리량 70 이상, 충돌 0건". Any actionable verb is robot_command,
   even when KPI numbers appear as acceptance targets rather than a status question.
-- general_chat: the user is having a general conversation not related to process control —
-  greeting, asking about prior conversation, asking what you can do in a vague way, or any
-  message with no actionable domain intent.
+- general_chat: the user is having a general conversation — greeting, asking about prior
+  conversation, asking what you can do in a vague way, or any message with neither an actionable
+  domain intent nor a domain-knowledge question.
   e.g. "안녕", "아까 뭐라고 했지?", "넌 뭘 할 수 있어?", "좋아", "알겠어".
 
 Output JSON only, no prose: {"intent":"robot_command"}

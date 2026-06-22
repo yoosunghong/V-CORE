@@ -152,7 +152,7 @@ class TurnTraceSink:
             if item.get("node") == "retrieve"
         )
         buckets: list[str] = []
-        if route == "general_chat" and retrieval_hits == 0:
+        if route in {"knowledge_query", "general_chat"} and retrieval_hits == 0:
             buckets.append("low_grounding")
         if route == "robot_command" and not any(item.get("node") == "finalize_robot_command" for item in trace):
             buckets.append("possible_misroute")

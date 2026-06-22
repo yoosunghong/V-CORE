@@ -52,6 +52,13 @@ class CapturingLlmGateway(RuleBasedLlmGateway):
         return "ok"
 
 
+class StationActionMisroutingLlm(CapturingLlmGateway):
+    """Models the production failure where a knowledge read looked operational."""
+
+    async def classify_intent(self, user_message, correlation_id):
+        return "station_action_query"
+
+
 def _orchestrator(llm, knowledge):
     repository = InMemorySessionRepository()
     events = InMemoryEventBus()
@@ -342,6 +349,38 @@ async def test_general_chat_threads_retrieved_knowledge_into_llm():
     assert llm.chat_knowledge == [chunk]
     retrieval = next(e for e in events if e.event_type == "agent.retrieval")
     assert retrieval.payload["hits"][0]["document_id"] == "sop_collision_001"
+
+
+@pytest.mark.asyncio
+async def test_korean_graph_query_routes_to_retrieval_before_llm_misclassification():
+    query = "존 2에서 검사를 처리할 수 있는 스테이션과 마지막 병목률은?"
+    chunk = RetrievedChunk(
+        document_id="ontology_station_b_inspect",
+        title="Ontology: Zone B stations for capability inspect",
+        text="Station 3; Last zone bottleneck_rate: 0.47",
+        score=1.0,
+        source="ontology_graph",
+    )
+    llm = StationActionMisroutingLlm()
+    knowledge = StubKnowledgeGateway([chunk])
+    orchestrator = _orchestrator(llm, knowledge)
+
+    message, command_id, status, events = await orchestrator.handle_user_message(
+        session_id="s_graph_route",
+        user_text=query,
+        correlation_id="corr_graph_route",
+    )
+
+    assert message.content == "ok"
+    assert command_id is None
+    assert status is None
+    assert knowledge.queries == [query]
+    assert llm.chat_knowledge == [chunk]
+    route = next(event for event in events if event.event_type == "agent.route.selected")
+    assert route.payload == {"route": "knowledge_query", "source": "graph"}
+    plan = next(event for event in events if event.event_type == "agent.plan.started")
+    assert plan.payload["source"] == "graph_rag"
+    assert any("Graph RAG" in step for step in plan.payload["steps"])
 
 
 @pytest.mark.asyncio

@@ -206,7 +206,8 @@ class GraphRagRetriever:
     def __init__(self, builder: OntologyGraphBuilder | None = None) -> None:
         self._builder = builder or OntologyGraphBuilder()
 
-    def is_relational_query(self, query: str) -> bool:
+    @staticmethod
+    def is_relational_query(query: str) -> bool:
         normalized = query.casefold()
         relation_terms = (
             "which station",

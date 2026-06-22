@@ -23,6 +23,7 @@ from app.application.ports import (
 )
 from app.application.robot_orchestrator import RobotCommandOrchestrator
 from app.domain.evaluation import ComparedRun, RunComparison, build_run_comparison
+from app.domain.ontology import GraphRagRetriever
 from app.domain.optimization import (
     OptimizationGoal,
     OptimizationOutcome,
@@ -83,6 +84,11 @@ _SIM_START_PLAN_STEPS = [
     "요청에서 AGV 대수와 합격 기준(목표 KPI)을 추출합니다.",
     "시작 명령 인자를 스키마로 검증합니다.",
     "UE5 가상 공정에 AGV를 배치해 시뮬레이션을 시작하고 진행 이벤트를 추적합니다.",
+]
+_GRAPH_KNOWLEDGE_PLAN_STEPS = [
+    "질의에서 존, 스테이션, 처리 역량, KPI 관계를 식별합니다.",
+    "Graph RAG에서 관계 경로와 최신 저장 실행의 KPI 근거를 조회합니다.",
+    "검색된 근거를 바탕으로 실행 명령 없이 답변합니다.",
 ]
 # Verbs that mark a *start* request among explicit sim-lifecycle commands; the stop verbs take
 # precedence so "다시 시작" reads as start but "정지/속도" never does.
@@ -1113,6 +1119,8 @@ class ChatOrchestrator:
             if self._is_simulation_start_request(user_text):
                 return _SIM_START_PLAN_STEPS, "deterministic"
             return _SIM_CONTROL_PLAN_STEPS, "deterministic"
+        if self._is_graph_knowledge_query(user_text):
+            return _GRAPH_KNOWLEDGE_PLAN_STEPS, "graph_rag"
         return None
 
     def _is_simulation_start_request(self, user_text: str) -> bool:
@@ -1197,6 +1205,11 @@ class ChatOrchestrator:
         # but never over an explicit sim lifecycle command.
         if self._is_simulation_status_request(user_text) and not self._is_explicit_sim_command(user_text):
             return "simulation_status", "keyword"
+        # Relational station/zone/capability/KPI questions are Graph RAG reads. Route them before
+        # the generic LLM classifier: without a dedicated guard, the phrase "처리할 수 있는
+        # 스테이션" is easily mistaken for the operational "what actions are available" intent.
+        if self._is_graph_knowledge_query(user_text):
+            return "knowledge_query", "graph"
         try:
             intent = await self._llm.classify_intent(user_text, correlation_id)
         except Exception:  # LLM boundary: never let routing fail the whole turn.
@@ -1213,6 +1226,46 @@ class ChatOrchestrator:
         if self._is_station_action_query(user_text):
             return "station_action_query", "keyword"
         return "robot_command", "keyword"
+
+    def _is_graph_knowledge_query(self, text: str) -> bool:
+        if not GraphRagRetriever.is_relational_query(text):
+            return False
+        normalized = text.casefold()
+        # Keep imperative station/control requests on the command path even when they mention
+        # graph entities. Descriptive wording such as "처리할 수 있는" remains a knowledge read.
+        command_terms = (
+            "해줘",
+            "해주세요",
+            "실행해",
+            "시작해",
+            "정지해",
+            "이동해",
+            "작업해",
+            "점검해",
+            "검사해",
+            "취소해",
+            "run station",
+            "move to",
+            "start simulation",
+            "stop simulation",
+            "cancel command",
+        )
+        if any(term in normalized for term in command_terms):
+            return False
+        read_terms = (
+            "?",
+            "어느",
+            "어떤",
+            "무엇",
+            "뭐",
+            "알려",
+            "조회",
+            "마지막",
+            "which",
+            "what",
+            "show",
+        )
+        return any(term in normalized for term in read_terms)
 
     def _is_process_status_request(self, text: str) -> bool:
         normalized = text.lower()
@@ -1425,6 +1478,7 @@ _VALID_ROUTES = {
     "robot_command",
     "compare_runs",
     "optimize_agvs",
+    "knowledge_query",
     "general_chat",
 }
 

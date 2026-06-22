@@ -118,6 +118,7 @@ class LangGraphMultiResponseAgent:
                 "station_action_query": "report_available_actions",
                 "compare_runs": "report_run_comparison",
                 "optimize_agvs": "optimize_agv_count",
+                "knowledge_query": "retrieve",
                 "general_chat": "retrieve",
                 "robot_command": "resolve_station",
             },

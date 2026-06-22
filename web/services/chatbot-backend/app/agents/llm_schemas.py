@@ -8,7 +8,13 @@ from app.domain.models import RobotCommandName, ToolCall
 
 
 class IntentDecision(BaseModel):
-    intent: Literal["process_status", "station_action_query", "robot_command"]
+    intent: Literal[
+        "process_status",
+        "station_action_query",
+        "robot_command",
+        "knowledge_query",
+        "general_chat",
+    ]
 
 
 class PlanDecision(BaseModel):

@@ -3,6 +3,7 @@ from __future__ import annotations
 import asyncio
 
 from app.application.chat_orchestrator import ChatOrchestrator
+from app.agents.llm_schemas import IntentDecision
 from app.domain.models import RobotCommandName
 from app.infrastructure.container import AppContainer
 from app.infrastructure.llm_gateway import build_rule_based_tool_call
@@ -76,6 +77,36 @@ def test_routing_falls_back_to_keyword_when_llm_raises() -> None:
     orch._llm = _BoomLlm()
     route, source = asyncio.run(orch._classify_route(USER_MESSAGE, "corr"))
     assert (route, source) == ("robot_command", "keyword")
+
+
+def test_intent_schema_accepts_chat_and_knowledge_routes() -> None:
+    assert IntentDecision(intent="general_chat").intent == "general_chat"
+    assert IntentDecision(intent="knowledge_query").intent == "knowledge_query"
+
+
+def test_graph_knowledge_query_wins_over_llm_station_action_misroute() -> None:
+    orch = AppContainer().chat
+    orch._llm = _FakeLlm("station_action_query")
+
+    route, source = asyncio.run(
+        orch._classify_route(
+            "존 2에서 검사를 처리할 수 있는 스테이션과 마지막 병목률은?",
+            "corr_graph",
+        )
+    )
+
+    assert (route, source) == ("knowledge_query", "graph")
+
+
+def test_explicit_station_command_is_not_hijacked_by_graph_route() -> None:
+    orch = AppContainer().chat
+    orch._llm = _FakeLlm("robot_command")
+
+    route, source = asyncio.run(
+        orch._classify_route("존 2의 3번 스테이션을 검사해줘", "corr_command")
+    )
+
+    assert (route, source) == ("robot_command", "llm")
 
 
 def test_compare_request_routes_to_compare_runs() -> None:

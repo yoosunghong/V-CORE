@@ -99,7 +99,13 @@ class OllamaLlmGateway:
         self._adapter_scale = adapter_scale
         self.last_tool_attempts: list[dict[str, Any]] = []
 
-    _VALID_INTENTS = {"process_status", "station_action_query", "robot_command", "general_chat"}
+    _VALID_INTENTS = {
+        "process_status",
+        "station_action_query",
+        "robot_command",
+        "knowledge_query",
+        "general_chat",
+    }
 
     async def preload(self, correlation_id: str = "startup-preload") -> None:
         payload = {

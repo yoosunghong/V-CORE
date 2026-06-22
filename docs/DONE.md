@@ -189,3 +189,34 @@ Relevant existing capabilities this plan extends rather than rebuilds:
   nonzero exit code unless the deployed collection is green, 1024-dim Cosine, has at least 16 points,
   and ranks `sop_collision_001` first for the collision-response query. The command passes against
   both the managed deployment and local mirror with all checks true and top score `0.62117743`.
+
+## RAG / GraphRAG limitation hardening
+
+### Eval-set scale + GraphRAG expressiveness (2026-06-22)
+
+Addressed the two portfolio limitations "RAG 평가셋 규모 제한" and "GraphRAG 표현력 제한".
+Full problem/process write-ups: [docs/troubleshooting/rag-evalset-scale.md](docs/troubleshooting/rag-evalset-scale.md)
+and [docs/troubleshooting/graphrag-expressiveness.md](docs/troubleshooting/graphrag-expressiveness.md).
+
+- **Eval-set scale.** Grew the deterministic PA.4 regression set from 6 retrieval / 2 graph / 3
+  answer cases to **16 / 4 / 6**. The key gap closed: the corpus is Korean but every eval query was
+  English, so multilingual retrieval was never regression-tested. Added Korean retrieval, graph, and
+  answer-grounding cases plus broader English corpus coverage (startup/throughput/status/dispatch).
+  Re-locked `RAG_PA4_BASELINE.json` (recall/nDCG/citation/faithfulness/grounded/abstention all 1.0).
+- **GraphRAG expressiveness.** Added Korean relational parsing to `app/domain/ontology.py`
+  (`is_relational_query` signals, `ZONE_ALIASES`, `parse_capability` aliases) so Korean multi-hop
+  queries (`존 2에서 검사를 처리할 수 있는 스테이션과 마지막 병목률은?`) traverse the graph instead
+  of falling back to vector search. Added station-level KPI attribution: new `latest_zone_metric`
+  reads a run's `zone_heatmap` so each station reports its per-zone `bottleneck_rate`, with the
+  cell-global value relabeled and kept as a fallback.
+- **GraphRAG in-process rebuild removed.** The graph was rebuilt from scratch on *every* relational
+  query. Split `OntologyGraphBuilder.build` into a memoized entry point (content fingerprint over
+  `(stations, runs)` → small LRU cache of the `OntologyGraph`) plus `_build` (the original
+  construction). A query now reuses the cached projection and a rebuild only fires when the station
+  registry or saved-run history changes — per-query rebuilds became per-state-change rebuilds, no new
+  service. Added memoization tests (cache reuse, fingerprint invalidation, one build across queries).
+- **Verified.** New Korean-query, per-zone-attribution, and memoization tests added; full backend
+  suite `python -m pytest -q` → **127 passed**.
+- **Remaining (documented).** Operational-log hard negatives + a statistical/live-stack benchmark
+  (eval-set); external durable graph store (Neo4j/RDF, cross-process) + compound-constraint grammar
+  (GraphRAG). Tracked in the two troubleshooting docs.

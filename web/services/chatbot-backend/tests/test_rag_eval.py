@@ -65,6 +65,9 @@ def test_answer_grounding_baseline_is_faithful():
         "answer_collision_grounded",
         "answer_bottleneck_grounded",
         "answer_honest_miss",
+        "answer_collision_grounded_ko",
+        "answer_status_grounded_ko",
+        "answer_honest_miss_ko",
     }
     assert summary["citation_rate"] == 1.0
     assert summary["faithfulness_rate"] == 1.0

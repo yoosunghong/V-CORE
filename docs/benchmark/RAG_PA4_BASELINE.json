@@ -1,6 +1,6 @@
 {
   "name": "PA.4 RAG regression baseline",
-  "date": "2026-06-19",
+  "date": "2026-06-22",
   "top_k": 5,
   "corpus": "vcore_operations_ko",
   "embedding_model": "bge-m3",
@@ -15,12 +15,12 @@
     "answer_grounding.grounded_rate": 1.0,
     "answer_grounding.abstention_accuracy": 1.0
   },
-  "retrieval_cases": 6,
-  "answer_grounding_cases": 3,
-  "graph_retrieval_cases": 2,
+  "retrieval_cases": 16,
+  "answer_grounding_cases": 6,
+  "graph_retrieval_cases": 4,
   "notes": [
     "Pytest uses deterministic fixture rankings and answers so CI can gate PA.4 without a live Qdrant or LLM stack.",
     "The live runner can compare stack output with this file via scripts/eval_rag_retrieval.py --baseline docs/benchmark/RAG_PA4_BASELINE.json.",
-    "Broaden this baseline when PB adds multi-hop GraphRAG cases."
+    "2026-06-22 eval-set scale expansion (see docs/troubleshooting/rag-evalset-scale.md): retrieval 6->16 (added broader English + Korean query variants for the Korean corpus), answer-grounding 3->6 (added Korean grounded + abstain cases), graph 2->4 (added Korean relational queries). Korean coverage closes the multilingual gap where the corpus is Korean but every eval query was English."
   ]
 }

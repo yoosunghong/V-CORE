@@ -214,8 +214,17 @@ RAG regression lives beside the existing benchmark harness:
   python scripts/eval_rag_retrieval.py --baseline ../../../docs/benchmark/RAG_PA4_BASELINE.json
   ```
 
-The current PA.4 baseline is intentionally small (6 retrieval cases, 3 answer-grounding cases) but
-fully regression-gated. PB extends the same harness with multi-hop GraphRAG cases.
+The PA.4 baseline started intentionally small (6 retrieval, 3 answer-grounding, 2 graph cases),
+fully regression-gated. **Eval-set scale expansion (2026-06-22)** grew it to **16 retrieval / 6
+answer-grounding / 4 graph** cases. The decisive gap it closed: the corpus is Korean but every
+original eval query was English, so the multilingual retrieval claim was never regression-tested.
+The expansion adds Korean query variants (retrieval + graph) and Korean grounded/abstain answer
+cases, plus broader English coverage of the corpus (startup, throughput, live status, dispatch
+failure). Hard-negative behaviour (wrong/uncited citation, hallucinated term, false grounding) is
+gated by `test_answer_grounding_flags_unsupported_uncited_claims`. The journey, remaining gaps
+(operational-log-derived hard negatives, a statistical production benchmark), and next steps are in
+[../troubleshooting/rag-evalset-scale.md](../troubleshooting/rag-evalset-scale.md). PB extends the
+same harness with multi-hop GraphRAG cases.
 
 ---
 

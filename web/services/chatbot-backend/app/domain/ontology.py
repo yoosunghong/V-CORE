@@ -1,7 +1,9 @@
 from __future__ import annotations
 
+import hashlib
+import json
 import re
-from collections import defaultdict
+from collections import OrderedDict, defaultdict
 from dataclasses import dataclass, field
 from typing import Any
 
@@ -55,22 +57,78 @@ ZONE_ALIASES = {
     "1": "A",
     "zone1": "A",
     "zone 1": "A",
+    "존1": "A",
+    "존 1": "A",
+    "구역1": "A",
+    "구역 1": "A",
     "a": "A",
     "2": "B",
     "zone2": "B",
     "zone 2": "B",
+    "존2": "B",
+    "존 2": "B",
+    "구역2": "B",
+    "구역 2": "B",
     "b": "B",
     "3": "C",
     "zone3": "C",
     "zone 3": "C",
+    "존3": "C",
+    "존 3": "C",
+    "구역3": "C",
+    "구역 3": "C",
     "c": "C",
 }
 
 
 class OntologyGraphBuilder:
-    """Build the PB ontology from station registry data plus saved run/KPI history."""
+    """Build the PB ontology from station registry data plus saved run/KPI history.
+
+    The projection is memoized on a content fingerprint of ``(stations, runs)``: a relational
+    query reuses the cached graph and a rebuild only fires when the station registry or the
+    saved-run history actually changes (incremental invalidation). This replaces the original
+    build-on-every-query behaviour — keeping the graph an in-process, persistent-until-changed
+    store without standing up a separate graph service (Neo4j/RDF). The returned graph is shared
+    and treated as read-only by ``GraphRagRetriever``.
+    """
+
+    def __init__(self, cache_size: int = 8) -> None:
+        self._cache_size = max(1, cache_size)
+        self._cache: OrderedDict[str, OntologyGraph] = OrderedDict()
+        self.builds = 0  # number of full rebuilds, for observability/tests
 
     def build(self, stations: list[Station], runs: list[SimulationRun]) -> OntologyGraph:
+        key = self._fingerprint(stations, runs)
+        cached = self._cache.get(key)
+        if cached is not None:
+            self._cache.move_to_end(key)
+            return cached
+        graph = self._build(stations, runs)
+        self._cache[key] = graph
+        self._cache.move_to_end(key)
+        while len(self._cache) > self._cache_size:
+            self._cache.popitem(last=False)
+        return graph
+
+    @staticmethod
+    def _fingerprint(stations: list[Station], runs: list[SimulationRun]) -> str:
+        station_sig = [station.model_dump(mode="json") for station in stations]
+        run_sig = [
+            {
+                "run_id": run.run_id,
+                "status": run.status.value,
+                "created_at": run.created_at.isoformat(),
+                "started_at": run.started_at.isoformat() if run.started_at else None,
+                "ended_at": run.ended_at.isoformat() if run.ended_at else None,
+                "kpis": run.kpis_json or {},
+            }
+            for run in runs
+        ]
+        payload = json.dumps([station_sig, run_sig], sort_keys=True, default=str)
+        return hashlib.sha1(payload.encode("utf-8")).hexdigest()
+
+    def _build(self, stations: list[Station], runs: list[SimulationRun]) -> OntologyGraph:
+        self.builds += 1
         graph = OntologyGraph()
         cell_id = stations[0].cell_id if stations else "cell_demo"
         cell_node_id = f"cell:{cell_id}"
@@ -161,9 +219,20 @@ class GraphRagRetriever:
             "bottleneck rate",
             "last bottleneck",
             "multi-hop",
+            # Korean relational signals (GraphRAG expressiveness expansion)
+            "스테이션",
+            "어느 스테이션",
+            "어떤 스테이션",
+            "처리할 수",
+            "가능한",
+            "역량",
+            "용량",
+            "병목률",
+            "마지막 병목",
         )
-        return any(term in normalized for term in relation_terms) and (
-            "station" in normalized or "zone" in normalized or "capability" in normalized
+        anchor_terms = ("station", "zone", "capability", "스테이션", "존", "구역", "역량")
+        return any(term in normalized for term in relation_terms) and any(
+            anchor in normalized for anchor in anchor_terms
         )
 
     def retrieve(
@@ -213,23 +282,35 @@ class GraphRagRetriever:
         for node in station_nodes:
             props = node.properties
             caps = ", ".join(capabilities_for_station_type(str(props.get("station_type", ""))))
-            lines.append(
+            station_zone = _normalize_zone(str(props.get("zone", ""))) or props.get("zone")
+            station_line = (
                 "Station {station_id}: type={station_type}, zone={zone}, capabilities={caps}, "
                 "task_ready={task_ready}, accessible={accessible}, state={state}.".format(
                     station_id=props.get("station_id"),
                     station_type=props.get("station_type"),
-                    zone=_normalize_zone(str(props.get("zone", ""))) or props.get("zone"),
+                    zone=station_zone,
                     caps=caps,
                     task_ready=props.get("task_ready"),
                     accessible=props.get("accessible"),
                     state=props.get("state"),
                 )
             )
+            zone_attr = (
+                latest_zone_metric(runs, str(station_zone), "bottleneck_rate")
+                if station_zone
+                else None
+            )
+            if zone_attr is not None:
+                attr_run_id, attr_value = zone_attr
+                station_line += (
+                    f" Last zone bottleneck_rate: {attr_value:g} (run {attr_run_id})."
+                )
+            lines.append(station_line)
         if latest_bottleneck is not None:
             run_id, value = latest_bottleneck
-            lines.append(f"Latest bottleneck_rate: {value:g} from run {run_id}.")
+            lines.append(f"Latest cell bottleneck_rate: {value:g} from run {run_id}.")
         else:
-            lines.append("Latest bottleneck_rate: not available in saved run history.")
+            lines.append("Latest cell bottleneck_rate: not available in saved run history.")
 
         score = 1.0 if capability or zone else 0.85
         return [
@@ -303,6 +384,15 @@ def parse_capability(query: str) -> str | None:
         "charge": "charge",
         "charger": "charge",
         "battery": "battery",
+        # Korean capability aliases (GraphRAG expressiveness expansion)
+        "검사": "inspect",
+        "점검": "inspect",
+        "적재": "load",
+        "픽업": "pickup",
+        "하역": "unload",
+        "작업": "process",
+        "충전": "charge",
+        "배터리": "battery",
     }
     for alias, capability in sorted(capability_aliases.items(), key=lambda item: len(item[0]), reverse=True):
         if re.search(rf"(?<![a-z0-9_]){re.escape(alias)}(?![a-z0-9_])", normalized):
@@ -315,6 +405,28 @@ def latest_metric(runs: list[SimulationRun], metric: str) -> tuple[str, float] |
         value = (run.kpis_json or {}).get(metric)
         if isinstance(value, (int, float)) and not isinstance(value, bool):
             return run.run_id, float(value)
+    return None
+
+
+def latest_zone_metric(
+    runs: list[SimulationRun], zone: str, metric: str
+) -> tuple[str, float] | None:
+    """Station-level KPI attribution: latest per-zone metric from a run's ``zone_heatmap``.
+
+    Falls back to ``None`` (caller keeps the cell-global value) when no run carries
+    zone-resolved evidence for the requested zone.
+    """
+
+    normalized_zone = _normalize_zone(zone) or zone
+    for run in sorted(runs, key=lambda item: item.created_at, reverse=True):
+        heatmap = (run.kpis_json or {}).get("zone_heatmap")
+        if not isinstance(heatmap, dict):
+            continue
+        for key, value in heatmap.items():
+            if (_normalize_zone(str(key)) or str(key)) != normalized_zone:
+                continue
+            if isinstance(value, (int, float)) and not isinstance(value, bool):
+                return run.run_id, float(value)
     return None
 
 

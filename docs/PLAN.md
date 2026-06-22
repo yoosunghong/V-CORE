@@ -144,6 +144,17 @@ parallel once PA lands.
 - [ ] Legacy P6 UE5 production-grade refactor — see [legacy/PLAN.md](legacy/PLAN.md); orthogonal to
       this track.
 
+### RAG / GraphRAG limitation follow-ups
+The two portfolio limitations were partially addressed 2026-06-22 (Korean eval coverage + Korean
+GraphRAG parsing + station-level KPI attribution). Process:
+[troubleshooting/rag-evalset-scale.md](troubleshooting/rag-evalset-scale.md),
+[troubleshooting/graphrag-expressiveness.md](troubleshooting/graphrag-expressiveness.md). Remaining:
+- [ ] RAG eval-set: operational-log-derived hard negatives + a statistically-sized live-stack
+      benchmark (current set is a deterministic contract gate, not a production benchmark).
+- [ ] GraphRAG: persistent graph store (Neo4j/RDF/managed) with incremental per-run sync instead of
+      in-process rebuild; compound-constraint grammar (multi-zone / AND-capability / numeric
+      thresholds); per-zone attribution for `throughput`/`avg_wait` beyond `bottleneck_rate`.
+
 ---
 
 ## Definition of "Done" (unchanged from CLAUDE.md)

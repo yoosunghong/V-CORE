@@ -1,0 +1,113 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1060 600" font-family="'Segoe UI','Malgun Gothic',Helvetica,Arial,sans-serif">
+  <defs>
+    <marker id="arrow" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L7,3 L0,6 Z" fill="#64748b"/>
+    </marker>
+    <marker id="arrowR" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L7,3 L0,6 Z" fill="#dc2626"/>
+    </marker>
+    <marker id="arrowG" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L7,3 L0,6 Z" fill="#059669"/>
+    </marker>
+  </defs>
+
+  <rect x="0" y="0" width="1060" height="600" fill="#ffffff"/>
+  <text x="530" y="40" text-anchor="middle" font-size="26" font-weight="700" fill="#0f172a">GraphRAG typed graph: 매 질의 재구축 → fingerprint 기반 memoized projection</text>
+  <text x="530" y="68" text-anchor="middle" font-size="15" fill="#64748b">OntologyGraphBuilder.build — 콘텐츠 fingerprint(stations, runs)로 캐시, 상태 변경 시에만 재구축</text>
+
+  <!-- ============ BEFORE PANEL ============ -->
+  <rect x="24" y="92" width="492" height="476" rx="14" fill="#fef2f2" stroke="#fecaca" stroke-width="1.5"/>
+  <rect x="24" y="92" width="492" height="46" rx="14" fill="#dc2626"/>
+  <rect x="24" y="120" width="492" height="18" fill="#dc2626"/>
+  <text x="48" y="122" font-size="19" font-weight="700" fill="#ffffff">개선 전 — Build on every query</text>
+
+  <!-- three query rows each triggering a full rebuild -->
+  <!-- row 1 -->
+  <rect x="48" y="168" width="118" height="44" rx="8" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+  <text x="107" y="195" text-anchor="middle" font-size="14" fill="#334155">관계형 질의 Q1</text>
+  <line x1="166" y1="190" x2="214" y2="190" stroke="#dc2626" stroke-width="2" marker-end="url(#arrowR)"/>
+  <rect x="216" y="166" width="150" height="48" rx="8" fill="#fde8e8" stroke="#dc2626" stroke-width="1.5"/>
+  <text x="291" y="186" text-anchor="middle" font-size="13.5" font-weight="600" fill="#b91c1c">build() 전체 재구축</text>
+  <text x="291" y="203" text-anchor="middle" font-size="11.5" fill="#b91c1c">nodes+edges 전부 할당</text>
+  <line x1="366" y1="190" x2="410" y2="190" stroke="#dc2626" stroke-width="2" marker-end="url(#arrowR)"/>
+  <rect x="412" y="170" width="78" height="40" rx="8" fill="#dbeafe" stroke="#3b82f6" stroke-width="1.5"/>
+  <text x="451" y="194" text-anchor="middle" font-size="13" fill="#1d4ed8">Graph</text>
+
+  <!-- row 2 -->
+  <rect x="48" y="236" width="118" height="44" rx="8" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+  <text x="107" y="263" text-anchor="middle" font-size="14" fill="#334155">관계형 질의 Q2</text>
+  <line x1="166" y1="258" x2="214" y2="258" stroke="#dc2626" stroke-width="2" marker-end="url(#arrowR)"/>
+  <rect x="216" y="234" width="150" height="48" rx="8" fill="#fde8e8" stroke="#dc2626" stroke-width="1.5"/>
+  <text x="291" y="254" text-anchor="middle" font-size="13.5" font-weight="600" fill="#b91c1c">build() 전체 재구축</text>
+  <text x="291" y="271" text-anchor="middle" font-size="11.5" fill="#b91c1c">상태 동일해도 재실행</text>
+  <line x1="366" y1="258" x2="410" y2="258" stroke="#dc2626" stroke-width="2" marker-end="url(#arrowR)"/>
+  <rect x="412" y="238" width="78" height="40" rx="8" fill="#dbeafe" stroke="#3b82f6" stroke-width="1.5"/>
+  <text x="451" y="262" text-anchor="middle" font-size="13" fill="#1d4ed8">Graph</text>
+
+  <!-- row 3 -->
+  <rect x="48" y="304" width="118" height="44" rx="8" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+  <text x="107" y="331" text-anchor="middle" font-size="14" fill="#334155">관계형 질의 Q3</text>
+  <line x1="166" y1="326" x2="214" y2="326" stroke="#dc2626" stroke-width="2" marker-end="url(#arrowR)"/>
+  <rect x="216" y="302" width="150" height="48" rx="8" fill="#fde8e8" stroke="#dc2626" stroke-width="1.5"/>
+  <text x="291" y="322" text-anchor="middle" font-size="13.5" font-weight="600" fill="#b91c1c">build() 전체 재구축</text>
+  <text x="291" y="339" text-anchor="middle" font-size="11.5" fill="#b91c1c">중복 비용 발생</text>
+  <line x1="366" y1="326" x2="410" y2="326" stroke="#dc2626" stroke-width="2" marker-end="url(#arrowR)"/>
+  <rect x="412" y="306" width="78" height="40" rx="8" fill="#dbeafe" stroke="#3b82f6" stroke-width="1.5"/>
+  <text x="451" y="330" text-anchor="middle" font-size="13" fill="#1d4ed8">Graph</text>
+
+  <rect x="48" y="380" width="442" height="68" rx="10" fill="#ffffff" stroke="#fecaca" stroke-width="1.5"/>
+  <text x="269" y="408" text-anchor="middle" font-size="15" font-weight="700" fill="#b91c1c">재구축 횟수 = 질의 수</text>
+  <text x="269" y="430" text-anchor="middle" font-size="14" fill="#7f1d1d">O(queries) · 영속/재사용 없음</text>
+
+  <text x="270" y="498" text-anchor="middle" font-size="13" fill="#94a3b8">질의 3회 → build 3회</text>
+  <text x="270" y="540" text-anchor="middle" font-size="34" font-weight="800" fill="#dc2626">builds = 3</text>
+
+  <!-- ============ AFTER PANEL ============ -->
+  <rect x="544" y="92" width="492" height="476" rx="14" fill="#ecfdf5" stroke="#a7f3d0" stroke-width="1.5"/>
+  <rect x="544" y="92" width="492" height="46" rx="14" fill="#059669"/>
+  <rect x="544" y="120" width="492" height="18" fill="#059669"/>
+  <text x="568" y="122" font-size="19" font-weight="700" fill="#ffffff">개선 후 — Memoized projection</text>
+
+  <!-- queries column -->
+  <rect x="566" y="170" width="120" height="40" rx="8" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+  <text x="626" y="194" text-anchor="middle" font-size="13.5" fill="#334155">Q1 (최초)</text>
+  <rect x="566" y="226" width="120" height="40" rx="8" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+  <text x="626" y="250" text-anchor="middle" font-size="13.5" fill="#334155">Q2 (동일 상태)</text>
+  <rect x="566" y="282" width="120" height="40" rx="8" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+  <text x="626" y="306" text-anchor="middle" font-size="13.5" fill="#334155">Q3 (동일 상태)</text>
+
+  <!-- fingerprint gate -->
+  <rect x="722" y="200" width="132" height="92" rx="10" fill="#fffbeb" stroke="#f59e0b" stroke-width="1.5"/>
+  <text x="788" y="232" text-anchor="middle" font-size="13.5" font-weight="700" fill="#b45309">fingerprint</text>
+  <text x="788" y="251" text-anchor="middle" font-size="11.5" fill="#b45309">sha1(stations,</text>
+  <text x="788" y="267" text-anchor="middle" font-size="11.5" fill="#b45309">runs)</text>
+  <text x="788" y="284" text-anchor="middle" font-size="11.5" fill="#b45309">일치? → LRU 조회</text>
+
+  <line x1="686" y1="190" x2="720" y2="226" stroke="#059669" stroke-width="2" marker-end="url(#arrowG)"/>
+  <line x1="686" y1="246" x2="720" y2="246" stroke="#059669" stroke-width="2" marker-end="url(#arrowG)"/>
+  <line x1="686" y1="302" x2="720" y2="266" stroke="#059669" stroke-width="2" marker-end="url(#arrowG)"/>
+
+  <!-- cache box -->
+  <rect x="892" y="196" width="120" height="100" rx="10" fill="#ffffff" stroke="#059669" stroke-width="2"/>
+  <text x="952" y="222" text-anchor="middle" font-size="13.5" font-weight="700" fill="#047857">LRU 캐시</text>
+  <rect x="912" y="234" width="80" height="44" rx="8" fill="#dbeafe" stroke="#3b82f6" stroke-width="1.5"/>
+  <text x="952" y="254" text-anchor="middle" font-size="13" fill="#1d4ed8">Graph</text>
+  <text x="952" y="270" text-anchor="middle" font-size="10.5" fill="#1d4ed8">(read-only 공유)</text>
+
+  <line x1="854" y1="246" x2="890" y2="246" stroke="#059669" stroke-width="2" marker-end="url(#arrowG)"/>
+  <text x="872" y="238" text-anchor="middle" font-size="11" font-weight="700" fill="#047857">HIT</text>
+  <text x="872" y="285" text-anchor="middle" font-size="10.5" fill="#047857">재사용</text>
+
+  <!-- miss / state change -->
+  <rect x="566" y="346" width="160" height="46" rx="8" fill="#fff7ed" stroke="#fb923c" stroke-width="1.5"/>
+  <text x="646" y="366" text-anchor="middle" font-size="12.5" font-weight="600" fill="#c2410c">+ 새 run / 상태 변경</text>
+  <text x="646" y="383" text-anchor="middle" font-size="11.5" fill="#c2410c">fingerprint 변경 → MISS</text>
+  <path d="M726 369 H788 V296" fill="none" stroke="#fb923c" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="700" y="338" font-size="11" font-weight="700" fill="#c2410c">MISS → _build 1회 후 캐시 갱신</text>
+
+  <rect x="566" y="408" width="446" height="40" rx="10" fill="#ffffff" stroke="#a7f3d0" stroke-width="1.5"/>
+  <text x="789" y="433" text-anchor="middle" font-size="14.5" font-weight="700" fill="#047857">재구축 횟수 = 상태 변경 횟수 · O(state changes)</text>
+
+  <text x="789" y="498" text-anchor="middle" font-size="13" fill="#94a3b8">동일 상태 질의 3회 → build 1회 (이후 캐시 HIT)</text>
+  <text x="789" y="540" text-anchor="middle" font-size="34" font-weight="800" fill="#059669">builds = 1</text>
+</svg>

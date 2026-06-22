@@ -4,7 +4,7 @@ import pytest
 from app.application.chat_orchestrator import ChatOrchestrator
 from app.application.robot_orchestrator import RobotCommandOrchestrator
 from app.domain.models import RetrievedChunk, SimulationRun
-from app.domain.ontology import GraphRagRetriever
+from app.domain.ontology import GraphRagRetriever, OntologyGraphBuilder
 from app.infrastructure.control_client import DemoControlServerClient
 from app.infrastructure.event_bus import InMemoryEventBus
 from app.infrastructure.iot_client import DemoIotCommandClient
@@ -161,7 +161,110 @@ async def test_graph_rag_retrieves_zone_capability_and_latest_bottleneck():
     assert chunks[0].source == "ontology_graph"
     assert chunks[0].document_id == "ontology_station_b_inspect"
     assert "Station 3" in chunks[0].text
-    assert "Latest bottleneck_rate: 0.31" in chunks[0].text
+    assert "Latest cell bottleneck_rate: 0.31" in chunks[0].text
+
+
+@pytest.mark.asyncio
+async def test_graph_rag_handles_korean_relational_query():
+    repository = InMemorySessionRepository()
+    await repository.create_run(
+        SimulationRun(
+            simulation_id="sim_graph_ko",
+            run_id="run_graph_ko",
+            kpis_json={"bottleneck_rate": 0.31, "bottleneck_zone": "B"},
+        )
+    )
+    stations = await DemoControlServerClient().list_stations("corr_graph_ko")
+    retriever = GraphRagRetriever()
+
+    query = "존 2에서 검사를 처리할 수 있는 스테이션과 마지막 병목률은?"
+    assert retriever.is_relational_query(query)
+
+    chunks = retriever.retrieve(query, stations, await repository.list_runs())
+
+    assert chunks[0].document_id == "ontology_station_b_inspect"
+    assert "Station 3" in chunks[0].text
+
+
+@pytest.mark.asyncio
+async def test_graph_rag_attributes_zone_level_bottleneck_per_station():
+    repository = InMemorySessionRepository()
+    await repository.create_run(
+        SimulationRun(
+            simulation_id="sim_graph_zone",
+            run_id="run_graph_zone",
+            kpis_json={"bottleneck_rate": 0.39, "zone_heatmap": {"B": 0.47, "A": 0.12}},
+        )
+    )
+    stations = await DemoControlServerClient().list_stations("corr_graph_zone")
+
+    chunks = GraphRagRetriever().retrieve(
+        "Which stations in Zone 2 can handle inspection, and what was their last bottleneck rate?",
+        stations,
+        await repository.list_runs(),
+    )
+
+    text = chunks[0].text
+    assert "Last zone bottleneck_rate: 0.47" in text
+    assert "Latest cell bottleneck_rate: 0.39" in text
+
+
+@pytest.mark.asyncio
+async def test_graph_builder_memoizes_until_inputs_change():
+    repository = InMemorySessionRepository()
+    await repository.create_run(
+        SimulationRun(
+            simulation_id="sim_cache",
+            run_id="run_cache_1",
+            kpis_json={"bottleneck_rate": 0.31},
+        )
+    )
+    stations = await DemoControlServerClient().list_stations("corr_cache")
+    builder = OntologyGraphBuilder()
+
+    runs = await repository.list_runs()
+    first = builder.build(stations, runs)
+    second = builder.build(stations, list(runs))  # equal content, fresh list
+
+    assert second is first  # cached projection reused, not rebuilt
+    assert builder.builds == 1
+
+    await repository.create_run(
+        SimulationRun(
+            simulation_id="sim_cache",
+            run_id="run_cache_2",
+            kpis_json={"bottleneck_rate": 0.18},
+        )
+    )
+    third = builder.build(stations, await repository.list_runs())
+
+    assert third is not first  # new run invalidates the fingerprint -> rebuild
+    assert builder.builds == 2
+
+
+@pytest.mark.asyncio
+async def test_graph_rag_reuses_cached_graph_across_queries():
+    repository = InMemorySessionRepository()
+    await repository.create_run(
+        SimulationRun(
+            simulation_id="sim_reuse",
+            run_id="run_reuse",
+            kpis_json={"bottleneck_rate": 0.31, "bottleneck_zone": "B"},
+        )
+    )
+    stations = await DemoControlServerClient().list_stations("corr_reuse")
+    runs = await repository.list_runs()
+    builder = OntologyGraphBuilder()
+    retriever = GraphRagRetriever(builder=builder)
+
+    for query in (
+        "Which stations in Zone 2 can handle inspection?",
+        "존 2에서 검사를 처리할 수 있는 스테이션은?",
+        "Which stations in Zone 1 can handle loading?",
+    ):
+        assert retriever.retrieve(query, stations, runs)
+
+    assert builder.builds == 1  # three relational queries, one build
 
 
 @pytest.mark.asyncio

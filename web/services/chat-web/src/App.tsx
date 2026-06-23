@@ -27,7 +27,6 @@ import {
   updateSimulation
 } from "./api";
 import type {LlmStatus} from "./api";
-import {subscribeAgvs, subscribeProcess} from "./firebase";
 import type {
   AgvTelemetry,
   ChatMessage,
@@ -1712,11 +1711,6 @@ export function App() {
   const logTimersRef = useRef<Map<string, number>>(new Map());
   // Mirrors selectedSimulationId so the long-lived chat WS closure reads the live selection.
   const selectedSimulationIdRef = useRef<string | null>(null);
-  // Tracks the last time the SSE stream delivered an "agvs" frame. Firebase is only
-  // allowed to update the AGV list when no SSE frame has arrived in the last 2 s,
-  // preventing stale RTDB data (e.g. a 3-AGV snapshot) from overwriting a live
-  // 2-AGV SSE feed.
-  const sseAgvsTimestampRef = useRef<number>(0);
   useEffect(() => {
     selectedSimulationIdRef.current = selectedSimulationId;
   }, [selectedSimulationId]);
@@ -1830,59 +1824,58 @@ export function App() {
   const chatInputDisabled = !sessionId || isSending || !isLlmReady;
 
   useEffect(() => {
-    let telemetry: EventSource | null = null;
     let cancelled = false;
+    // This same-origin endpoint is stable. Open it independently from viewport discovery:
+    // EventSource reconnects after backend restarts, while a failed one-shot viewport fetch
+    // previously left telemetry disabled until the user reloaded the whole page.
+    const telemetry = openUnrealTelemetryStream(fallbackViewport.telemetry_sse_url);
+
+    telemetry.onopen = () => setViewportState("connected");
+    telemetry.addEventListener("telemetry", (event) => {
+      try {
+        const parsed = JSON.parse((event as MessageEvent).data) as ProcessTelemetry;
+        setDashboard((current) => updateDashboardFromTelemetry(current, parsed));
+      } catch {
+        setViewportState("telemetry-error");
+      }
+    });
+    telemetry.addEventListener("agvs", (event) => {
+      try {
+        setAgvs(JSON.parse((event as MessageEvent).data) as AgvTelemetry[]);
+      } catch {
+        /* ignore malformed frame */
+      }
+    });
+    telemetry.addEventListener("process", (event) => {
+      try {
+        setProcessSnapshot(JSON.parse((event as MessageEvent).data) as ProcessSnapshot);
+      } catch {
+        /* ignore malformed frame */
+      }
+    });
+    telemetry.addEventListener("hud", (event) => {
+      try {
+        setHud(JSON.parse((event as MessageEvent).data) as HudSnapshot);
+      } catch {
+        /* ignore malformed frame */
+      }
+    });
+    telemetry.onerror = () => setViewportState("telemetry-reconnecting");
 
     fetchUnrealViewport()
       .then((payload) => {
         if (cancelled) return;
         setViewport(payload);
-        telemetry = openUnrealTelemetryStream(payload.telemetry_sse_url);
-        telemetry.onopen = () => setViewportState("connected");
-        telemetry.addEventListener("telemetry", (event) => {
-          try {
-            const parsed = JSON.parse((event as MessageEvent).data) as ProcessTelemetry;
-            setDashboard((current) => updateDashboardFromTelemetry(current, parsed));
-          } catch {
-            setViewportState("telemetry-error");
-          }
-        });
-        // Live UE5 frames relayed by the backend (Firebase-independent). These drive the
-        // AGV list, the metric cards, and the web HUD whenever a simulation is running.
-        telemetry.addEventListener("agvs", (event) => {
-          try {
-            sseAgvsTimestampRef.current = Date.now();
-            setAgvs(JSON.parse((event as MessageEvent).data) as AgvTelemetry[]);
-          } catch {
-            /* ignore malformed frame */
-          }
-        });
-        telemetry.addEventListener("process", (event) => {
-          try {
-            setProcessSnapshot(JSON.parse((event as MessageEvent).data) as ProcessSnapshot);
-          } catch {
-            /* ignore malformed frame */
-          }
-        });
-        telemetry.addEventListener("hud", (event) => {
-          try {
-            setHud(JSON.parse((event as MessageEvent).data) as HudSnapshot);
-          } catch {
-            /* ignore malformed frame */
-          }
-        });
-        telemetry.onerror = () => setViewportState("telemetry-reconnecting");
       })
       .catch(() => {
         if (!cancelled) {
           setViewport(fallbackViewport);
-          setViewportState("offline");
         }
       });
 
     return () => {
       cancelled = true;
-      telemetry?.close();
+      telemetry.close();
     };
   }, []);
 
@@ -1913,23 +1906,7 @@ export function App() {
     setIsMonitorOpen(isSimActive);
   }, [isSimActive]);
 
-  // Real-time AGV + process telemetry from Firebase (UE5 → collector → RTDB).
-  useEffect(() => {
-    // Firebase is the secondary path: it only augments the SSE live feed, never clears it
-    // (an empty RTDB snapshot must not wipe AGVs the backend SSE just delivered).
-    const unsubscribeAgvs = subscribeAgvs((next) => {
-      if (next.length > 0 && Date.now() - sseAgvsTimestampRef.current > 2000) setAgvs(next);
-    });
-    const unsubscribeProcess = subscribeProcess((next) => {
-      if (next) setProcessSnapshot(next);
-    });
-    return () => {
-      unsubscribeAgvs();
-      unsubscribeProcess();
-    };
-  }, []);
-
-  // When Firebase process data is present, drive the metric cards live from it.
+  // Process SSE telemetry drives the metric cards and run state.
   useEffect(() => {
     if (!processSnapshot) return;
     // Telemetry is the authority once present: clear the chat-driven flag on stop.

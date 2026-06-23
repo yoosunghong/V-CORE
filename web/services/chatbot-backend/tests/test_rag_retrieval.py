@@ -2,9 +2,39 @@ import httpx
 import pytest
 
 from app.application.chat_orchestrator import ChatOrchestrator
+from app.application.multi_response_graph import _structured_graph_answer
 from app.application.robot_orchestrator import RobotCommandOrchestrator
 from app.domain.models import RetrievedChunk, SimulationRun
 from app.domain.ontology import GraphRagRetriever, OntologyGraphBuilder
+
+
+def test_structured_graph_answer_cannot_be_overridden_by_llm_hallucination():
+    chunk = RetrievedChunk(
+        document_id="ontology_station_b_inspect",
+        title="Ontology Zone B stations for capability inspect",
+        text="Station 3",
+        score=1.0,
+        graph={
+            "zone": "B",
+            "capability": "inspect",
+            "stations": [
+                {
+                    "station_id": 3,
+                    "station_type": "inspection",
+                    "capabilities": ["inspect", "inspection", "qa"],
+                    "bottleneck_rate": 0.47,
+                }
+            ],
+            "latest_bottleneck": {"value": 0.39, "run_id": "run_latest"},
+        },
+    )
+
+    answer = _structured_graph_answer([chunk])
+    assert answer is not None
+    assert "Zone B" in answer
+    assert "스테이션 3" in answer
+    assert "0.47" in answer
+    assert "not in the knowledge base" not in answer
 from app.infrastructure.control_client import DemoControlServerClient
 from app.infrastructure.event_bus import InMemoryEventBus
 from app.infrastructure.iot_client import DemoIotCommandClient

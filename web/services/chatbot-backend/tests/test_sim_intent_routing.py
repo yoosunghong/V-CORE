@@ -57,6 +57,17 @@ def test_explicit_sim_command_overrides_llm_misroute() -> None:
     assert (route, source) == ("robot_command", "llm_guard")
 
 
+def test_korean_end_command_routes_and_builds_stop_tool_without_llm_help() -> None:
+    orch = AppContainer().chat
+    orch._llm = _FakeLlm("general_chat")
+    route, source = asyncio.run(orch._classify_route("종료해", "corr_end"))
+    assert (route, source) == ("robot_command", "llm_guard")
+
+    tool_call = build_rule_based_tool_call("종료해", None)
+    assert tool_call is not None
+    assert tool_call.name == RobotCommandName.STOP_SIMULATION
+
+
 def test_guard_does_not_hijack_plain_status_query() -> None:
     orch = AppContainer().chat
     # No lifecycle verb → the LLM's read intent is respected, not overridden.

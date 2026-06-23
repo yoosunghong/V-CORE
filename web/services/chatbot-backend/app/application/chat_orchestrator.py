@@ -97,7 +97,7 @@ _SIM_START_VERBS = (
     "start", "run", "launch", "deploy",
 )
 _SIM_STOP_VERBS = (
-    "정지", "중단", "멈춰", "일시정지", "재개", "속도", "배속",
+    "정지", "중단", "종료", "끝내", "멈춰", "일시정지", "재개", "속도", "배속",
     "stop", "pause", "resume", "speed",
 )
 
@@ -1504,6 +1504,8 @@ _SIM_ACTION_KEYWORDS = (
     "투입",
     "정지",
     "중단",
+    "종료",
+    "끝내",
     "멈춰",
     "일시정지",
     "재개",
@@ -1574,6 +1576,8 @@ _SIM_LIFECYCLE_VERBS = (
     "시작",
     "정지",
     "중단",
+    "종료",
+    "끝내",
     "멈춰",
     "일시정지",
     "재개",
@@ -1600,6 +1604,14 @@ def _clean_is_explicit_sim_command(self: ChatOrchestrator, text: str) -> bool:
     lifecycle verb, so it is never pulled into the command path by this guard.
     """
     normalized = text.lower()
+    # Short follow-up commands rely on the active conversation context and often omit the noun
+    # entirely ("종료해", "정지해"). Treat only unmistakable stop imperatives as lifecycle
+    # controls so the LLM cannot downgrade them to general chat.
+    if any(
+        command in normalized
+        for command in ("종료해", "종료해줘", "끝내", "정지해", "중단해", "멈춰", "stop")
+    ):
+        return True
     return any(topic in normalized for topic in _SIM_TOPIC_KEYWORDS) and any(
         verb in normalized for verb in _SIM_LIFECYCLE_VERBS
     )

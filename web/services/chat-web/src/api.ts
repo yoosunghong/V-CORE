@@ -94,8 +94,9 @@ export async function listSessions(): Promise<SessionListResponse> {
 
 export async function fetchSessionMessages(sessionId: string): Promise<SessionMessagesResponse> {
   const params = new URLSearchParams({
-    limit: "40",
-    max_content_chars: "1200"
+    // Reopening a chat must restore the complete persisted conversation.
+    limit: "0",
+    max_content_chars: "0"
   });
   const response = await fetch(
     `${apiBaseUrl}/chat/sessions/${encodeURIComponent(sessionId)}/messages?${params.toString()}`

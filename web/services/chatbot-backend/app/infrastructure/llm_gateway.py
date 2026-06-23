@@ -877,7 +877,10 @@ def build_rule_based_tool_call(user_message: str, station: Station | None) -> To
         return ToolCall(name=RobotCommandName.START_SIMULATION, arguments=arguments)
     if _contains_any(
         normalized,
-        ("stop sim", "stop simulation", "abort", "emergency stop", "시뮬레이션 정지", "정지", "중단"),
+        (
+            "stop sim", "stop simulation", "abort", "emergency stop",
+            "시뮬레이션 정지", "정지", "중단", "종료", "끝내",
+        ),
     ):
         return ToolCall(name=RobotCommandName.STOP_SIMULATION, arguments={})
 

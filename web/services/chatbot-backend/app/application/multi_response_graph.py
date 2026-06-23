@@ -41,6 +41,40 @@ class MultiResponseState(TypedDict, total=False):
     result: tuple[ChatMessage, str | None, CommandStatus | None, list[DomainEvent]]
 
 
+def _structured_graph_answer(chunks: list[RetrievedChunk] | None) -> str | None:
+    """Render ontology evidence without asking the generative model to reinterpret it."""
+    if not chunks:
+        return None
+    chunk = next((item for item in chunks if isinstance(item.graph, dict)), None)
+    if chunk is None or chunk.graph is None:
+        return None
+    stations = chunk.graph.get("stations")
+    if not isinstance(stations, list) or not stations:
+        return None
+
+    zone = chunk.graph.get("zone")
+    capability = chunk.graph.get("capability")
+    heading = f"Zone {zone}" if isinstance(zone, str) and zone else "전체 셀"
+    heading += f"에서 `{capability}` 역량을 가진 스테이션" if isinstance(capability, str) and capability else "의 스테이션"
+    lines = [f"{heading}은 다음과 같습니다."]
+    for raw in stations:
+        if not isinstance(raw, dict):
+            continue
+        capabilities = raw.get("capabilities")
+        caps = ", ".join(str(value) for value in capabilities) if isinstance(capabilities, list) else "—"
+        bottleneck = raw.get("bottleneck_rate")
+        bottleneck_text = f"{float(bottleneck):g}" if isinstance(bottleneck, (int, float)) and not isinstance(bottleneck, bool) else "저장된 Zone 병목률 없음"
+        lines.append(
+            f"- 스테이션 {raw.get('station_id', '?')} ({raw.get('station_type', 'unknown')}): "
+            f"역량 {caps}; 마지막 병목률 {bottleneck_text}"
+        )
+    latest = chunk.graph.get("latest_bottleneck")
+    if isinstance(latest, dict) and isinstance(latest.get("value"), (int, float)):
+        lines.append(f"- 참고: 셀 전체의 마지막 병목률은 {float(latest['value']):g}입니다.")
+    lines.append(f"출처: {chunk.title}")
+    return "\n".join(lines)
+
+
 class LangGraphMultiResponseAgent:
     """Coordinates the chat response lifecycle as a LangGraph state machine."""
 
@@ -301,12 +335,16 @@ class LangGraphMultiResponseAgent:
         return out
 
     async def _report_general_chat(self, state: MultiResponseState) -> dict[str, Any]:
-        message = await self._orchestrator._general_chat_message(
-            state["user_text"],
-            state["session_id"],
-            state["correlation_id"],
-            knowledge=state.get("retrieved"),
-        )
+        # Graph retrieval is already structured and authoritative. Rendering it directly keeps a
+        # small local LLM from contradicting the evidence. Free-text/vector RAG still uses the LLM.
+        message = _structured_graph_answer(state.get("retrieved"))
+        if message is None:
+            message = await self._orchestrator._general_chat_message(
+                state["user_text"],
+                state["session_id"],
+                state["correlation_id"],
+                knowledge=state.get("retrieved"),
+            )
         assistant = await self._orchestrator._add_assistant_message(
             state["session_id"],
             message,
@@ -317,7 +355,6 @@ class LangGraphMultiResponseAgent:
             "trace": [{"node": "report_general_chat"}],
             "result": (assistant, None, None, state["events"]),
         }
-
     async def _resolve_station(self, state: MultiResponseState) -> dict[str, Station | None]:
         station = await self._orchestrator._station_status_agent.resolve_station(
             state["user_text"],

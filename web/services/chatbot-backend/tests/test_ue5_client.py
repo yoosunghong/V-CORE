@@ -31,6 +31,74 @@ def test_ue5_client_posts_sim_start_to_ue5() -> None:
     assert command.status == CommandStatus.ACCEPTED
 
 
+def test_ue5_client_confirms_stop_completed_after_accepted_response() -> None:
+    status_checks = 0
+
+    async def handler(request: httpx.Request) -> httpx.Response:
+        nonlocal status_checks
+        if request.url.path == "/sim/stop":
+            return httpx.Response(202, json={"status": "accepted"})
+        assert request.url.path == "/sim/status"
+        status_checks += 1
+        return httpx.Response(200, json={"running": status_checks < 2})
+
+    async def run() -> RobotCommand:
+        transport = httpx.MockTransport(handler)
+        async with httpx.AsyncClient(transport=transport, base_url="http://ue5.test") as client:
+            ue5 = Ue5CommandClient(
+                base_url="http://ue5.test",
+                api_key="test-key",
+                client=client,
+                stop_verify_attempts=2,
+                stop_verify_interval_seconds=0,
+            )
+            return await ue5.send_robot_command(
+                RobotCommand(
+                    command_id="cmd_stop",
+                    session_id="session_ue5",
+                    command_name=RobotCommandName.STOP_SIMULATION,
+                    correlation_id="corr_stop",
+                    idempotency_key="idem-stop",
+                    parameters={},
+                )
+            )
+
+    command = asyncio.run(run())
+    assert status_checks == 2
+    assert command.status == CommandStatus.ACCEPTED
+
+
+def test_ue5_client_marks_stop_failed_when_simulation_keeps_running() -> None:
+    async def handler(request: httpx.Request) -> httpx.Response:
+        if request.url.path == "/sim/stop":
+            return httpx.Response(202, json={"status": "accepted"})
+        return httpx.Response(200, json={"running": True})
+
+    async def run() -> RobotCommand:
+        transport = httpx.MockTransport(handler)
+        async with httpx.AsyncClient(transport=transport, base_url="http://ue5.test") as client:
+            ue5 = Ue5CommandClient(
+                base_url="http://ue5.test",
+                api_key="test-key",
+                client=client,
+                stop_verify_attempts=2,
+                stop_verify_interval_seconds=0,
+            )
+            return await ue5.send_robot_command(
+                RobotCommand(
+                    command_id="cmd_stop_stuck",
+                    session_id="session_ue5",
+                    command_name=RobotCommandName.STOP_SIMULATION,
+                    correlation_id="corr_stop_stuck",
+                    idempotency_key="idem-stop-stuck",
+                    parameters={},
+                )
+            )
+
+    command = asyncio.run(run())
+    assert command.status == CommandStatus.FAILED
+
+
 def test_ue5_client_maps_status_to_process_telemetry() -> None:
     async def handler(request: httpx.Request) -> httpx.Response:
         assert request.url.path == "/sim/status"

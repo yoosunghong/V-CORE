@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import asyncio
 import logging
 from typing import Any
 
@@ -42,11 +43,15 @@ class Ue5CommandClient:
         api_key: str,
         timeout_seconds: float = 5.0,
         client: httpx.AsyncClient | None = None,
+        stop_verify_attempts: int = 6,
+        stop_verify_interval_seconds: float = 0.05,
     ) -> None:
         self._base_url = base_url.rstrip("/")
         self._api_key = api_key
         self._timeout_seconds = timeout_seconds
         self._client = client
+        self._stop_verify_attempts = max(1, stop_verify_attempts)
+        self._stop_verify_interval_seconds = max(0.0, stop_verify_interval_seconds)
 
     async def send_robot_command(self, command: RobotCommand) -> RobotCommand:
         route = _COMMAND_ROUTES.get(command.command_name)
@@ -65,6 +70,16 @@ class Ue5CommandClient:
         try:
             response = await self._post(route, payload, command.correlation_id)
             response.raise_for_status()
+            if (
+                command.command_name == RobotCommandName.STOP_SIMULATION
+                and not await self._wait_until_stopped(command.correlation_id)
+            ):
+                logger.error(
+                    "UE5 accepted stop command %s but remained running",
+                    command.command_id,
+                )
+                command.status = CommandStatus.FAILED
+                return command
             command.status = CommandStatus.ACCEPTED
         except httpx.HTTPError as exc:
             # UE5 unreachable: mark the command FAILED so the chat turn can tell the
@@ -77,6 +92,17 @@ class Ue5CommandClient:
             )
             command.status = CommandStatus.FAILED
         return command
+
+    async def _wait_until_stopped(self, correlation_id: str) -> bool:
+        """Confirm the game-thread stop completed instead of trusting the queued HTTP ACK."""
+        for attempt in range(self._stop_verify_attempts):
+            response = await self._get("/sim/status", correlation_id)
+            response.raise_for_status()
+            if response.json().get("running") is False:
+                return True
+            if attempt + 1 < self._stop_verify_attempts:
+                await asyncio.sleep(self._stop_verify_interval_seconds)
+        return False
 
     async def select_camera(self, agv_id: str, correlation_id: str) -> bool:
         """Switch the UE5 viewport to an AGV's viewpoint camera (or 'overview')."""

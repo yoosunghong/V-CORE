@@ -1,5 +1,8 @@
+import asyncio
+
 from fastapi.testclient import TestClient
 
+from app.domain.models import ChatMessage, MessageRole
 from app.main import create_app
 
 
@@ -244,6 +247,35 @@ def test_session_delete_removes_session_and_history() -> None:
     assert missing.status_code == 404
 
     assert client.delete(f"/chat/sessions/{session_id}").status_code == 404
+
+
+def test_session_history_zero_limits_return_every_full_message() -> None:
+    client = TestClient(create_app())
+    first = client.post(
+        "/chat/messages",
+        json={"message": "현재 공정 상태 알려줘", "user_id": "history-user"},
+        headers={"x-correlation-id": "corr_history_0"},
+    )
+    session_id = first.json()["session_id"]
+    container = client.app.state.container
+
+    long_content = "가" * 9000
+    for index in range(45):
+        asyncio.run(container.repository.add_message(ChatMessage(
+            session_id=session_id,
+            role=MessageRole.ASSISTANT,
+            content=long_content if index == 0 else f"history-{index}",
+            correlation_id=f"corr_history_{index + 1}",
+        )))
+
+    response = client.get(
+        f"/chat/sessions/{session_id}/messages",
+        params={"limit": 0, "max_content_chars": 0},
+    )
+    assert response.status_code == 200
+    messages = response.json()["messages"]
+    assert len(messages) == 47
+    assert messages[2]["content"] == long_content
 
 
 def test_simulation_crud_and_run_controls() -> None:

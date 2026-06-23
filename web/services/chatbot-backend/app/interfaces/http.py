@@ -553,24 +553,29 @@ async def list_session_messages(
     max_content_chars: int | None = None,
     container: AppContainer = Depends(get_container),
 ) -> SessionMessagesResponse:
-    effective_limit = limit if limit is not None else container.settings.session_history_limit
-    bounded_limit = min(max(effective_limit, 1), 200)
+    # Zero explicitly requests full persisted history; omitted values keep bounded defaults.
+    if limit == 0:
+        bounded_limit = None
+    else:
+        effective_limit = limit if limit is not None else container.settings.session_history_limit
+        bounded_limit = min(max(effective_limit, 1), 200)
     effective_max_chars = (
         max_content_chars
         if max_content_chars is not None
         else container.settings.session_history_message_max_chars
     )
-    bounded_max_chars = min(max(effective_max_chars, 80), 8000)
+    bounded_max_chars = None if effective_max_chars == 0 else min(max(effective_max_chars, 80), 8000)
     try:
         messages = await container.sessions.list_messages(session_id, limit=bounded_limit)
     except ValueError as exc:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(exc)) from exc
-    messages = [
-        message.model_copy(
-            update={"content": _truncate_text(message.content, bounded_max_chars) or ""}
-        )
-        for message in messages
-    ]
+    if bounded_max_chars is not None:
+        messages = [
+            message.model_copy(
+                update={"content": _truncate_text(message.content, bounded_max_chars) or ""}
+            )
+            for message in messages
+        ]
     return SessionMessagesResponse(session_id=session_id, messages=messages)
 
 

@@ -32,6 +32,8 @@ import type {
   AgvTelemetry,
   ChatMessage,
   DomainEvent,
+  GraphEvidence,
+  GraphStation,
   HudSnapshot,
   OverlayDashboard,
   OverlayMetric,
@@ -64,6 +66,7 @@ type TranscriptItem =
   | {id: string; kind: "message"; role: "user" | "assistant"; text: string; at: string}
   | {id: string; kind: "event"; eventType: string; text: string; at: string}
   | {id: string; kind: "report"; text: string; at: string; kpis: ReportKpis | null; verdict: ReportVerdict | null}
+  | {id: string; kind: "graph"; evidence: GraphEvidence; at: string}
   | {id: string; kind: "plan"; text: string; index: number; total: number; at: string};
 
 type ProgressStatus = {
@@ -992,6 +995,108 @@ function ReportCard({
   );
 }
 
+// Parse the structured GraphRAG evidence off an `agent.retrieval` event. Returns null for vector
+// (non-relational) hits, which carry no `graph` payload and stay as plain text.
+function graphEvidenceFromEvent(event: DomainEvent): GraphEvidence | null {
+  const graph = payloadValue(event, "graph");
+  if (!graph || typeof graph !== "object") return null;
+  const raw = graph as Record<string, unknown>;
+  const stations = Array.isArray(raw.stations) ? (raw.stations as GraphStation[]) : [];
+  if (stations.length === 0) return null;
+  const path = Array.isArray(raw.path) ? (raw.path as string[]) : [];
+  const latest = raw.latest_bottleneck;
+  return {
+    zone: typeof raw.zone === "string" ? raw.zone : raw.zone == null ? null : String(raw.zone),
+    capability: typeof raw.capability === "string" ? raw.capability : null,
+    path,
+    stations,
+    latest_bottleneck:
+      latest && typeof latest === "object"
+        ? (latest as {value: number; run_id: string})
+        : null
+  };
+}
+
+function formatBottleneck(value: number | null): string {
+  return value == null ? "—" : `${value}%`;
+}
+
+// Relational (GraphRAG) answer rendered as an evidence card: the traversed graph path as a chain
+// of chips, then the matched stations with capabilities and their last bottleneck_rate.
+function GraphRagCard({evidence, at}: {evidence: GraphEvidence; at: string}) {
+  const {zone, capability, path, stations, latest_bottleneck} = evidence;
+  const scopeParts = [
+    zone ? `Zone ${zone}` : "전체 셀",
+    capability ? `· ${capability}` : ""
+  ].filter(Boolean);
+  return (
+    <article className="graphCard">
+      <header className="graphCardHead">
+        <span className="graphCardIcon" aria-hidden="true">🕸️</span>
+        <div>
+          <strong>그래프 지식 근거</strong>
+          <span>GraphRAG · Relationship Evidence</span>
+        </div>
+        <span className="graphCardScope">{scopeParts.join(" ")}</span>
+      </header>
+      {path.length > 0 ? (
+        <div className="graphPath" aria-label="graph traversal path">
+          {path.map((node, index) => (
+            <span className="graphPathStep" key={`${node}-${index}`}>
+              <span className="graphPathNode" data-kind={index % 2 === 0 ? "entity" : "edge"}>
+                {node}
+              </span>
+              {index < path.length - 1 ? <span className="graphPathArrow" aria-hidden="true">→</span> : null}
+            </span>
+          ))}
+        </div>
+      ) : null}
+      <div className="graphTableWrap">
+        <table className="graphTable">
+          <thead>
+            <tr>
+              <th>스테이션</th>
+              <th>유형</th>
+              <th>역량</th>
+              <th>상태</th>
+              <th className="graphTableNum">마지막 병목률</th>
+            </tr>
+          </thead>
+          <tbody>
+            {stations.map((station) => (
+              <tr key={String(station.station_id)}>
+                <td><strong>#{String(station.station_id)}</strong></td>
+                <td>{station.station_type ?? "—"}</td>
+                <td>
+                  <span className="graphCaps">
+                    {station.capabilities.length > 0
+                      ? station.capabilities.map((cap) => (
+                          <span className="graphCapChip" key={cap}>{cap}</span>
+                        ))
+                      : "—"}
+                  </span>
+                </td>
+                <td>{station.state ?? "—"}</td>
+                <td className="graphTableNum">
+                  <span className="graphBottleneck" data-has={station.bottleneck_rate != null}>
+                    {formatBottleneck(station.bottleneck_rate)}
+                  </span>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      {latest_bottleneck ? (
+        <div className="graphFootnote">
+          최신 셀 병목률 {latest_bottleneck.value}% · 실행 {latest_bottleneck.run_id.slice(-8)}
+        </div>
+      ) : null}
+      <time>{formatTime(at)}</time>
+    </article>
+  );
+}
+
 function sessionTitle(session: SessionSummary): string {
   // Surface the distinguishing user request first so older sessions are identifiable
   // (the long shared prefix made every row look the same).
@@ -1717,7 +1822,7 @@ export function App() {
   const chatItems = useMemo(
     () =>
       items
-        .filter((item) => item.kind === "message" || item.kind === "event" || item.kind === "plan" || item.kind === "report")
+        .filter((item) => item.kind === "message" || item.kind === "event" || item.kind === "plan" || item.kind === "report" || item.kind === "graph")
         .slice(-12),
     [items]
   );
@@ -1998,6 +2103,16 @@ export function App() {
           });
           return;
         }
+        const graphEvidence = graphEvidenceFromEvent(event);
+        if (graphEvidence) {
+          const graphId = `${event.event_id}-graph`;
+          setItems((current) =>
+            current.some((currentItem) => currentItem.id === graphId)
+              ? current
+              : [...current, {id: graphId, kind: "graph", evidence: graphEvidence, at: event.occurred_at}]
+          );
+          return;
+        }
         if (!shouldAppendEventToTranscript(event)) {
           return;
         }
@@ -2091,6 +2206,18 @@ export function App() {
         const progress = progressStatusFromEvent(event);
         if (progress) setProgressStatus(progress);
         await new Promise((resolve) => setTimeout(resolve, PLAN_STEP_REVEAL_MS));
+      }
+
+      // GraphRAG evidence card: render the relationship/KPI table above the prose answer.
+      for (const event of response.events) {
+        const evidence = graphEvidenceFromEvent(event);
+        if (!evidence) continue;
+        const graphId = `${event.event_id}-graph`;
+        setItems((current) =>
+          current.some((currentItem) => currentItem.id === graphId)
+            ? current
+            : [...current, {id: graphId, kind: "graph", evidence, at: event.occurred_at}]
+        );
       }
 
       setItems((current) =>
@@ -2560,6 +2687,10 @@ export function App() {
 
                 if (item.kind === "report") {
                   return <ReportCard key={item.id} text={item.text} at={item.at} kpis={item.kpis} verdict={item.verdict} />;
+                }
+
+                if (item.kind === "graph") {
+                  return <GraphRagCard key={item.id} evidence={item.evidence} at={item.at} />;
                 }
 
                 if (item.kind === "plan") {

@@ -155,6 +155,19 @@ Relevant existing capabilities this plan extends rather than rebuilds:
 - **Verified.** Focused RAG/GraphRAG tests pass (`17 passed`); full backend suite passes
   (`119 passed`). The ontology export job produced the expected cell/zone/station/capability graph.
 
+### PB — GraphRAG evidence card (overlay UI) (2026-06-23)
+- **Structured evidence payload.** `GraphRagRetriever.retrieve` now attaches a `graph` dict to its
+  `RetrievedChunk` (zone, capability, traversed path, matched stations with last bottleneck_rate,
+  latest cell bottleneck). `_retrieve_knowledge` surfaces it on the `agent.retrieval` event payload
+  (`graph`) so the frontend has structured data, not just prose.
+- **Overlay card.** `chat-web` renders relational answers as a `GraphRagCard` (graph path as a chip
+  chain + a station table with capability chips and last bottleneck_rate), mirroring the existing
+  `ReportCard` pattern; the LLM prose answer still follows below. Wired through both the HTTP
+  response events and the session WebSocket.
+- **Config fix.** Local `web/.env` was missing the RAG block, so `RAG_ENABLED` defaulted to `false`
+  and the gateway fell back to `NullKnowledgeGateway` (no graph retrieval). Restored the block
+  (`RAG_ENABLED=true`, `GRAPH_RAG_ENABLED=true`, `EMBED_BASE_URL`, …).
+
 ## PC — Guardrails + Observability
 
 ### PC — Guardrails + Observability (2026-06-19)

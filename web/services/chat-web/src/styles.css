@@ -2559,3 +2559,192 @@ button {
     width: 94vw;
   }
 }
+
+/* GraphRAG relationship evidence card — relational station/zone/capability/KPI answers. */
+.graphCard {
+  align-self: stretch;
+  max-width: 100%;
+  display: grid;
+  gap: 10px;
+  padding: 14px;
+  border: 1px solid rgba(167, 139, 250, 0.36);
+  border-radius: 12px;
+  background: linear-gradient(180deg, rgba(46, 16, 101, 0.5), rgba(15, 23, 42, 0.98));
+  box-shadow: 0 12px 30px rgba(2, 6, 23, 0.55), inset 0 1px rgba(148, 163, 184, 0.16);
+  color: #e2e8f0;
+}
+
+.graphCardHead {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 10px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.18);
+}
+
+.graphCardIcon {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 9px;
+  background: rgba(167, 139, 250, 0.18);
+  font-size: 17px;
+}
+
+.graphCardHead strong {
+  display: block;
+  color: #f8fafc;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.graphCardHead > div span {
+  display: block;
+  margin-top: 2px;
+  color: rgba(148, 163, 184, 0.78);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+}
+
+.graphCardScope {
+  padding: 4px 9px;
+  border-radius: 999px;
+  background: rgba(167, 139, 250, 0.18);
+  color: #c4b5fd;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.4px;
+  white-space: nowrap;
+}
+
+.graphPath {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 2px;
+  padding: 10px;
+  border-radius: 9px;
+  background: rgba(15, 23, 42, 0.55);
+  border: 1px solid rgba(148, 163, 184, 0.16);
+}
+
+.graphPathStep {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.graphPathNode {
+  padding: 3px 8px;
+  border-radius: 7px;
+  font-size: 10px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.graphPathNode[data-kind="entity"] {
+  background: rgba(167, 139, 250, 0.2);
+  color: #ddd6fe;
+  border: 1px solid rgba(167, 139, 250, 0.4);
+}
+
+.graphPathNode[data-kind="edge"] {
+  background: transparent;
+  color: rgba(148, 163, 184, 0.85);
+  font-size: 9px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.graphPathArrow {
+  color: rgba(167, 139, 250, 0.7);
+  font-size: 11px;
+  padding: 0 1px;
+}
+
+.graphTableWrap {
+  overflow-x: auto;
+  border-radius: 9px;
+  border: 1px solid rgba(148, 163, 184, 0.16);
+}
+
+.graphTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 11px;
+}
+
+.graphTable thead th {
+  padding: 8px 10px;
+  text-align: left;
+  color: rgba(148, 163, 184, 0.85);
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  background: rgba(15, 23, 42, 0.6);
+  border-bottom: 1px solid rgba(148, 163, 184, 0.18);
+}
+
+.graphTable tbody td {
+  padding: 8px 10px;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+  color: #e2e8f0;
+  vertical-align: middle;
+}
+
+.graphTable tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.graphTableNum {
+  text-align: right;
+}
+
+.graphCaps {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.graphCapChip {
+  padding: 2px 7px;
+  border-radius: 999px;
+  background: rgba(56, 189, 248, 0.16);
+  color: #7dd3fc;
+  font-size: 9px;
+  font-weight: 700;
+}
+
+.graphBottleneck {
+  display: inline-block;
+  padding: 3px 9px;
+  border-radius: 7px;
+  font-size: 12px;
+  font-weight: 800;
+  color: rgba(148, 163, 184, 0.7);
+}
+
+.graphBottleneck[data-has="true"] {
+  background: rgba(251, 191, 36, 0.18);
+  color: #fcd34d;
+}
+
+.graphFootnote {
+  padding: 7px 10px;
+  border-radius: 8px;
+  background: rgba(15, 23, 42, 0.5);
+  border: 1px solid rgba(148, 163, 184, 0.14);
+  color: rgba(203, 213, 225, 0.85);
+  font-size: 10px;
+  font-weight: 600;
+}
+
+.graphCard time {
+  color: rgba(148, 163, 184, 0.6);
+  font-size: 10px;
+}

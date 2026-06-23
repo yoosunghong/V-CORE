@@ -344,21 +344,29 @@ class ChatOrchestrator:
         # Null gateway, or an honest miss) carries no grounding for the overlay to show.
         if not chunks:
             return [], None
+        payload: dict[str, object] = {
+            "query": query,
+            "hits": [
+                {
+                    "document_id": chunk.document_id,
+                    "title": chunk.title,
+                    "score": chunk.score,
+                }
+                for chunk in chunks
+            ],
+        }
+        # Surface structured GraphRAG evidence (path + stations + bottleneck_rate) so the overlay
+        # can render a relationship card instead of plain text. Only the top relational hit carries it.
+        graph_evidence = next(
+            (chunk.graph for chunk in chunks if chunk.graph is not None), None
+        )
+        if graph_evidence is not None:
+            payload["graph"] = graph_evidence
         event = DomainEvent(
             event_type="agent.retrieval",
             correlation_id=correlation_id,
             session_id=session_id,
-            payload={
-                "query": query,
-                "hits": [
-                    {
-                        "document_id": chunk.document_id,
-                        "title": chunk.title,
-                        "score": chunk.score,
-                    }
-                    for chunk in chunks
-                ],
-            },
+            payload=payload,
         )
         await self._events.publish(event)
         return chunks, event

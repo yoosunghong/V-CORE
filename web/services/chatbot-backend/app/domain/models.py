@@ -128,6 +128,10 @@ class RetrievedChunk(BaseModel):
     category: str = "unknown"
     vector_score: float | None = None
     rerank_score: float | None = None
+    # Structured evidence for relational (GraphRAG) hits — zone/capability, the traversed graph
+    # path, and the matched stations with their last bottleneck_rate. None for vector chunks; the
+    # frontend renders it as a card instead of plain text when present.
+    graph: dict | None = None
 
 
 class Simulation(BaseModel):

@@ -9,6 +9,28 @@ export type ChatMessage = {
   created_at: string;
 };
 
+// Structured GraphRAG evidence carried on the `agent.retrieval` event payload (`graph`), used to
+// render a relationship card for relational station/zone/capability/KPI questions.
+export type GraphStation = {
+  station_id: string | number | null;
+  station_type: string | null;
+  zone: string | number | null;
+  capabilities: string[];
+  task_ready: boolean | null;
+  accessible: boolean | null;
+  state: string | null;
+  bottleneck_rate: number | null;
+  bottleneck_run_id: string | null;
+};
+
+export type GraphEvidence = {
+  zone: string | null;
+  capability: string | null;
+  path: string[];
+  stations: GraphStation[];
+  latest_bottleneck: {value: number; run_id: string} | null;
+};
+
 export type DomainEvent = {
   event_id: string;
   event_type: string;

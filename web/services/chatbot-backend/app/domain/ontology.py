@@ -263,26 +263,25 @@ class GraphRagRetriever:
         title = ": " + " ".join(title_parts)
         title = title.removeprefix(": ")
 
-        lines = [
-            "Graph path: "
-            + " -> ".join(
-                part
-                for part in (
-                    f"Zone({zone})" if zone else "Cell(cell_demo)",
-                    "CONTAINS",
-                    "Station",
-                    "HAS_CAPABILITY" if capability else "",
-                    f"Capability({capability})" if capability else "",
-                    "HAS_RUN",
-                    "MEASURED",
-                    "Kpi(bottleneck_rate)",
-                )
-                if part
+        path = [
+            part
+            for part in (
+                f"Zone({zone})" if zone else "Cell(cell_demo)",
+                "CONTAINS",
+                "Station",
+                "HAS_CAPABILITY" if capability else "",
+                f"Capability({capability})" if capability else "",
+                "HAS_RUN",
+                "MEASURED",
+                "Kpi(bottleneck_rate)",
             )
+            if part
         ]
+        lines = ["Graph path: " + " -> ".join(path)]
+        stations_struct: list[dict] = []
         for node in station_nodes:
             props = node.properties
-            caps = ", ".join(capabilities_for_station_type(str(props.get("station_type", ""))))
+            caps_list = list(capabilities_for_station_type(str(props.get("station_type", ""))))
             station_zone = _normalize_zone(str(props.get("zone", ""))) or props.get("zone")
             station_line = (
                 "Station {station_id}: type={station_type}, zone={zone}, capabilities={caps}, "
@@ -290,7 +289,7 @@ class GraphRagRetriever:
                     station_id=props.get("station_id"),
                     station_type=props.get("station_type"),
                     zone=station_zone,
-                    caps=caps,
+                    caps=", ".join(caps_list),
                     task_ready=props.get("task_ready"),
                     accessible=props.get("accessible"),
                     state=props.get("state"),
@@ -301,15 +300,31 @@ class GraphRagRetriever:
                 if station_zone
                 else None
             )
+            entry: dict = {
+                "station_id": props.get("station_id"),
+                "station_type": props.get("station_type"),
+                "zone": station_zone,
+                "capabilities": caps_list,
+                "task_ready": props.get("task_ready"),
+                "accessible": props.get("accessible"),
+                "state": props.get("state"),
+                "bottleneck_rate": None,
+                "bottleneck_run_id": None,
+            }
             if zone_attr is not None:
                 attr_run_id, attr_value = zone_attr
                 station_line += (
                     f" Last zone bottleneck_rate: {attr_value:g} (run {attr_run_id})."
                 )
+                entry["bottleneck_rate"] = attr_value
+                entry["bottleneck_run_id"] = attr_run_id
+            stations_struct.append(entry)
             lines.append(station_line)
+        latest_struct: dict | None = None
         if latest_bottleneck is not None:
             run_id, value = latest_bottleneck
             lines.append(f"Latest cell bottleneck_rate: {value:g} from run {run_id}.")
+            latest_struct = {"value": value, "run_id": run_id}
         else:
             lines.append("Latest cell bottleneck_rate: not available in saved run history.")
 
@@ -323,6 +338,13 @@ class GraphRagRetriever:
                 source="ontology_graph",
                 category="graph_ontology",
                 rerank_score=score,
+                graph={
+                    "zone": zone,
+                    "capability": capability,
+                    "path": path,
+                    "stations": stations_struct,
+                    "latest_bottleneck": latest_struct,
+                },
             )
         ][:top_k]
 

@@ -8,8 +8,11 @@
 #   powershell -ExecutionPolicy Bypass -File web/start-demo.ps1
 #
 # Pass -Build to force a backend image rebuild (docker compose up --build -d).
+# Pass -Force to stop any running llama-server and relaunch it with the correct base + routing
+# LoRA — use this when a wrong-but-healthy model may be serving :8080 (the "already healthy"
+# check below would otherwise leave it in place).
 
-param([switch]$Build)
+param([switch]$Build, [switch]$Force)
 
 $ErrorActionPreference = "Stop"
 $repo = Split-Path $PSScriptRoot -Parent
@@ -23,6 +26,12 @@ $healthUrl   = "http://127.0.0.1:8080/health"
 function Test-LlamaHealthy {
     try { return (Invoke-RestMethod -Uri $healthUrl -TimeoutSec 2).status -eq "ok" }
     catch { return $false }
+}
+
+if ($Force) {
+    Write-Host "[start-demo] -Force: stopping any running llama-server to guarantee the correct model..."
+    Get-Process llama-server -ErrorAction SilentlyContinue | Stop-Process -Force
+    Start-Sleep -Seconds 2
 }
 
 if (Test-LlamaHealthy) {

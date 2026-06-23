@@ -17,6 +17,21 @@ if not exist "%PROJECT_FILE%" (
   exit /b 1
 )
 
+set "START_DEMO=%~dp0web\start-demo.ps1"
+if not exist "%START_DEMO%" (
+  echo ERROR: start-demo.ps1 was not found at "%START_DEMO%".
+  exit /b 1
+)
+
+echo Bringing up the V-CORE web stack (force-correct LLM model + rebuilt Docker images)...
+echo.
+powershell -ExecutionPolicy Bypass -File "%START_DEMO%" -Force -Build
+if errorlevel 1 (
+  echo ERROR: web stack bring-up failed. Aborting before UE5 launch.
+  exit /b 1
+)
+echo.
+
 echo Publishing UE5 Pixel Streaming to:
 echo   %VCORE_PIXEL_STREAMING_URL%
 echo.

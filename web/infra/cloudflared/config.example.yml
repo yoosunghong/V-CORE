@@ -12,5 +12,5 @@ credentials-file: C:\Users\PC\.cloudflared\<tunnel-id>.json
 
 ingress:
   - hostname: v-core.yoosung.dev
-    service: http://localhost:5173
+    service: http://localhost:5199
   - service: http_status:404

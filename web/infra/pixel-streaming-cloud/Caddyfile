@@ -1,0 +1,12 @@
+{
+	email {$ACME_EMAIL:admin@yoosung.dev}
+}
+
+{$PLAYER_DOMAIN:stream.v-core.yoosung.dev} {
+	encode zstd gzip
+	reverse_proxy signalling:80
+}
+
+{$STREAMER_DOMAIN:streamer.v-core.yoosung.dev} {
+	reverse_proxy signalling:8888
+}

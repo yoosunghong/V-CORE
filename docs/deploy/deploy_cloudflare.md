@@ -1,5 +1,11 @@
 # Deploy: V-CORE web demo at `v-core.yoosung.dev`
 
+> Pixel Streaming note: this Tunnel publishes the operator web application,
+> not the WebRTC media plane. For remote UE5 video and input, deploy
+> `web/infra/pixel-streaming-cloud` and set
+> `UE5_VIEW_URL=https://stream.v-core.yoosung.dev`. The cloud edge instructions
+> include the required DNS-only signaling and TURN records.
+
 The V-CORE web demo is served from the **local machine** through a Cloudflare Tunnel.
 UE5, Ollama, and the backend all run locally; only the browser ↔ frontend hop crosses
 the internet. The portfolio site (`yoosung.dev`) links to it from the temporary
@@ -8,7 +14,7 @@ the internet. The portfolio site (`yoosung.dev`) links to it from the temporary
 ## Architecture
 
 ```
-Browser ── HTTPS ──> v-core.yoosung.dev ── Cloudflare Tunnel ──> localhost:5173 (chat-web nginx)
+Browser ── HTTPS ──> v-core.yoosung.dev ── Cloudflare Tunnel ──> localhost:5199 (chat-web nginx)
                                                                        │ same-origin reverse proxy
                                                                        ▼
                                                                   backend :8000
@@ -26,7 +32,7 @@ Browser ── HTTPS ──> v-core.yoosung.dev ── Cloudflare Tunnel ──>
 
 ## One-time setup
 
-1. **Run the stack locally** (chat-web nginx on `:5173`, backend on `:8000`, ollama, postgres):
+1. **Run the stack locally** (chat-web nginx published on `:5199`, backend on `:8000`, ollama, postgres):
    ```
    cd web
    docker compose up -d

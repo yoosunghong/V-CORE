@@ -1,0 +1,81 @@
+name: vcore-pixel-streaming
+
+services:
+  signalling:
+    build:
+      # PixelStreaming2WebServers is the Epic infrastructure checkout already
+      # used by this project. Keep its branch aligned with the UE plugin version.
+      context: ../../../PixelStreaming2WebServers
+      dockerfile: SignallingWebServer/Dockerfile
+    restart: unless-stopped
+    environment:
+      STUN_SERVER: ${STUN_SERVER:-stun.l.google.com:19302}
+      TURN_SERVER: ${TURN_DOMAIN:-turn.v-core.yoosung.dev}:${TURN_PORT:-3478}
+      TURN_USER: ${TURN_USER:?set TURN_USER in .env}
+      TURN_PASS: ${TURN_PASSWORD:?set TURN_PASSWORD in .env}
+      PUBLIC_IP: ${PUBLIC_IP:?set PUBLIC_IP in .env}
+      FRONTEND_DIR: /SignallingWebServer/SignallingWebServer/www
+    command:
+      - --
+      - --streamer_port
+      - "8888"
+      - --player_port
+      - "80"
+      - --http_root
+      - /SignallingWebServer/SignallingWebServer/www
+      - --homepage
+      - player.html
+      - --max_players
+      - "${MAX_PLAYERS:-4}"
+      - --reverse_proxy
+    expose:
+      - "80"
+      - "8888"
+    networks:
+      - pixel-streaming
+
+  edge:
+    image: caddy:2.10-alpine
+    restart: unless-stopped
+    environment:
+      PLAYER_DOMAIN: ${PLAYER_DOMAIN:-stream.v-core.yoosung.dev}
+      STREAMER_DOMAIN: ${STREAMER_DOMAIN:-streamer.v-core.yoosung.dev}
+      ACME_EMAIL: ${ACME_EMAIL:-admin@yoosung.dev}
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy-data:/data
+      - caddy-config:/config
+    depends_on:
+      - signalling
+    networks:
+      - pixel-streaming
+
+  turn:
+    image: coturn/coturn:alpine
+    restart: unless-stopped
+    command:
+      - --fingerprint
+      - --lt-cred-mech
+      - --realm=${TURN_REALM:-v-core.yoosung.dev}
+      - --user=${TURN_USER:?set TURN_USER in .env}:${TURN_PASSWORD:?set TURN_PASSWORD in .env}
+      - --external-ip=${PUBLIC_IP:?set PUBLIC_IP in .env}
+      - --listening-port=${TURN_PORT:-3478}
+      - --min-port=${TURN_MIN_PORT:-49160}
+      - --max-port=${TURN_MAX_PORT:-49200}
+      - --no-multicast-peers
+      - --log-file=stdout
+    ports:
+      - "${TURN_PORT:-3478}:${TURN_PORT:-3478}/tcp"
+      - "${TURN_PORT:-3478}:${TURN_PORT:-3478}/udp"
+      - "${TURN_MIN_PORT:-49160}-${TURN_MAX_PORT:-49200}:${TURN_MIN_PORT:-49160}-${TURN_MAX_PORT:-49200}/udp"
+
+networks:
+  pixel-streaming:
+
+volumes:
+  caddy-data:
+  caddy-config:

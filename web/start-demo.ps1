@@ -17,9 +17,18 @@ param([switch]$Build, [switch]$Force)
 $ErrorActionPreference = "Stop"
 $repo = Split-Path $PSScriptRoot -Parent
 
-$llamaServer = Join-Path $repo "Intermediate/llama-build/bin/Release/llama-server.exe"
-$baseBlob    = "C:/Users/PC/.ollama/models/blobs/sha256-b709d81508a078a686961de6ca07a953b895d9b286c46e17f00fb267f4f2d297"
-$adapter     = Join-Path $repo "docs/sft/integrated/data/vcore-path-action-router-adapter-f16.gguf"
+function Resolve-VcorePath([string]$Value, [string]$Default) {
+    $path = if ($Value) { [Environment]::ExpandEnvironmentVariables($Value) } else { $Default }
+    if ([IO.Path]::IsPathRooted($path)) { return $path }
+    return Join-Path $repo $path
+}
+
+$llamaServer = Resolve-VcorePath $env:VCORE_LLAMA_SERVER `
+    (Join-Path $repo "Intermediate/llama-build/bin/Release/llama-server.exe")
+$baseBlob = Resolve-VcorePath $env:VCORE_LLM_BASE_MODEL `
+    (Join-Path $HOME ".ollama/models/blobs/sha256-b709d81508a078a686961de6ca07a953b895d9b286c46e17f00fb267f4f2d297")
+$adapter = Resolve-VcorePath $env:VCORE_LLM_ADAPTER `
+    (Join-Path $repo "docs/sft/integrated/data/vcore-path-action-router-adapter-f16.gguf")
 $log         = Join-Path $repo "Intermediate/llama-server-8080.log"
 $healthUrl   = "http://127.0.0.1:8080/health"
 
@@ -37,8 +46,15 @@ if ($Force) {
 if (Test-LlamaHealthy) {
     Write-Host "[start-demo] llama-server already healthy on :8080."
 } else {
-    foreach ($p in @($llamaServer, $baseBlob, $adapter)) {
-        if (-not (Test-Path $p)) { throw "Missing required file: $p" }
+    $missing = @($llamaServer, $baseBlob, $adapter) | Where-Object { -not (Test-Path -LiteralPath $_) }
+    if ($missing.Count -gt 0) {
+        Write-Host "[start-demo] Missing required LLM runtime file(s):" -ForegroundColor Red
+        $missing | ForEach-Object { Write-Host "  $_" -ForegroundColor Red }
+        if ($missing -contains $llamaServer) {
+            Write-Host "[start-demo] Build it with: powershell -ExecutionPolicy Bypass -File Scripts/BuildLlamaServer.ps1" -ForegroundColor Yellow
+        }
+        Write-Host "[start-demo] Paths can be overridden with VCORE_LLAMA_SERVER, VCORE_LLM_BASE_MODEL, and VCORE_LLM_ADAPTER." -ForegroundColor Yellow
+        throw "Missing required VCORE LLM runtime file(s)."
     }
     Write-Host "[start-demo] launching llama-server (base + routing LoRA, adapter off by default)..."
     # --lora-init-without-apply: the adapter is loaded but applied per-request via the
@@ -62,15 +78,21 @@ if (Test-LlamaHealthy) {
     Write-Host "[start-demo] llama-server healthy on :8080."
 }
 
+$dockerCommand = Get-Command docker.exe -ErrorAction SilentlyContinue
+if (-not $dockerCommand) { throw "docker.exe was not found on PATH. Install or start Docker Desktop." }
+& $dockerCommand.Source info --format "{{.ServerVersion}}" | Out-Null
+if ($LASTEXITCODE -ne 0) { throw "The Docker engine is unavailable. Start Docker Desktop, then retry." }
+
 Push-Location $PSScriptRoot
 try {
     if ($Build) {
         Write-Host "[start-demo] docker compose up --build -d ..."
-        docker compose up --build -d
+        & $dockerCommand.Source compose up --build -d
     } else {
         Write-Host "[start-demo] docker compose up -d ..."
-        docker compose up -d
+        & $dockerCommand.Source compose up -d
     }
+    if ($LASTEXITCODE -ne 0) { throw "docker compose failed with exit code $LASTEXITCODE." }
 } finally {
     Pop-Location
 }

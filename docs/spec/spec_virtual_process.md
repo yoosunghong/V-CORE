@@ -168,7 +168,7 @@ and overlays operator controls. If Pixel Streaming is not running, the dashboard
 SSE telemetry still remain usable, making video failure independent from command and
 status observability.
 
-For the local UE 5.6 standalone demo, `LaunchPixelStreaming2Standalone.bat` expects Epic's
+For the local packaged demo, `Scripts\LaunchPixelStreaming.bat` expects Epic's
 Pixel Streaming 2 WebServers runtime at `PixelStreaming2WebServers/` in the repo root
 (`SignallingWebServer/package.json` must exist). The batch builds the local Node packages
 when `SignallingWebServer/dist/index.js` is missing, starts the signalling/player server

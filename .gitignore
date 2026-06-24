@@ -117,3 +117,7 @@ web;W/
 # ─── Coding tools ──────────────────────────────────────────────────────────
 .codex/
 .claude/
+
+
+# Package
+Packaged/

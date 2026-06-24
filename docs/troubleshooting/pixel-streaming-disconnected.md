@@ -32,7 +32,7 @@ live frame (e.g. `RUNNING · 25%`) instead of returning to idle.
 | `chat-web` (React, embeds the player page in an `<iframe>`) | Docker | `:5199` |
 | `chatbot-backend` (FastAPI) | Docker | `:8000` |
 
-Launched via `LaunchPixelStreaming2Standalone.bat`, which starts the signalling server and
+Launched via `Scripts\LaunchAll.bat`, which starts the signalling server and
 then launches UE with `-PixelStreamingURL=ws://127.0.0.1:8888`. The frontend embeds
 `UE5_VIEW_URL` (`http://localhost:8880`) as the viewport, appending `?AutoConnect=true`.
 

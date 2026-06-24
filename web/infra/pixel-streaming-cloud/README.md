@@ -56,7 +56,10 @@ On Windows, set the publisher URL and use the cloud launcher:
 
 ```powershell
 $env:VCORE_PIXEL_STREAMING_URL = "wss://streamer.v-core.yoosung.dev"
-.\LaunchPixelStreaming2Cloud.bat
+set VCORE_PIXEL_STREAMING_URL=wss://streamer.v-core.yoosung.dev
+.\Scripts\LaunchLlamaBackend.bat
+.\Scripts\LaunchWeb.bat
+.\Scripts\LaunchUE5.bat
 ```
 
 The publisher connection is outbound, so the workstation normally needs no

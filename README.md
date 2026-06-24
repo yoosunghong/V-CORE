@@ -52,8 +52,8 @@ chatbot-backend (FastAPI + LangGraph multi-agent, Ollama/Gemma)
 The portfolio deployment keeps UE5, LangGraph, the fine-tuned local model, and `bge-m3` embedding
 inference on the workstation while serving the `vcore_operations_ko` knowledge index from Qdrant
 Managed Cloud over authenticated HTTPS. A mirrored local Qdrant remains available for automatic
-retrieval failback and a fully offline demo. Setup, data boundaries, cost rationale, and the live-demo
-narrative are documented in [docs/deploy_csp.md](docs/deploy_csp.md).
+retrieval failback and fully offline operation. Setup, data boundaries, cost rationale, and the
+live deployment narrative are documented in [docs/deploy_csp.md](docs/deploy_csp.md).
 
 ### Agent command set
 
@@ -68,7 +68,7 @@ narrative are documented in [docs/deploy_csp.md](docs/deploy_csp.md).
 
 ---
 
-## Running the demo
+## Running the system
 
 Requires Docker (+ GPU for Ollama). UE5 changes require the Unreal editor.
 
@@ -139,7 +139,7 @@ VCORE/
 
 ## Legacy / not wired to the current service
 
-Content kept in-tree but **not connected** to the running Virtual Process demo. Audited 2026-06-07:
+Content kept in-tree but **not connected** to the running Virtual Process system. Audited 2026-06-07:
 
 | Item | Verdict |
 |---|---|

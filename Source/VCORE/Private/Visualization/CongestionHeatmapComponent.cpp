@@ -213,7 +213,6 @@ void UCongestionHeatmapComponent::EnsureHeatTexture()
     }
 
     HeatTexture->CompressionSettings = TC_VectorDisplacementmap;
-    HeatTexture->MipGenSettings = TMGS_NoMipmaps;
     HeatTexture->SRGB = false;
     HeatTexture->Filter = TF_Bilinear;
     HeatTexture->UpdateResource();

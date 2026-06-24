@@ -29,10 +29,6 @@
 		{
 			"Name": "PixelStreaming2",
 			"Enabled": true
-		},
-		{
-			"Name": "NarshaMCP",
-			"Enabled": true
 		}
 	]
 }
